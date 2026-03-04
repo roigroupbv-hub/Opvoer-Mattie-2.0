@@ -140,6 +140,30 @@
   @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
   .spinning { animation: spin 1s linear infinite; display: inline-block; }
 
+  /* ── Web Search ── */
+  .search-results-box { background: #f9f4ef; border: 1px solid #efe7e1; border-radius: 10px; margin-top: 16px; overflow: hidden; }
+  .search-result-item { padding: 14px 18px; border-bottom: 1px solid #efe7e1; }
+  .search-result-item:last-child { border-bottom: none; }
+  .search-result-title { font-size: 13px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
+  .search-result-url { font-size: 10px; color: #27ae60; font-family: 'Space Mono', monospace; margin-bottom: 6px; word-break: break-all; }
+  .search-result-snippet { font-size: 12px; color: #666; line-height: 1.6; }
+  .search-result-actions { display: flex; gap: 6px; margin-top: 8px; }
+  .search-fetch-btn { padding: 5px 12px; border-radius: 5px; border: 1px solid #e0c5b6; background: #fff; color: #1a1a1a; font-size: 11px; font-weight: 600; cursor: pointer; font-family: 'Poppins', sans-serif; transition: all .15s; }
+  .search-fetch-btn:hover { background: #fdf9f6; border-color: #bf8d7a; }
+  .search-fetch-btn:disabled { opacity: 0.4; cursor: wait; }
+  .search-fetch-btn.fetched { background: #e8f8ef; border-color: #27ae60; color: #1a7a4c; }
+  .search-extracted { margin-top: 10px; padding: 12px; background: #fff; border-radius: 8px; border: 1px solid #e8e0d8; }
+  .search-extracted-label { font-size: 10px; font-weight: 600; color: #bf8d7a; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .search-extracted-content { font-size: 12px; color: #333; line-height: 1.7; max-height: 200px; overflow-y: auto; }
+  .search-extracted-content.mono { font-family: 'Space Mono', monospace; font-size: 11px; }
+  .search-use-btn { margin-top: 8px; padding: 5px 14px; border-radius: 5px; border: none; background: #27ae60; color: #fff; font-size: 11px; font-weight: 600; cursor: pointer; font-family: 'Poppins', sans-serif; }
+  .search-use-btn:hover { background: #219a52; }
+  .search-section-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; background: rgba(224,197,182,0.15); font-size: 12px; font-weight: 600; color: #888; }
+  .search-config-bar { display: flex; align-items: center; gap: 8px; padding: 10px 0; margin-bottom: 10px; }
+  .search-config-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .search-config-dot.green { background: #27ae60; }
+  .search-config-dot.red { background: #e74c3c; }
+
   /* ── Toast notifications ── */
   .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); padding: 12px 24px; border-radius: 8px; font-size: 13px; font-weight: 600; font-family: 'Poppins', sans-serif; z-index: 999; animation: toastIn 0.3s ease; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
   .toast.success { background: #1a1a1a; color: #27ae60; }
@@ -292,6 +316,23 @@
   </div>
 </div>
 
+<!-- Google Search API Modal -->
+<div class="modal-overlay" id="googleApiModal" style="display:none;">
+  <div class="modal">
+    <h3>🔍 Google Search API Instellingen</h3>
+    <p>Om productinformatie automatisch op te zoeken heb je een Google Custom Search API key en Search Engine ID nodig. Deze worden alleen lokaal in je browser opgeslagen.</p>
+    <label style="font-size:11px;font-weight:600;color:#888;margin-bottom:4px;display:block;">API Key</label>
+    <input type="password" id="googleApiKeyInput" placeholder="AIzaSy..." />
+    <label style="font-size:11px;font-weight:600;color:#888;margin-bottom:4px;display:block;">Search Engine ID (cx)</label>
+    <input type="text" id="googleCxInput" placeholder="a1b2c3d4e5f6g7h8i" />
+    <p style="font-size:11px;color:#bbb;">Nog geen key? Ga naar <a href="https://console.cloud.google.com/" target="_blank" style="color:#1a0dab;">Google Cloud Console</a> en <a href="https://programmablesearchengine.google.com/" target="_blank" style="color:#1a0dab;">Programmable Search Engine</a></p>
+    <div class="modal-actions">
+      <button class="modal-btn secondary" onclick="closeGoogleApiModal()">Annuleren</button>
+      <button class="modal-btn primary" onclick="saveGoogleApiKeys()">Opslaan</button>
+    </div>
+  </div>
+</div>
+
 <div class="content">
 
   <!-- TAB 0: AI Generator -->
@@ -339,6 +380,52 @@
           5. Controleer en pas aan waar nodig in de verschillende tabbladen<br><br>
           <strong>⚙ Magento-koppeling</strong><br>
           Configureer je Magento 2 API-gegevens in de Magento-tab om producten direct te kunnen opvoeren.
+        </p>
+      </div>
+    </div>
+
+    <!-- Web Search sectie -->
+    <div class="card">
+      <div class="section-header">
+        <div class="top">
+          <div class="section-number">🔍</div>
+          <h2 class="section-title">Productinfo Opzoeken</h2>
+        </div>
+        <p class="section-sub">Zoek automatisch ingrediënten en merkomschrijvingen op via Google</p>
+      </div>
+
+      <div class="search-config-bar">
+        <span class="search-config-dot" id="googleConfigDot"></span>
+        <span style="font-size:12px;color:#888;" id="googleConfigStatus"></span>
+        <button style="margin-left:auto;padding:4px 10px;border-radius:5px;border:1px solid #e8e0d8;background:#fff;color:#888;font-size:11px;cursor:pointer;font-family:'Poppins',sans-serif;" onclick="openGoogleApiModal()">⚙ Instellingen</button>
+      </div>
+
+      <div class="ai-box">
+        <div style="margin-bottom:16px;">
+          <label class="ai-label">Productnaam zoeken</label>
+          <input class="ai-input" id="searchProductInput" type="text" placeholder="Bijv. Olaplex No. 3 Hair Perfector">
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="ai-generate-btn" id="searchBtn" onclick="searchProductInfo()" style="flex:1;">
+            🔍 Zoek ingrediënten & productinfo
+          </button>
+        </div>
+      </div>
+
+      <div id="searchResults" style="display:none;">
+        <div class="search-results-box" id="searchResultsList"></div>
+      </div>
+
+      <div class="info-box" style="margin-top:16px;">
+        <p>
+          <strong>💡 Zo werkt productinfo opzoeken</strong><br>
+          1. Voer de productnaam in<br>
+          2. Klik op "Zoek ingrediënten & productinfo"<br>
+          3. De tool doorzoekt Google naar ingrediëntenlijsten en productomschrijvingen<br>
+          4. Klik op "Ophalen" bij een resultaat om de pagina te lezen<br>
+          5. Gevonden ingrediënten en omschrijvingen kun je direct overnemen<br><br>
+          <strong>⚙ Vereist:</strong> Google Custom Search API key en Search Engine ID.
+          Klik op ⚙ Instellingen hierboven om deze in te voeren.
         </p>
       </div>
     </div>
@@ -2648,8 +2735,332 @@ function bulkDownload() {
   });
 }
 
+// ─── Google Search API ───
+function openGoogleApiModal() {
+  document.getElementById('googleApiModal').style.display = 'flex';
+  const stored = getGoogleApiConfig();
+  if (stored.apiKey) document.getElementById('googleApiKeyInput').value = stored.apiKey;
+  if (stored.cx) document.getElementById('googleCxInput').value = stored.cx;
+}
+
+function closeGoogleApiModal() {
+  document.getElementById('googleApiModal').style.display = 'none';
+}
+
+function saveGoogleApiKeys() {
+  const apiKey = document.getElementById('googleApiKeyInput').value.trim();
+  const cx = document.getElementById('googleCxInput').value.trim();
+  if (!apiKey || !cx) { showToast('Vul beide velden in', 'error'); return; }
+  try {
+    sessionStorage.setItem('google_api_key', apiKey);
+    sessionStorage.setItem('google_cx', cx);
+  } catch(e) {}
+  closeGoogleApiModal();
+  updateGoogleConfigStatus();
+  showToast('Google Search instellingen opgeslagen', 'success');
+}
+
+function getGoogleApiConfig() {
+  let apiKey = '', cx = '';
+  try {
+    apiKey = sessionStorage.getItem('google_api_key') || '';
+    cx = sessionStorage.getItem('google_cx') || '';
+  } catch(e) {}
+  return { apiKey, cx };
+}
+
+function updateGoogleConfigStatus() {
+  const { apiKey, cx } = getGoogleApiConfig();
+  const dot = document.getElementById('googleConfigDot');
+  const status = document.getElementById('googleConfigStatus');
+  if (apiKey && cx) {
+    dot.className = 'search-config-dot green';
+    status.textContent = 'Google Search API geconfigureerd';
+  } else {
+    dot.className = 'search-config-dot red';
+    status.textContent = 'Google Search API niet geconfigureerd — klik op ⚙ Instellingen';
+  }
+}
+
+async function searchProductInfo() {
+  const { apiKey, cx } = getGoogleApiConfig();
+  if (!apiKey || !cx) { openGoogleApiModal(); return; }
+
+  const query = document.getElementById('searchProductInput').value.trim();
+  if (!query) { showToast('Voer een productnaam in', 'error'); return; }
+
+  const btn = document.getElementById('searchBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinning">⟳</span> Zoeken...';
+
+  const resultsContainer = document.getElementById('searchResults');
+  const resultsList = document.getElementById('searchResultsList');
+  resultsList.innerHTML = '';
+  resultsContainer.style.display = 'none';
+
+  try {
+    // Zoek naar ingrediënten
+    const ingredientResults = await googleSearch(apiKey, cx, query + ' ingrediënten INCI lijst');
+    // Zoek naar productomschrijving
+    const descResults = await googleSearch(apiKey, cx, query + ' productomschrijving');
+
+    resultsContainer.style.display = 'block';
+
+    // Ingrediënten resultaten
+    if (ingredientResults.length > 0) {
+      resultsList.innerHTML += '<div class="search-section-header">📋 Ingrediënten / INCI-lijst</div>';
+      ingredientResults.forEach((r, i) => {
+        resultsList.innerHTML += buildSearchResultHTML(r, 'ingredients', i);
+      });
+    }
+
+    // Omschrijving resultaten
+    if (descResults.length > 0) {
+      resultsList.innerHTML += '<div class="search-section-header">📝 Productomschrijving</div>';
+      descResults.forEach((r, i) => {
+        resultsList.innerHTML += buildSearchResultHTML(r, 'description', i);
+      });
+    }
+
+    if (ingredientResults.length === 0 && descResults.length === 0) {
+      resultsList.innerHTML = '<div style="padding:20px;text-align:center;color:#aaa;font-size:13px;">Geen resultaten gevonden. Probeer een andere zoekterm.</div>';
+    }
+
+    showToast(`${ingredientResults.length + descResults.length} resultaten gevonden`, 'success');
+  } catch (err) {
+    showToast('Fout bij zoeken: ' + err.message, 'error');
+    console.error(err);
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '🔍 Zoek ingrediënten & productinfo';
+}
+
+async function googleSearch(apiKey, cx, query) {
+  const url = `https://www.googleapis.com/customsearch/v1?key=${encodeURIComponent(apiKey)}&cx=${encodeURIComponent(cx)}&q=${encodeURIComponent(query)}&num=5`;
+  const res = await fetch(url);
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error?.message || 'Google Search API fout');
+  }
+  const data = await res.json();
+  return (data.items || []).map(item => ({
+    title: item.title,
+    url: item.link,
+    snippet: item.snippet || ''
+  }));
+}
+
+function buildSearchResultHTML(result, type, index) {
+  const id = `${type}_${index}`;
+  return `
+    <div class="search-result-item" id="result_${id}">
+      <div class="search-result-title">${escapeHTML(result.title)}</div>
+      <div class="search-result-url">${escapeHTML(result.url)}</div>
+      <div class="search-result-snippet">${escapeHTML(result.snippet)}</div>
+      <div class="search-result-actions">
+        <button class="search-fetch-btn" id="fetchBtn_${id}" onclick="fetchAndExtract('${id}', '${escapeHTML(result.url)}', '${type}')">
+          📄 Pagina ophalen
+        </button>
+      </div>
+      <div id="extracted_${id}"></div>
+    </div>
+  `;
+}
+
+function escapeHTML(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+async function fetchAndExtract(id, url, type) {
+  const btn = document.getElementById(`fetchBtn_${id}`);
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinning">⟳</span> Ophalen...';
+
+  try {
+    // Gebruik een CORS proxy om de pagina op te halen
+    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+    const res = await fetch(proxyUrl);
+    if (!res.ok) throw new Error('Kan pagina niet ophalen');
+    const html = await res.text();
+
+    // Parse HTML en extraheer relevante content
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+
+    // Verwijder scripts en styles
+    doc.querySelectorAll('script, style, nav, header, footer, iframe').forEach(el => el.remove());
+
+    const extractedDiv = document.getElementById(`extracted_${id}`);
+
+    if (type === 'ingredients') {
+      const ingredients = extractIngredients(doc, html);
+      if (ingredients) {
+        extractedDiv.innerHTML = `
+          <div class="search-extracted">
+            <div class="search-extracted-label">Gevonden ingrediënten</div>
+            <div class="search-extracted-content mono">${escapeHTML(ingredients)}</div>
+            <button class="search-use-btn" onclick="useExtractedIngredients(this, '${escapeAttr(ingredients)}')">✓ Gebruik deze ingrediënten</button>
+          </div>
+        `;
+        btn.className = 'search-fetch-btn fetched';
+        btn.innerHTML = '✓ Opgehaald';
+      } else {
+        extractedDiv.innerHTML = '<div style="margin-top:8px;font-size:11px;color:#e07a5f;">Geen ingrediëntenlijst gevonden op deze pagina.</div>';
+        btn.innerHTML = '📄 Pagina ophalen';
+        btn.disabled = false;
+      }
+    } else {
+      const description = extractDescription(doc);
+      if (description) {
+        extractedDiv.innerHTML = `
+          <div class="search-extracted">
+            <div class="search-extracted-label">Gevonden omschrijving</div>
+            <div class="search-extracted-content">${escapeHTML(description)}</div>
+            <button class="search-use-btn" onclick="copyExtractedText(this, '${escapeAttr(description)}')">📋 Kopieer naar klembord</button>
+          </div>
+        `;
+        btn.className = 'search-fetch-btn fetched';
+        btn.innerHTML = '✓ Opgehaald';
+      } else {
+        extractedDiv.innerHTML = '<div style="margin-top:8px;font-size:11px;color:#e07a5f;">Geen productomschrijving gevonden op deze pagina.</div>';
+        btn.innerHTML = '📄 Pagina ophalen';
+        btn.disabled = false;
+      }
+    }
+  } catch (err) {
+    showToast('Fout bij ophalen: ' + err.message, 'error');
+    btn.innerHTML = '📄 Pagina ophalen';
+    btn.disabled = false;
+  }
+}
+
+function escapeAttr(str) {
+  return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n').replace(/\r/g, '');
+}
+
+function extractIngredients(doc, rawHtml) {
+  // Methode 1: Zoek naar INCI-achtige patronen in de tekst
+  const text = doc.body?.textContent || '';
+
+  // Zoek naar "Ingredients:" of "Ingrediënten:" gevolgd door een lijst
+  const patterns = [
+    /(?:ingredients|ingredi[eë]nten|inci|samenstelling|bestanddelen)\s*[:\-]\s*((?:aqua|water|alcohol|cetyl|sodium|cocamido|glycerin|parfum|limonene|linalool|citronellol)[^\n]{20,})/i,
+    /(?:ingredients|ingredi[eë]nten|inci|samenstelling|bestanddelen)\s*[:\-]\s*([A-Z][a-z]+(?:\s*[\(\)\/,\.\-\s]+[A-Za-z\d\s\(\)\/\.\-]+){10,})/,
+  ];
+
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+    if (match && match[1]) {
+      let result = match[1].trim();
+      // Beperk tot een redelijke lengte
+      const endMarkers = ['\n\n', 'Waarschuwing', 'Let op', 'Gebruiksaanwijzing', 'Hoe gebruik', 'Tips:'];
+      for (const marker of endMarkers) {
+        const idx = result.indexOf(marker);
+        if (idx > 50) result = result.substring(0, idx);
+      }
+      if (result.length > 30) return result.trim();
+    }
+  }
+
+  // Methode 2: Zoek in specifieke HTML elementen
+  const selectors = [
+    '[class*="ingredient"]', '[id*="ingredient"]',
+    '[class*="inci"]', '[id*="inci"]',
+    '[class*="composition"]', '[class*="samenstelling"]',
+    '[data-tab*="ingredient"]'
+  ];
+
+  for (const sel of selectors) {
+    const el = doc.querySelector(sel);
+    if (el) {
+      const content = el.textContent.trim();
+      if (content.length > 30 && content.length < 5000) {
+        // Controleer of het echt ingrediënten lijken te zijn
+        const lower = content.toLowerCase();
+        if (lower.includes('aqua') || lower.includes('water') || lower.includes('sodium') ||
+            lower.includes('glycerin') || lower.includes('alcohol') || lower.includes('parfum')) {
+          return content.replace(/^[^A-Za-z]+/, '').trim();
+        }
+      }
+    }
+  }
+
+  // Methode 3: Brute force zoek in alle tekst naar INCI-achtige sequenties
+  const inciMatch = text.match(/(Aqua(?:\s*\([^)]+\))?\s*,\s*(?:[A-Z][a-z]+[^.]{5,})){1}/i);
+  if (inciMatch && inciMatch[0].length > 50) {
+    let result = inciMatch[0];
+    const endIdx = result.search(/\.\s*[A-Z][a-z]+\s+[a-z]/);
+    if (endIdx > 50) result = result.substring(0, endIdx + 1);
+    return result.trim();
+  }
+
+  return null;
+}
+
+function extractDescription(doc) {
+  // Zoek productbeschrijving
+  const selectors = [
+    '[class*="product-description"]', '[class*="product-info"]',
+    '[class*="productDescription"]', '[class*="productInfo"]',
+    '[id*="description"]', '[id*="product-info"]',
+    '[class*="beschrijving"]', '[class*="omschrijving"]',
+    '.product-detail__description', '.product__description',
+    '[itemprop="description"]',
+    'meta[name="description"]'
+  ];
+
+  for (const sel of selectors) {
+    const el = doc.querySelector(sel);
+    if (el) {
+      let content = '';
+      if (el.tagName === 'META') {
+        content = el.getAttribute('content') || '';
+      } else {
+        content = el.textContent.trim();
+      }
+      if (content.length > 30 && content.length < 3000) {
+        return content.substring(0, 1500);
+      }
+    }
+  }
+
+  // Fallback: zoek langste paragraaf in de body
+  const paragraphs = doc.querySelectorAll('p');
+  let best = '';
+  paragraphs.forEach(p => {
+    const t = p.textContent.trim();
+    if (t.length > best.length && t.length > 50 && t.length < 2000) {
+      best = t;
+    }
+  });
+
+  return best || null;
+}
+
+function useExtractedIngredients(btn, ingredients) {
+  const decoded = ingredients.replace(/\\n/g, '\n').replace(/\\'/g, "'").replace(/\\\\/g, '\\');
+  document.getElementById('ingredients').value = decoded;
+  btn.textContent = '✓ Overgenomen!';
+  btn.style.background = '#1a7a4c';
+  showToast('Ingrediënten overgenomen', 'success');
+  switchTab(2); // Ga naar Content tab
+}
+
+function copyExtractedText(btn, text) {
+  const decoded = text.replace(/\\n/g, '\n').replace(/\\'/g, "'").replace(/\\\\/g, '\\');
+  navigator.clipboard.writeText(decoded).then(() => {
+    btn.textContent = '✓ Gekopieerd!';
+    btn.style.background = '#1a7a4c';
+    showToast('Omschrijving gekopieerd naar klembord', 'success');
+  });
+}
+
 // Load saved config on startup
 loadMagentoConfig();
+updateGoogleConfigStatus();
 </script>
 </body>
 </html>
