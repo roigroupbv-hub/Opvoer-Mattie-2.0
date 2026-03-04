@@ -1,0 +1,2655 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Haarshop.nl – Productopvoer Mattie</title>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Poppins', sans-serif; font-weight: 300; background: #f5f0eb; color: #1a1a1a; min-height: 100vh; }
+  input::placeholder, textarea::placeholder { color: #bfb5aa; }
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-thumb { background: #d9cfc4; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #bbb; }
+
+  /* ── Header ── */
+  .header { background: #000; padding: 0 28px; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+  .header-left { display: flex; align-items: center; gap: 12px; }
+  .header-logo { height: 28px; }
+  .header-divider { width: 1px; height: 20px; background: #333; }
+  .header-sub { color: #666; font-size: 11px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .header-badge { padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: 600; letter-spacing: 0.5px; }
+  .header-badge.test { background: rgba(224,197,182,0.15); color: #e0c5b6; }
+  .header-badge[style*="background:#428e8c"] { letter-spacing: 0.5px; }
+  .header-badge.version { background: rgba(255,255,255,0.06); color: #555; font-family: 'Space Mono', monospace; }
+
+  /* ── Progress bar under tabs ── */
+  .progress-bar { height: 3px; background: #e5dcd1; position: relative; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #e0c5b6, #bf8d7a); transition: width 0.4s ease; border-radius: 0 2px 2px 0; }
+
+  /* ── Tabs ── */
+  .tab-bar { background: #fff; border-bottom: 1px solid #e8e0d8; display: flex; overflow-x: auto; position: sticky; top: 56px; z-index: 99; }
+  .tab-bar::-webkit-scrollbar { height: 0; }
+  .tab-btn { padding: 0 20px; height: 48px; border: none; border-bottom: 2px solid transparent; background: transparent; color: #aaa; font-weight: 500; font-size: 12.5px; font-family: 'Poppins', sans-serif; cursor: pointer; transition: all .2s; white-space: nowrap; display: flex; align-items: center; gap: 6px; letter-spacing: 0.2px; position: relative; }
+  .tab-btn:hover { color: #666; background: #faf8f5; }
+  .tab-btn.active { border-bottom-color: #000; color: #000; font-weight: 700; }
+  .tab-btn .tab-dot { width: 6px; height: 6px; border-radius: 50%; background: #e5dcd1; flex-shrink: 0; transition: background .3s; }
+  .tab-btn .tab-dot.filled { background: #27ae60; }
+  .tab-btn .tab-dot.partial { background: #f5a623; }
+
+  /* ── Content ── */
+  .content { max-width: 800px; margin: 0 auto; padding: 24px 16px 100px; }
+  .card { background: #fff; border-radius: 14px; padding: 28px; box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 0 0 1px rgba(0,0,0,0.02); margin-bottom: 20px; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ── Section headers ── */
+  .section-header { margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #f2ece4; }
+  .section-header .top { display: flex; align-items: center; gap: 10px; margin-bottom: 2px; }
+  .section-number { background: #1a1a1a; color: #e0c5b6; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; font-family: 'Space Mono', monospace; flex-shrink: 0; }
+  .section-title { font-family: 'Poppins', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: -0.2px; }
+  .section-sub { margin: 0 0 0 38px; font-size: 12px; color: #aaa; }
+
+  /* ── Fields ── */
+  .field { margin-bottom: 16px; }
+  .field-label { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; color: #888; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.6px; }
+  .field-label .required { color: #e07a5f; font-size: 14px; line-height: 1; }
+  .field-hint { font-size: 10px; color: #bbb; font-weight: 400; text-transform: none; letter-spacing: 0; margin-left: auto; }
+  .field-input, .field-textarea { width: 100%; padding: 10px 14px; border-radius: 8px; border: 1.5px solid #e8e0d8; font-size: 13.5px; font-family: 'Poppins', sans-serif; font-weight: 300; outline: none; background: #fff; transition: border-color .2s, box-shadow .2s; }
+  select.field-input { cursor: pointer; appearance: auto; }
+  .field-input:focus, .field-textarea:focus { border-color: #1a1a1a; box-shadow: 0 0 0 3px rgba(0,0,0,0.04); }
+  .field-input.error { border-color: #e07a5f; background: #fef5f3; }
+  .field-textarea { resize: vertical; line-height: 1.7; }
+  .field-input.mono, .field-textarea.mono { font-family: 'Space Mono', monospace; font-size: 12px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  /* ── Badges ── */
+  .badge-container { display: flex; flex-wrap: wrap; gap: 6px; }
+  .badge { padding: 5px 12px; border-radius: 6px; border: 1.5px solid #e8e0d8; background: #fff; color: #666; font-size: 12px; font-family: 'Poppins', sans-serif; font-weight: 400; cursor: pointer; transition: all .15s; white-space: nowrap; }
+  .badge:hover { border-color: #999; color: #333; }
+  .badge.active { border-color: #1a1a1a; background: #1a1a1a; color: #fff; font-weight: 500; }
+
+  /* ── Buttons ── */
+  .copy-btn { padding: 7px 14px; border-radius: 6px; border: none; background: #1a1a1a; color: #fff; font-size: 12px; font-weight: 600; font-family: 'Poppins', sans-serif; cursor: pointer; transition: all .15s; }
+  .copy-btn:hover { background: #333; }
+  .copy-btn.copied { background: #27ae60; }
+
+  /* ── AI section ── */
+  .ai-box { background: #1a1a1a; border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+  .ai-label { display: block; font-size: 11px; font-weight: 600; color: #e0c5b6; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.6px; }
+  .ai-label-sub { color: #666; }
+  .ai-input { width: 100%; padding: 12px 16px; border-radius: 8px; border: 1.5px solid rgba(224,197,182,0.25); background: rgba(255,255,255,0.05); color: #fff; font-size: 14px; font-family: 'Poppins', sans-serif; font-weight: 300; outline: none; transition: border-color .2s; }
+  .ai-input:focus { border-color: #e0c5b6; }
+  .ai-input-sub { border-color: rgba(255,255,255,0.08); color: #aaa; font-size: 13px; padding: 10px 16px; }
+  .ai-input::placeholder { color: rgba(255,255,255,0.25); }
+  .ai-input-sub::placeholder { color: rgba(255,255,255,0.15); }
+  .ai-generate-btn { width: 100%; padding: 13px; border-radius: 8px; border: none; background: #e0c5b6; color: #1a1a1a; font-size: 14px; font-weight: 700; font-family: 'Poppins', sans-serif; cursor: pointer; transition: all .2s; }
+  .ai-generate-btn:disabled { background: #444; color: #777; cursor: wait; }
+  .ai-generate-btn:hover:not(:disabled) { background: #d4b5a3; }
+
+  .info-box { background: #f9f4ef; border: 1px solid #efe7e1; border-radius: 10px; padding: 16px 18px; }
+  .info-box p { font-size: 12.5px; color: #999; line-height: 1.8; }
+  .info-box strong { color: #777; }
+
+  /* ── List rows (features & steps) ── */
+  .list-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .list-num { font-size: 11px; color: #ccc; font-family: 'Space Mono', monospace; width: 20px; text-align: center; flex-shrink: 0; }
+  .list-row input { flex: 1; }
+  .remove-btn { width: 26px; height: 26px; border-radius: 6px; border: 1px solid #eee; background: #fff; color: #ccc; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all .15s; }
+  .remove-btn:hover { border-color: #e07a5f; color: #e07a5f; background: #fef5f3; }
+  .add-btn { margin-top: 8px; padding: 7px 14px; border-radius: 6px; border: 1.5px dashed #e0dbd4; background: transparent; color: #aaa; font-size: 12px; cursor: pointer; font-family: 'Poppins', sans-serif; transition: all .15s; }
+  .add-btn:hover { border-color: #999; color: #666; }
+
+  /* ── Category tags ── */
+  .cat-tag { padding: 5px 12px; border-radius: 6px; background: #1a1a1a; color: #fff; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; margin: 0 6px 6px 0; }
+  .cat-tag button { background: rgba(255,255,255,0.15); border: none; color: #fff; width: 16px; height: 16px; border-radius: 4px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .cat-tag button:hover { background: rgba(255,80,80,0.5); }
+
+  /* ── SEO ── */
+  .seo-auto-btn { margin-bottom: 20px; padding: 9px 18px; border-radius: 6px; border: 1.5px solid #e0c5b6; background: #fff; color: #1a1a1a; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Poppins', sans-serif; transition: all .15s; }
+  .seo-auto-btn:hover { background: #faf6f3; }
+
+  .google-preview { margin-top: 20px; background: #fff; border: 1px solid #e8e0d8; border-radius: 10px; padding: 18px; }
+  .google-preview .label { font-size: 10px; color: #aaa; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+  .google-preview .title { font-size: 18px; color: #1a0dab; font-family: Arial, sans-serif; margin-bottom: 2px; line-height: 1.3; }
+  .google-preview .url { font-size: 13px; color: #006621; font-family: Arial, sans-serif; margin-bottom: 4px; }
+  .google-preview .desc { font-size: 13px; color: #545454; font-family: Arial, sans-serif; line-height: 1.5; }
+
+  /* ── Export ── */
+  .code-block { background: #1a1a1a; color: #d4d0cc; padding: 18px; border-radius: 8px; font-size: 11.5px; font-family: 'Space Mono', monospace; overflow-x: auto; white-space: pre-wrap; line-height: 1.7; }
+  .preview-box { border: 1px solid #e8e0d8; border-radius: 10px; padding: 22px; font-size: 14px; line-height: 1.8; }
+  .data-table { background: #f9f4ef; border-radius: 10px; overflow: hidden; }
+  .data-row { display: flex; padding: 10px 18px; border-bottom: 1px solid #efe7e1; font-size: 12.5px; }
+  .data-row:last-child { border-bottom: none; }
+  .data-label { width: 130px; font-weight: 600; color: #888; flex-shrink: 0; }
+  .data-value { color: #333; }
+  .export-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .export-title { font-size: 14px; font-weight: 700; }
+
+  .reset-btn { padding: 9px 20px; border-radius: 6px; border: 1.5px solid #e8e0d8; background: #fff; color: #aaa; font-size: 12px; cursor: pointer; font-family: 'Poppins', sans-serif; transition: all .15s; }
+  .reset-btn:hover { border-color: #e07a5f; color: #e07a5f; }
+  .word-count { font-size: 11px; color: #bbb; font-family: 'Space Mono', monospace; }
+
+  .selected-info { margin-top: 10px; padding: 8px 12px; background: #f9f4ef; border-radius: 6px; font-size: 12px; color: #888; }
+  .selected-info:empty { display: none; }
+  .selected-info strong { color: #1a1a1a; font-weight: 600; }
+
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  .spinning { animation: spin 1s linear infinite; display: inline-block; }
+
+  /* ── Toast notifications ── */
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); padding: 12px 24px; border-radius: 8px; font-size: 13px; font-weight: 600; font-family: 'Poppins', sans-serif; z-index: 999; animation: toastIn 0.3s ease; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+  .toast.success { background: #1a1a1a; color: #27ae60; }
+  .toast.error { background: #1a1a1a; color: #e07a5f; }
+  .toast.info { background: #1a1a1a; color: #e0c5b6; }
+  @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+
+  /* ── Empty state ── */
+  .empty-state { text-align: center; padding: 32px 20px; color: #ccc; }
+  .empty-state-icon { font-size: 32px; margin-bottom: 8px; opacity: 0.4; }
+  .empty-state-text { font-size: 13px; }
+  .empty-state-action { margin-top: 12px; }
+
+  /* ── Magento ── */
+  .magento-status { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; }
+  .magento-status.connected { background: #f0faf4; color: #1a7a4c; }
+  .magento-status.disconnected { background: #fef8f0; color: #b45309; }
+  .magento-status.error { background: #fef3f3; color: #c0392b; }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .status-dot.green { background: #27ae60; }
+  .status-dot.orange { background: #f39c12; }
+  .status-dot.red { background: #e74c3c; }
+  .magento-config-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .magento-btn { padding: 10px 20px; border-radius: 8px; border: none; font-size: 13px; font-weight: 700; font-family: 'Poppins', sans-serif; cursor: pointer; transition: all .15s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .magento-btn.primary { background: #27ae60; color: #fff; width: 100%; }
+  .magento-btn.primary:hover { background: #219a52; }
+  .magento-btn.primary:disabled { background: #95d5b2; cursor: wait; }
+  .magento-btn.secondary { background: #1a1a1a; color: #fff; }
+  .magento-btn.secondary:hover { background: #333; }
+  .magento-btn.outline { background: #fff; color: #1a1a1a; border: 1.5px solid #e8e0d8; }
+  .magento-btn.outline:hover { border-color: #1a1a1a; }
+  .magento-log { background: #1a1a1a; border-radius: 8px; padding: 14px 16px; max-height: 220px; overflow-y: auto; margin-top: 14px; }
+  .magento-log-entry { font-size: 11px; font-family: 'Space Mono', monospace; line-height: 1.8; }
+  .magento-log-entry.info { color: #888; }
+  .magento-log-entry.success { color: #2ecc71; }
+  .magento-log-entry.error { color: #e74c3c; }
+  .magento-log-entry.warn { color: #f39c12; }
+  .magento-summary { background: #f9f4ef; border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+  .magento-summary-row { display: flex; justify-content: space-between; padding: 5px 0; font-size: 12px; border-bottom: 1px solid #efe7e1; }
+  .magento-summary-row:last-child { border: none; }
+  .magento-summary-label { color: #999; }
+  .magento-summary-value { color: #1a1a1a; font-weight: 600; max-width: 60%; text-align: right; overflow: hidden; text-overflow: ellipsis; }
+  .category-search { position: relative; }
+  .category-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1.5px solid #e8e0d8; border-radius: 0 0 8px 8px; max-height: 200px; overflow-y: auto; z-index: 50; display: none; }
+  .category-dropdown.open { display: block; }
+  .category-option { padding: 8px 14px; font-size: 12px; cursor: pointer; border-bottom: 1px solid #f5f5f5; }
+  .category-option:hover { background: #f9f4ef; }
+  .category-option .path { color: #999; font-size: 10px; }
+
+  /* ── Image upload ── */
+  .img-dropzone { border: 2px dashed #e0dbd4; border-radius: 12px; padding: 32px 20px; text-align: center; cursor: pointer; transition: all .2s; background: #fafaf8; }
+  .img-dropzone:hover, .img-dropzone.dragover { border-color: #bf8d7a; background: #fdf9f6; }
+  .img-dropzone-icon { font-size: 28px; margin-bottom: 6px; opacity: 0.3; }
+  .img-dropzone-text { font-size: 13px; color: #999; }
+  .img-dropzone-text strong { color: #bf8d7a; }
+  .img-dropzone-hint { font-size: 10px; color: #ccc; margin-top: 4px; }
+  .img-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; margin-top: 16px; }
+  .img-card { background: #fafafa; border: 1.5px solid #e8e0d8; border-radius: 10px; overflow: hidden; position: relative; transition: all .15s; }
+  .img-card.main-image { border-color: #bf8d7a; box-shadow: 0 0 0 2px rgba(191,141,122,0.2); }
+  .img-card:hover { border-color: #bbb; }
+  .img-card-preview { width: 100%; aspect-ratio: 1; object-fit: contain; background: #fff; display: block; }
+  .img-card-bar { padding: 8px 10px; display: flex; flex-direction: column; gap: 4px; background: #fff; border-top: 1px solid #f0ebe5; }
+  .img-card-name { font-size: 10px; color: #aaa; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: 'Space Mono', monospace; }
+  .img-card-actions { display: flex; gap: 3px; flex-wrap: wrap; }
+  .img-action-btn { padding: 3px 7px; border-radius: 4px; border: 1px solid #eee; background: #fff; color: #666; font-size: 10px; cursor: pointer; font-family: 'Poppins', sans-serif; transition: all .1s; display: flex; align-items: center; gap: 2px; white-space: nowrap; }
+  .img-action-btn:hover { border-color: #999; color: #1a1a1a; }
+  .img-action-btn.primary { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+  .img-action-btn.star { background: #e0c5b6; color: #1a1a1a; border-color: #e0c5b6; }
+  .img-action-btn.danger { color: #e07a5f; }
+  .img-action-btn.danger:hover { background: #fef5f3; border-color: #e07a5f; }
+  .img-action-btn:disabled { opacity: 0.4; cursor: wait; }
+  .img-badge-main { position: absolute; top: 6px; left: 6px; background: #e0c5b6; color: #1a1a1a; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; z-index: 2; }
+  .img-badge-index { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.6); color: #fff; font-size: 9px; font-weight: 700; width: 20px; height: 20px; border-radius: 4px; display: flex; align-items: center; justify-content: center; z-index: 2; font-family: 'Space Mono', monospace; }
+  .img-search-result { padding: 12px 16px; border: 1.5px solid #e8e0d8; border-radius: 8px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all .1s; }
+  .img-search-result:hover { border-color: #bf8d7a; background: #fdf9f6; }
+  .img-search-result .name { font-weight: 600; font-size: 13px; }
+  .img-search-result .meta { font-size: 11px; color: #aaa; font-family: 'Space Mono', monospace; margin-top: 2px; }
+  .img-search-result .select-btn { padding: 5px 12px; border-radius: 6px; border: none; background: #1a1a1a; color: #fff; font-size: 11px; font-weight: 600; cursor: pointer; }
+  .existing-img-card { position: relative; background: #fafafa; border: 1.5px solid #e8e0d8; border-radius: 10px; overflow: hidden; }
+  .existing-img-card img { width: 100%; aspect-ratio: 1; object-fit: contain; background: #fff; display: block; }
+  .existing-img-card .types { position: absolute; bottom: 6px; left: 6px; display: flex; gap: 2px; flex-wrap: wrap; }
+  .existing-img-card .type-badge { font-size: 8px; padding: 2px 5px; border-radius: 3px; background: rgba(0,0,0,0.75); color: #fff; font-family: 'Space Mono', monospace; }
+  .img-bulk-bar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 14px; padding: 14px 16px; background: #f9f4ef; border-radius: 10px; border: 1px solid #efe7e1; }
+  .img-bulk-btn { padding: 8px 14px; border-radius: 6px; border: none; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Poppins', sans-serif; transition: all .15s; }
+  .img-bulk-btn.bg-remove { background: #1a1a1a; color: #fff; }
+  .img-bulk-btn.resize { background: #e0c5b6; color: #1a1a1a; }
+  .img-bulk-btn.download { background: #27ae60; color: #fff; }
+  .img-bulk-btn:disabled { opacity: 0.4; cursor: wait; }
+  .img-progress { margin-top: 12px; }
+  .img-progress-bar { height: 4px; background: #e8e0d8; border-radius: 2px; overflow: hidden; }
+  .img-progress-fill { height: 100%; background: linear-gradient(90deg, #e0c5b6, #1a1a1a); border-radius: 2px; transition: width .3s; }
+  .img-progress-text { font-size: 10px; color: #aaa; margin-top: 4px; font-family: 'Space Mono', monospace; }
+
+  /* ── Modal ── */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; display: flex; align-items: center; justify-content: center; }
+  .modal { background: #fff; border-radius: 14px; padding: 28px; max-width: 480px; width: 90%; }
+  .modal h3 { font-size: 16px; margin-bottom: 6px; }
+  .modal p { font-size: 12px; color: #999; margin-bottom: 14px; line-height: 1.7; }
+  .modal input { width: 100%; padding: 10px 14px; border-radius: 8px; border: 1.5px solid #e8e0d8; font-size: 13px; font-family: 'Space Mono', monospace; outline: none; margin-bottom: 14px; }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+  .modal-btn { padding: 9px 18px; border-radius: 6px; border: none; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Poppins', sans-serif; }
+  .modal-btn.primary { background: #1a1a1a; color: #fff; }
+  .modal-btn.secondary { background: #f0ebe5; color: #888; }
+
+  /* ── Validation helper ── */
+  .char-count { font-size: 10px; color: #bbb; font-family: 'Space Mono', monospace; text-align: right; margin-top: 2px; }
+  .char-count.warning { color: #f5a623; }
+  .char-count.error { color: #e07a5f; }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-left">
+    <img src="data:image/png;base64,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REBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQF9wRSzzMggjfLLI4MYxjd3OcTsAAO0lfCmfwGaLwGlj1VySlEkjnObY4JGn0NiQ6oIPfvuG+GxP4pAezwucLtDZaajzDUmiZV3d4bNS2mUbxUneHSj8OT+qeje/c9kr2gNaGtAAA2AHcv1EBERAREQEREBERAREQEREBERAREQEREBERAREQEREBaE4ztIY9RMBffrTSh2TWOJ0tOWg81TAOskPTtPa5vrGw25it9ogpnRbs4zNOW6f6w1U1vpnxWW+A19GdvQa8n7dGD2ei/rt3Ne1aTQEREBERAREQEREBERAREQEREBERAVrHDh9wTB/kSm+rCqnVrvDzA6n0JwWN5BJsFG/p4Oha4fqKDO1jmqX3Msq+Rqv6l6yNYxq08x6V5bINiW2SsI3/MPQVHIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgK3rTn7nuN/JNL9U1VCq3rTn7nuN/JNL9U1B2cx/ojef7BP9W5U+K4PMf6I3n+wT/VuVPiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiLv45RsuGQW6hkaXMqKqOJwHaQ5wB/Ug6CIiAiIgIiIPTxWit9xyW20N2uDbbbp6mNlXVuG/mIi4c79u8hu5A71LrMuMWz4/R02P6XYmyegoYG09PU3NzmRhjBytDYmnmLdgOrnNPqUMkQbuvPFTrZcKp0sWT09ujPZDSW+AMb7C9rnfOSv2y8VWtluqmSzZNT3GNvbBV2+Esd7SxrXfM4LSCIJn6f8bTZKplPneIshhcPSq7RITyn81Iez9Pf1FSrwLMcbzrHIcgxW6w3GgkPLzs3Do3gAlj2nq1wBG4I36jxUKOF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DDlFFcsaq3dJHFhqadp9T2Dn+dnRV+Igt5xLNMRy2IyYzktqu+zeZzaSqZI5o8XNB3HvC99U10089LOyopppIJmHdkkbi1zT4gjqFsbD9eNXMVO1rzm6yRf5queKtm3gBMHcvu2QWnIq+7Fxm6pURa25W3HLpH+EX00kUh9hY8Af4Vm9HxyO5AKzTgc3eYrt0PuMXT50EzUUPv8AnxW3/wDp3V//AKo3/wCNdKu443+bcKHTlof+C6a7dB7QIuvzoJnL5keyKN0kj2sY0FznOOwAHaSVXvkXGRqtcC9tspsfs0Z+IYaR0sg9pkc5p/whadzjUnPc2mkkyjK7rcmSHcwPnLYB7Im7Mb7gEE8tc+IPR2145dMarrkMokr6WWmlorXtM3Z7S30pd+RvuJcO3ZVxHbc7b7d26/EQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBTK8md/G53+TQf/uFDVTK8md/G53+TQf/ALhBM5QU8pN90TF/kl/1zlOtQU8pN90TF/kl/wBc5BFJERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBTM8mawn+Hsm42HwAfP8I/9lDNTP8mZ/EZ9+VbvoqUEyVA/ykkvNqfjUHL8Sy8++/bzTyD/ANP61PBQK8pD91rHvkJv18yCLiIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICmT5M+rgbUZ1QukaKiRlDKxm/UtaZw4+4vb86hssj03ynIMPy+ivONXWe21zXiPzsWx5mOIBa5pBDgfAgjsQW6qvfyhd7obnrfSW+jkEklqtEVPUkH4srnyScvua9h96l1r3k98xzQW6ZJZa80l1io4nsqBGxxa53LudnAjvPcqvLhWVdwr56+vqZamrqJHSzTSuLnyPcdy5xPUkk77oOBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERB/9k=" alt="Haarshop.nl" style="height:28px;width:auto;">
+    <div class="header-divider"></div>
+    <div class="header-sub">Productopvoer Mattie</div>
+  </div>
+  <div class="header-right">
+    <span class="header-badge" style="background:#428e8c;">PRODUCTIE</span>
+    <span class="header-badge version">v4</span>
+  </div>
+</div>
+
+<!-- Tabs -->
+<div class="tab-bar" id="tabBar">
+  <button class="tab-btn active" onclick="switchTab(0)">Start</button>
+  <button class="tab-btn" onclick="switchTab(1)"><span class="tab-dot" id="dot1"></span> Product</button>
+  <button class="tab-btn" onclick="switchTab(2)"><span class="tab-dot" id="dot2"></span> Content</button>
+  <button class="tab-btn" onclick="switchTab(3)"><span class="tab-dot" id="dot3"></span> Kenmerken</button>
+  <button class="tab-btn" onclick="switchTab(4)"><span class="tab-dot" id="dot4"></span> SEO</button>
+  <button class="tab-btn" onclick="switchTab(5)">Export</button>
+  <button class="tab-btn" onclick="switchTab(6)">Afbeeldingen</button>
+  <button class="tab-btn" onclick="switchTab(7)">Magento</button>
+</div>
+<div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+
+<!-- API Key Modal -->
+<div class="modal-overlay" id="apiModal" style="display:none;">
+  <div class="modal">
+    <h3>🔑 Anthropic API Key</h3>
+    <p>Om de AI-generator te gebruiken heb je een Anthropic API key nodig. Deze wordt alleen lokaal in je browser opgeslagen en nooit verstuurd naar andere servers dan Anthropic.</p>
+    <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-..." />
+    <p style="font-size:11px;color:#bbb;">Nog geen key? Maak er een aan op <a href="https://console.anthropic.com/" target="_blank" style="color:#1a0dab;">console.anthropic.com</a></p>
+    <div class="modal-actions">
+      <button class="modal-btn secondary" onclick="closeApiModal()">Annuleren</button>
+      <button class="modal-btn primary" onclick="saveApiKey()">Opslaan</button>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- TAB 0: AI Generator -->
+  <div class="tab-content active" id="tab0">
+    <div class="card">
+      <div class="section-header">
+        <div class="top">
+          <div class="section-number">✦</div>
+          <h2 class="section-title">AI Productgenerator</h2>
+        </div>
+        <p class="section-sub">Voer de productnaam in en laat AI de productopvoer voor je genereren</p>
+      </div>
+
+
+      <div class="ai-box">
+        <div style="margin-bottom:16px;">
+          <label class="ai-label">Productnaam *</label>
+          <input class="ai-input" id="aiInput" type="text" placeholder="Bijv. Paul Mitchell Curls Spring Loaded Frizz-Fighting Shampoo 250 ml">
+        </div>
+        <div style="margin-bottom:20px;">
+          <label class="ai-label ai-label-sub">Referentie URL (optioneel)</label>
+          <input class="ai-input ai-input-sub" id="aiUrl" type="text" placeholder="https://www.example.com/product-page">
+        </div>
+        <div style="margin-bottom:20px;">
+          <label class="ai-label ai-label-sub">Productbestanden uploaden (optioneel)</label>
+          <div id="aiFileDropzone" style="border:1.5px dashed rgba(224,197,182,0.3);border-radius:8px;padding:16px;text-align:center;cursor:pointer;margin-top:6px;transition:all .2s;" onclick="document.getElementById('aiFileInput').click()" ondragover="event.preventDefault();this.style.borderColor='#e0c5b6';this.style.background='rgba(224,197,182,0.08)'" ondragleave="this.style.borderColor='rgba(224,197,182,0.3)';this.style.background='transparent'" ondrop="event.preventDefault();this.style.borderColor='rgba(224,197,182,0.3)';this.style.background='transparent';handleAiFileUpload(event.dataTransfer.files)">
+            <div style="color:rgba(255,255,255,0.25);font-size:12px;">📎 Sleep bestanden hierheen of <span style="color:#e0c5b6;font-weight:500;">klik om te uploaden</span></div>
+            <div style="color:rgba(255,255,255,0.15);font-size:10px;margin-top:4px;">PDF, afbeeldingen of tekst — max. 5 bestanden</div>
+          </div>
+          <input type="file" id="aiFileInput" accept=".pdf,.jpg,.jpeg,.png,.webp,.txt,.csv,.doc,.docx" multiple style="display:none" onchange="handleAiFileUpload(this.files)">
+          <div id="aiFileList" style="margin-top:8px;"></div>
+        </div>
+        <button class="ai-generate-btn" id="generateBtn" onclick="generateWithAI()">
+          ✦ Genereer met AI
+        </button>
+      </div>
+
+      <div class="info-box">
+        <p>
+          <strong>💡 Zo gebruik je de AI generator</strong><br>
+          1. Voer de productnaam in zoals op de verpakking (bijv. "Moroccanoil – Treatment – 100 ml")<br>
+          2. Voeg optioneel een referentie-URL toe van een concurrent of merkwebsite<br>
+          3. Upload eventueel productdocumenten (PDF, afbeeldingen)<br>
+          4. Klik op "Genereer met AI" — alle velden worden automatisch ingevuld<br>
+          5. Controleer en pas aan waar nodig in de verschillende tabbladen<br><br>
+          <strong>⚙ Magento-koppeling</strong><br>
+          Configureer je Magento 2 API-gegevens in de Magento-tab om producten direct te kunnen opvoeren.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 1: Productinfo -->
+  <div class="tab-content" id="tab1">
+    <div class="card">
+      <div class="section-header">
+        <div class="top"><div class="section-number">1</div><h2 class="section-title">Productinformatie</h2></div>
+        <p class="section-sub">Basisgegevens van het product</p>
+      </div>
+      <div class="field">
+        <label class="field-label">Productnaam <span class="required">*</span> <span class="field-hint">Merk – Lijn Producttype – Inhoud</span></label>
+        <input class="field-input" id="productName" placeholder="Bijv. Moroccanoil – Treatment – 100 ml">
+      </div>
+      <div class="grid-2">
+        <div class="field"><label class="field-label">Merk <span class="required">*</span></label><input class="field-input" id="brand" placeholder="Bijv. Moroccanoil"></div>
+        <div class="field"><label class="field-label">Lijn</label><input class="field-input" id="line" placeholder="Bijv. Treatment"></div>
+      </div>
+      <div class="grid-2">
+        <div class="field"><label class="field-label">Sub-lijn</label><input class="field-input" id="subLine" placeholder="Optioneel"></div>
+        <div class="field"><label class="field-label">Inhoud <span class="required">*</span></label><input class="field-input" id="contentSize" placeholder="Bijv. 100 ml"></div>
+      </div>
+      <div class="grid-2">
+        <div class="field"><label class="field-label">Producttype <span class="required">*</span></label><input class="field-input" id="productType" placeholder="Bijv. Treatment"></div>
+        <div class="field"><label class="field-label">Sub producttype</label><input class="field-input" id="subProductType" placeholder="Optioneel"></div>
+      </div>
+      <div style="margin-top:8px;">
+        <label class="field-label">Snelkeuze producttype</label>
+        <div class="badge-container" id="productTypeBadges"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: Content -->
+  <div class="tab-content" id="tab2">
+    <div class="card">
+      <div class="section-header">
+        <div class="top"><div class="section-number">2</div><h2 class="section-title">Short Description</h2></div>
+        <p class="section-sub">15-20 woorden, productnaam NIET benoemen</p>
+      </div>
+      <div class="field">
+        <label class="field-label">Short description <span class="required">*</span> <span class="field-hint">Zonder productnaam, die staat er al boven</span></label>
+        <textarea class="field-textarea" id="shortDescription" rows="2" placeholder="Beschrijf kort wat het product is en waarvoor het dient..."></textarea>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span class="word-count" id="shortWordCount">0 woorden</span>
+        <button class="copy-btn" onclick="copyField('shortDescription')">Kopieer</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-header">
+        <div class="top"><div class="section-number">3</div><h2 class="section-title">Productomschrijving</h2></div>
+        <p class="section-sub">~100 woorden. Productnaam wordt automatisch dikgedrukt ervoor gezet.</p>
+      </div>
+      <div class="field">
+        <label class="field-label">Omschrijving</label>
+        <textarea class="field-textarea" id="description" rows="6" placeholder="Schrijf hier de productomschrijving (zonder productnaam aan het begin)..."></textarea>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span class="word-count" id="descWordCount">0 woorden</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-header">
+        <div class="top"><div class="section-number">4</div><h2 class="section-title">Belangrijkste eigenschappen</h2></div>
+        <p class="section-sub">6-7 punten, elke zin eindigt met een punt</p>
+      </div>
+      <div id="featuresContainer"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-header">
+        <div class="top"><div class="section-number">5</div><h2 class="section-title">Gebruiksaanwijzing</h2></div>
+        <p class="section-sub">Genummerde stappen, elke zin eindigt met een punt</p>
+      </div>
+      <div id="stepsContainer"></div>
+      <button class="add-btn" onclick="addStep()">+ Stap toevoegen</button>
+      <div style="margin-top:20px;">
+        <div class="field">
+          <label class="field-label">Cross-sell tekst</label>
+          <input class="field-input" id="crossSellText" placeholder="Bijv. Gebruik naast deze shampoo ook de bijpassende conditioner voor het beste resultaat.">
+        </div>
+        <div style="margin-top:10px;padding:14px;background:#1e1e1e;border-radius:8px;border:1px solid rgba(224,197,182,0.12);">
+          <label style="display:block;font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:8px;font-weight:500;text-transform:uppercase;letter-spacing:0.5px;">Link invoegen in cross-sell tekst</label>
+          <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;">
+            <div style="flex:1;min-width:120px;">
+              <label style="display:block;font-size:10px;color:rgba(255,255,255,0.25);margin-bottom:3px;">Linktekst (woord)</label>
+              <input class="field-input" id="crossSellLinkText" placeholder="Bijv. Conditioner" style="font-size:12px;padding:6px 10px;">
+            </div>
+            <div style="flex:2;min-width:180px;">
+              <label style="display:block;font-size:10px;color:rgba(255,255,255,0.25);margin-bottom:3px;">URL</label>
+              <input class="field-input" id="crossSellLinkUrl" placeholder="https://www.haarshop.nl/product-url" style="font-size:12px;padding:6px 10px;">
+            </div>
+            <button onclick="insertCrossSellLink()" style="padding:6px 14px;background:#e0c5b6;color:#1a1a1a;border:none;border-radius:6px;cursor:pointer;font-size:11px;font-weight:600;white-space:nowrap;transition:background .15s;" onmouseover="this.style.background='#d9afa0'" onmouseout="this.style.background='#e0c5b6'">🔗 Link invoegen</button>
+          </div>
+          <div id="crossSellPreview" style="margin-top:10px;display:none;">
+            <label style="display:block;font-size:10px;color:rgba(255,255,255,0.25);margin-bottom:3px;">Preview</label>
+            <div id="crossSellPreviewContent" style="font-size:12px;color:rgba(255,255,255,0.5);padding:6px 10px;background:rgba(255,255,255,0.03);border-radius:6px;line-height:1.6;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-header">
+        <div class="top"><div class="section-number">6</div><h2 class="section-title">Ingrediënten</h2></div>
+        <p class="section-sub">Volledige INCI-lijst</p>
+      </div>
+      <div class="field">
+        <label class="field-label">Ingrediëntenlijst</label>
+        <textarea class="field-textarea mono" id="ingredients" rows="5" placeholder="Aqua (Water, Eau), Cocamidopropyl Betaine, ..."></textarea>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;">
+        <button class="copy-btn" onclick="copyField('ingredients')">Kopieer ingrediënten</button>
+      </div>
+      <div style="margin-top:14px;padding:14px;background:#1e1e1e;border-radius:8px;border:1px solid rgba(224,197,182,0.12);">
+        <label style="display:block;font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:8px;font-weight:500;text-transform:uppercase;letter-spacing:0.5px;">Ingrediënten ophalen van URL</label>
+        <p style="font-size:10.5px;color:rgba(255,255,255,0.2);margin-bottom:10px;line-height:1.5;">Klopt de ingrediëntenlijst niet of is deze onvolledig? Plak hieronder de URL van een productpagina die de juiste INCI-lijst bevat.</p>
+        <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;">
+          <div style="flex:1;min-width:220px;">
+            <input class="field-input" id="ingredientsFetchUrl" placeholder="https://www.example.com/product-page" style="font-size:12px;padding:6px 10px;">
+          </div>
+          <button id="ingredientsFetchBtn" onclick="fetchIngredientsFromUrl()" style="padding:6px 14px;background:#e0c5b6;color:#1a1a1a;border:none;border-radius:6px;cursor:pointer;font-size:11px;font-weight:600;white-space:nowrap;transition:background .15s;" onmouseover="this.style.background='#d9afa0'" onmouseout="this.style.background='#e0c5b6'">🔍 Ophalen</button>
+        </div>
+        <div id="ingredientsFetchStatus" style="margin-top:8px;font-size:11px;display:none;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: Eigenschappen -->
+  <div class="tab-content" id="tab3">
+    <div class="card">
+      <div class="section-header">
+        <div class="top"><div class="section-number">7</div><h2 class="section-title">Ik heb</h2></div>
+        <p class="section-sub">Selecteer de relevante haar-/huidtypes en problemen</p>
+      </div>
+      <input class="field-input" id="ikHebBadgesSearch" placeholder="🔍 Zoek in 'Ik heb'..." style="margin-bottom:12px;font-size:13px;" oninput="renderToggleBadges('ikHebBadges',IK_HEB,'ikHeb','ikHebSelected')">
+      <div class="badge-container" id="ikHebBadges"></div>
+      <div class="selected-info" id="ikHebSelected"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-header">
+        <div class="top"><div class="section-number">8</div><h2 class="section-title">Werking</h2></div>
+        <p class="section-sub">Wat doet het product?</p>
+      </div>
+      <input class="field-input" id="werkingBadgesSearch" placeholder="🔍 Zoek in 'Werking'..." style="margin-bottom:12px;font-size:13px;" oninput="renderToggleBadges('werkingBadges',WERKING,'werking','werkingSelected')">
+      <div class="badge-container" id="werkingBadges"></div>
+      <div class="selected-info" id="werkingSelected"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-header">
+        <div class="top"><div class="section-number">9</div><h2 class="section-title">Vrij van</h2></div>
+        <p class="section-sub">Stoffen waar het product vrij van is</p>
+      </div>
+      <input class="field-input" id="vrijVanBadgesSearch" placeholder="🔍 Zoek in 'Vrij van'..." style="margin-bottom:12px;font-size:13px;" oninput="renderToggleBadges('vrijVanBadges',VRIJ_VAN,'vrijVan','vrijVanSelected')">
+      <div class="badge-container" id="vrijVanBadges"></div>
+      <div class="selected-info" id="vrijVanSelected"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-header">
+        <div class="top"><div class="section-number">10</div><h2 class="section-title">Categorieën</h2></div>
+        <p class="section-sub">Voeg relevante categorieën toe voor Haarshop.nl</p>
+      </div>
+      <div id="categoriesContainer" style="margin-bottom:16px;"></div>
+      <div style="display:flex;gap:8px;">
+        <input class="field-input" id="newCatInput" placeholder="Nieuwe categorie toevoegen..." style="flex:1;" onkeydown="if(event.key==='Enter')addCategory()">
+        <button class="copy-btn" onclick="addCategory()">+</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 4: SEO -->
+  <div class="tab-content" id="tab4">
+    <div class="card">
+      <div class="section-header">
+        <div class="top"><div class="section-number">11</div><h2 class="section-title">SEO-instellingen</h2></div>
+        <p class="section-sub">Zoekmachine-optimalisatie</p>
+      </div>
+      <button class="seo-auto-btn" onclick="autoGenerateSEO()">⚡ Auto-genereer SEO velden</button>
+      <div class="field"><label class="field-label">URL Key</label><input class="field-input mono" id="urlKey" placeholder="product-naam-merk-inhoud"></div>
+      <div class="field"><label class="field-label">Meta Title</label><input class="field-input" id="metaTitle" placeholder="Productnaam zonder streepjes"></div>
+      <div class="field"><label class="field-label">SEO Titel</label><input class="field-input" id="seoTitle" placeholder="Productnaam – morgen in huis✓"></div>
+      <div class="field"><label class="field-label">SEO Beschrijving</label><textarea class="field-textarea" id="seoDescription" rows="3" placeholder="Productnaam bestel je voordelig op Haarshop.nl ✓ ..."></textarea></div>
+      <div class="google-preview" id="googlePreview" style="display:none;">
+        <div class="label">Google Preview</div>
+        <div class="title" id="previewTitle"></div>
+        <div class="url" id="previewUrl"></div>
+        <div class="desc" id="previewDesc"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 5: Export -->
+  <div class="tab-content" id="tab5">
+    <div class="card">
+      <div class="export-header">
+        <h3 class="export-title">Short Description (HTML)</h3>
+        <button class="copy-btn" onclick="copyText(buildShortHTML())">Kopieer</button>
+      </div>
+      <pre class="code-block" id="exportShortHTML"></pre>
+    </div>
+    <div class="card">
+      <div class="export-header">
+        <h3 class="export-title">Productomschrijving (HTML)</h3>
+        <button class="copy-btn" onclick="copyText(buildFullHTML())">Kopieer HTML</button>
+      </div>
+      <pre class="code-block" id="exportFullHTML"></pre>
+    </div>
+    <div class="card">
+      <h3 class="export-title" style="margin-bottom:16px;">Preview</h3>
+      <div class="preview-box" id="exportPreview"></div>
+    </div>
+    <div class="card">
+      <div class="export-header">
+        <h3 class="export-title">Gestructureerde Data</h3>
+        <button class="copy-btn" onclick="copyText(buildStructuredText())">Kopieer alles</button>
+      </div>
+      <div class="data-table" id="exportDataTable"></div>
+    </div>
+    <div class="card">
+      <div class="export-header">
+        <h3 class="export-title">Ingrediënten</h3>
+        <button class="copy-btn" onclick="copyField('ingredients')">Kopieer</button>
+      </div>
+      <div class="info-box" id="exportIngredients" style="font-family:'Space Mono',monospace;font-size:12px;word-break:break-word;line-height:1.8;color:#555;"></div>
+    </div>
+    <div style="text-align:center;padding-top:12px;">
+      <button class="reset-btn" onclick="resetAll()">Reset alle velden</button>
+    </div>
+  </div>
+
+  <!-- TAB 6: Afbeeldingen -->
+  <div class="tab-content" id="tab6">
+
+    <!-- Product koppeling -->
+    <div class="card">
+      <div class="section-header">
+        <div class="top"><div class="section-number">🔗</div><h2 class="section-title">Koppel aan Magento Product</h2></div>
+        <p class="section-sub">Zoek een bestaand product om afbeeldingen aan te koppelen</p>
+      </div>
+
+      <div id="linkedProductBanner" style="display:none;padding:14px 20px;border-radius:12px;background:#e8f8ef;margin-bottom:20px;display:none;">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <span style="color:#27ae60;font-weight:700;">✓ Gekoppeld aan:</span>
+            <span id="linkedProductName" style="font-weight:600;margin-left:6px;"></span>
+            <span id="linkedProductSku" style="color:#888;font-size:12px;font-family:'Space Mono',monospace;margin-left:8px;"></span>
+          </div>
+          <button class="img-action-btn danger" onclick="unlinkProduct()">✕ Ontkoppelen</button>
+        </div>
+        <div id="linkedProductImages" style="margin-top:8px;font-size:12px;color:#888;"></div>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-bottom:16px;">
+        <input class="field-input" id="imgProductSearch" placeholder="Zoek op productnaam of SKU..." style="flex:1;" onkeydown="if(event.key==='Enter')searchProductForImages()">
+        <button class="magento-btn secondary" onclick="searchProductForImages()" style="white-space:nowrap;padding:10px 20px;">🔍 Zoeken</button>
+      </div>
+
+      <div id="imgSearchResults" style="display:none;"></div>
+    </div>
+
+    <!-- Bestaande afbeeldingen van product -->
+    <div class="card" id="existingImagesCard" style="display:none;">
+      <div class="section-header">
+        <div class="top"><div class="section-number">📸</div><h2 class="section-title">Huidige afbeeldingen in Magento</h2></div>
+        <p class="section-sub">Deze afbeeldingen staan al bij het product</p>
+      </div>
+      <div class="img-grid" id="existingImgGrid"></div>
+    </div>
+
+    <!-- Upload nieuwe afbeeldingen -->
+    <div class="card">
+      <div class="section-header">
+        <div class="top"><div class="section-number">📷</div><h2 class="section-title">Nieuwe afbeeldingen uploaden</h2></div>
+        <p class="section-sub">Upload maximaal 10 afbeeldingen. Bewerk ze en push naar Magento.</p>
+      </div>
+
+      <!-- Drop zone -->
+      <div class="img-dropzone" id="imgDropzone" onclick="document.getElementById('imgFileInput').click()">
+        <div class="img-dropzone-icon">📁</div>
+        <div class="img-dropzone-text">Sleep afbeeldingen hierheen of <strong>klik om te uploaden</strong></div>
+        <div class="img-dropzone-hint">JPG, PNG of WebP — max. 10 afbeeldingen</div>
+      </div>
+      <input type="file" id="imgFileInput" accept="image/jpeg,image/png,image/webp" multiple style="display:none" onchange="handleImageUpload(this.files)">
+
+      <div style="margin-top:12px;font-size:12px;color:#999;font-family:'Space Mono',monospace;" id="imgCounter">0 / 10 afbeeldingen</div>
+
+      <!-- Image grid -->
+      <div class="img-grid" id="imgGrid"></div>
+
+      <!-- Bulk actions -->
+      <div class="img-bulk-bar" id="imgBulkBar" style="display:none;">
+        <span style="font-size:13px;color:#666;font-weight:600;">Bulk acties:</span>
+        <button class="img-bulk-btn bg-remove" onclick="bulkRemoveBg()" id="bulkBgBtn">
+          🪄 Achtergrond verwijderen (alle)
+        </button>
+        <button class="img-bulk-btn resize" onclick="bulkResize()" id="bulkResizeBtn">
+          📐 Resize naar 1200×1200 (alle)
+        </button>
+        <button class="img-bulk-btn download" onclick="bulkDownload()">
+          💾 Download alle
+        </button>
+      </div>
+
+      <!-- Progress -->
+      <div class="img-progress" id="imgProgress" style="display:none;">
+        <div class="img-progress-bar"><div class="img-progress-fill" id="imgProgressFill" style="width:0%"></div></div>
+        <div class="img-progress-text" id="imgProgressText">Verwerken...</div>
+      </div>
+    </div>
+
+    <!-- Push to Magento -->
+    <div class="card" id="imgPushCard" style="display:none;">
+      <div class="section-header">
+        <div class="top"><div class="section-number">🚀</div><h2 class="section-title">Afbeeldingen naar Magento pushen</h2></div>
+        <p class="section-sub">Upload de afbeeldingen naar het gekoppelde Magento product</p>
+      </div>
+
+      <div class="magento-summary" id="imgPushSummary"></div>
+
+      <button class="magento-btn primary" id="imgPushBtn" onclick="pushImagesToMagento()" style="padding:16px;font-size:16px;">
+        🚀 Upload afbeeldingen naar Magento
+      </button>
+
+      <div class="magento-log" id="imgPushLog" style="display:none;"></div>
+    </div>
+
+    <!-- Info -->
+    <div class="card">
+      <div class="info-box" style="line-height:1.9;">
+        <p><strong>Workflow</strong><br>
+        1. Zoek en koppel een bestaand Magento product<br>
+        2. Upload je productafbeeldingen<br>
+        3. Selecteer de hoofdafbeelding (★)<br>
+        4. Optioneel: verwijder achtergronden en/of resize naar 1200×1200<br>
+        5. Push de afbeeldingen naar Magento<br><br>
+        <strong>Afbeeldingsrollen in Magento</strong><br>
+        • <strong>★ Hoofdafbeelding</strong> = base image, small image én thumbnail tegelijk<br>
+        • Overige afbeeldingen worden als gallery images toegevoegd<br><br>
+        <strong>Tip:</strong> Verwijder eerst de achtergrond, resize daarna voor het beste resultaat.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 7: Magento Opvoer -->
+  <div class="tab-content" id="tab7">
+    <!-- Connection settings -->
+    <div class="card">
+      <div class="section-header">
+        <div class="top"><div class="section-number">⚙</div><h2 class="section-title">Magento 2 Verbinding</h2></div>
+        <p class="section-sub">Configureer de verbinding met je Magento webshop</p>
+      </div>
+
+      <div id="magentoStatus" class="magento-status disconnected">
+        <span class="status-dot orange"></span>
+        <span>Niet verbonden – configureer hieronder je instellingen</span>
+      </div>
+
+      <div class="magento-config-grid">
+        <div class="field">
+          <label class="field-label">Magento 2 URL</label>
+          <input class="field-input mono" id="magentoUrl" placeholder="https://www.haarshop.nl" style="font-size:12px;">
+          <span style="font-size:10px;color:rgba(255,255,255,0.25);margin-top:2px;display:block;">Basis-URL van je Magento 2 webshop (zonder trailing slash)</span>
+        </div>
+        <div class="field">
+          <label class="field-label">Magento API Bearer Token</label>
+          <input class="field-input mono" id="magentoApiKey" type="password" placeholder="Magento 2 Integration Access Token" style="font-size:12px;">
+          <span style="font-size:10px;color:rgba(255,255,255,0.25);margin-top:2px;display:block;">System → Integrations → Access Token</span>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;margin-bottom:8px;">
+        <button class="magento-btn secondary" onclick="saveMagentoConfig()">💾 Instellingen opslaan</button>
+        <button class="magento-btn outline" onclick="testMagentoConnection()">🔌 Test verbinding</button>
+        <button class="magento-btn outline" onclick="loadMagentoCategories()">📂 Categorieën laden</button>
+      </div>
+    </div>
+
+    <!-- STAP 1: Product zoeken & koppelen -->
+    <div class="card">
+      <div class="section-header">
+        <div class="top"><div class="section-number">①</div><h2 class="section-title">Product Zoeken & Koppelen</h2></div>
+        <p class="section-sub">Zoek een bestaand Magento product om alle velden naartoe te schrijven</p>
+      </div>
+
+      <div id="opvoerLinkedBanner" style="display:none;padding:16px 20px;border-radius:12px;background:#efd6ca;margin-bottom:20px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+          <div>
+            <span style="color:#bf8d7a;font-weight:700;">✓ Gekoppeld:</span>
+            <strong id="opvoerLinkedName" style="margin-left:6px;"></strong>
+            <span id="opvoerLinkedSku" style="color:#888;font-size:12px;font-family:'Space Mono',monospace;margin-left:8px;"></span>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <span id="opvoerLinkedStatus" style="font-size:12px;"></span>
+            <button class="img-action-btn danger" onclick="unlinkOpvoerProduct()">✕ Ontkoppelen</button>
+          </div>
+        </div>
+        <div id="opvoerLinkedMeta" style="margin-top:6px;font-size:12px;color:#888;"></div>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-bottom:16px;">
+        <input class="field-input" id="opvoerProductSearch" placeholder="Zoek op productnaam of SKU..." style="flex:1;" onkeydown="if(event.key==='Enter')searchOpvoerProduct()">
+        <button class="magento-btn secondary" onclick="searchOpvoerProduct()" style="white-space:nowrap;padding:10px 20px;">🔍 Zoeken</button>
+      </div>
+
+      <div id="opvoerSearchResults" style="display:none;max-height:300px;overflow-y:auto;"></div>
+    </div>
+
+    <!-- STAP 2: Veldmapping overzicht -->
+    <div class="card" id="opvoerFieldMapCard" style="display:none;">
+      <div class="section-header">
+        <div class="top"><div class="section-number">②</div><h2 class="section-title">Veldmapping Overzicht</h2></div>
+        <p class="section-sub">Vink aan welke velden je wilt pushen. Velden met ✓ zijn ingevuld.</p>
+      </div>
+
+      <div class="info-box" style="margin-bottom:16px;font-size:13px;">
+        <p><strong>Tip:</strong> Vul eerst alle velden in via de AI Generator en andere tabbladen, kom dan hier terug om alles in één keer te pushen.</p>
+      </div>
+
+      <div id="opvoerFieldMap" style="border:1px solid #e5dcd1;border-radius:12px;overflow:hidden;"></div>
+
+      <!-- Extra Magento velden -->
+      <div style="margin-top:20px;">
+        <div class="magento-config-grid">
+          <div class="field">
+            <label class="field-label">Prijs (€)</label>
+            <input class="field-input" id="magentoPrice" type="number" step="0.01" placeholder="0.00">
+          </div>
+          <div class="field">
+            <label class="field-label">Voorraad (stuks)</label>
+            <input class="field-input" id="magentoQty" type="number" placeholder="0">
+          </div>
+        </div>
+        <div class="magento-config-grid">
+          <div class="field">
+            <label class="field-label">Status</label>
+            <select class="field-input" id="magentoProductStatus">
+              <option value="2">Uitgeschakeld (concept)</option>
+              <option value="1">Ingeschakeld (live)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="field-label">Gewicht (kg)</label>
+            <input class="field-input" id="magentoWeight" type="number" step="0.01" placeholder="0.3" value="0.3">
+          </div>
+        </div>
+
+        <div class="field" style="margin-top:12px;">
+          <label class="field-label">Magento Categorieën</label>
+          <div id="magentoCatTags" style="margin-bottom:8px;"></div>
+          <div class="category-search">
+            <input class="field-input" id="magentoCatSearch" placeholder="Zoek een Magento categorie..." oninput="filterMagentoCategories()" onfocus="document.getElementById('magentoCatDropdown').classList.add('open')" onblur="setTimeout(()=>document.getElementById('magentoCatDropdown').classList.remove('open'),200)">
+            <div class="category-dropdown" id="magentoCatDropdown"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STAP 3: Push -->
+    <div class="card" id="opvoerPushCard" style="display:none;text-align:center;">
+      <div class="section-header" style="text-align:left;">
+        <div class="top"><div class="section-number">③</div><h2 class="section-title">Alles Pushen naar Magento</h2></div>
+        <p class="section-sub">Geselecteerde velden worden naar het product geschreven</p>
+      </div>
+
+      <div class="magento-summary" id="opvoerPushSummary" style="text-align:left;margin-bottom:20px;"></div>
+
+      <button class="magento-btn primary" id="pushBtn" onclick="pushAllFieldsToMagento()" style="padding:16px;font-size:16px;width:100%;">
+        🚀 Alle velden naar Magento pushen
+      </button>
+      <p style="margin-top:10px;font-size:12px;color:#999;">Bestaande waarden worden overschreven met de tool-data.</p>
+
+      <div class="magento-log" id="magentoLog" style="display:none;"></div>
+    </div>
+
+    <!-- Attribuut mapping referentie -->
+    <div class="card">
+      <div class="section-header">
+        <div class="top"><div class="section-number">🔧</div><h2 class="section-title">Attribuut Mapping</h2></div>
+        <p class="section-sub">Controleer of de attribute codes overeenkomen met jouw Magento</p>
+      </div>
+      <div class="info-box" style="font-size:12px;font-family:'Space Mono',monospace;line-height:2.2;">
+        <p><strong>Tool veld → Magento attribute_code</strong><br>
+        ──────────────────────────────<br>
+        Productnaam → <code>name</code><br>
+        Short description → <code>short_description</code><br>
+        Omschrijving HTML → <code>description</code><br>
+        Meta titel → <code>meta_title</code><br>
+        SEO beschrijving → <code>meta_description</code><br>
+        URL key → <code>url_key</code><br>
+        Ingrediënten → <code>ingredients</code><br>
+        Merk → <code>brand</code><br>
+        Lijn → <code>product_line</code><br>
+        Producttype → <code>product_type_custom</code><br>
+        Inhoud → <code>content_size</code><br>
+        Ik heb → <code>ik_heb</code><br>
+        Werking → <code>werking</code><br>
+        Vrij van → <code>vrij_van</code><br>
+        <br>
+        ⚠ Pas attribute codes aan in <code>productopvoer-api.php</code> → <code>$haarshopAttrs</code></p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ─── Data Store ───
+const data = {
+  features: ['','','','','','',''],
+  steps: ['','','',''],
+  categories: [],
+  ikHeb: [],
+  werking: [],
+  vrijVan: [],
+};
+
+const PRODUCT_TYPES = ['Shampoo','Conditioner','Haarmasker','Leave-in Conditioner','Haarolie','Haarlak','Mousse','Gel','Wax','Crème','Serum','Spray','Treatment','Peeling','Droogshampoo','Shampoo Bar','Balsem','Styling Paste','Pommade','Volume Poeder','Hitte Beschermend Spray','Schuimversteviger','Primer','Scrub','Tonic','Ampullen','Elixer','Mist','Lotion','Booster'];
+const IK_HEB = [
+  // Haartype
+  'Krullend haar','Steil haar','Golvend haar','Fijn haar','Dik haar','Droog haar','Vet haar','Normaal haar',
+  'Gekleurd haar','Beschadigd haar','Pluizig haar','Dun haar','Grijs haar','Blond haar','Lang haar','Kort haar',
+  'Breekbaar haar','Futloos haar','Poreus haar','Weerbarstig haar','Extensions',
+  // Hoofdhuid
+  'Hoofdhuidproblemen','Roos','Gevoelige hoofdhuid','Droge hoofdhuid','Vettige hoofdhuid','Jeukende hoofdhuid',
+  'Schilferende hoofdhuid','Haaruitval','Dunner wordend haar',
+  // Huidtype (voor body/face producten)
+  'Droge huid','Vette huid','Gevoelige huid','Normale huid','Gemengde huid','Rijpe huid','Acne-gevoelige huid',
+  'Geïrriteerde huid','Gedehydrateerde huid',
+  // Specifiek
+  'Gespleten punten','Verwaarloosd haar','Chemisch behandeld haar','Geblondeerd haar','Highlighted haar',
+  'Afro haar','Kroeshaar','Coily haar','Baby & Kinderen','Mannen'
+];
+const WERKING = [
+  // Haarverzorging
+  'Hydraterend','Voedend','Herstellend','Versterkend','Volume gevend','Glad makend','Anti-pluis','Anti-frizz',
+  'Kruldefinitie','Kleur beschermend','Glans gevend','Reinigend','Ontwarrend','Hitte beschermend',
+  'UV-bescherming','Anti-roos','Verdikkend','Verfrissend','Kalmerend','Fixerend','Texturiserend',
+  'Beschermt tegen haarbreuk','Verzacht het haar','Elasticiteit herstellend','Definiërend',
+  'Diep reinigend','Neutraliserend','Anti-geel','Zilvershampoo','Kleur opfrissend','Kleur verdiepend',
+  'Detox','Zuiverend','Uitgroei verbergend','Pluiscontrole',
+  // Hoofdhuid
+  'Beschermt de hoofdhuid','Kalmeert de hoofdhuid','Verwijdert dode huidcellen','Verzorgt de hoofdhuid',
+  'Stimuleert haargroei','Verbetert de doorbloeding','Reguleert talgproductie','Exfolierend',
+  // Styling
+  'Lichte fixatie','Middelhoge fixatie','Sterke fixatie','Extreme fixatie','Flexibele hold',
+  'Matt effect','Wet look','Natuurlijk effect','Strandlook','Textuur','Body & bounce',
+  // Huidverzorging
+  'Anti-aging','Versteviging','Egalisering','Cellulite verminderend','Bruinend','Zelfbruinend',
+  'Verkoelend','Ontspannend','Verstevigend','Liftend','Poriën verfijnend'
+];
+const VRIJ_VAN = [
+  'Sulfaten','SLS/SLES','Parabenen','Siliconen','Ftalaten','Gluten','Minerale oliën',
+  'Alcohol','Kunstmatige kleurstoffen','Kunstmatige geurstoffen','Microplastics','PEG',
+  'Fosfaten','Formaldehyde','MIT/CMIT','Propyleenglycol','Natriumchloride',
+  'Petroleumderivaten','Dierlijke ingrediënten','Palmolie',
+  'Vegan','Dierproefvrij','Biologisch','Natuurlijk','CG Proof (Curly Girl)',
+  'CO2-neutraal','Gerecyclede verpakking','Certified B Corp'
+];
+
+// ─── Tab switching ───
+function switchTab(idx) {
+  document.querySelectorAll('.tab-content').forEach((el, i) => el.classList.toggle('active', i === idx));
+  document.querySelectorAll('.tab-btn').forEach((el, i) => el.classList.toggle('active', i === idx));
+  if (idx === 4) updateGooglePreview();
+  if (idx === 5) updateExport();
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── Toast notifications ───
+function showToast(message, type = 'info') {
+  const existing = document.querySelector('.toast');
+  if (existing) existing.remove();
+  const toast = document.createElement('div');
+  toast.className = 'toast ' + type;
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2800);
+}
+
+// ─── Progress tracking ───
+function updateProgress() {
+  const checks = [
+    !!document.getElementById('productName').value,
+    !!document.getElementById('brand').value,
+    !!document.getElementById('shortDescription').value,
+    !!document.getElementById('description').value,
+    data.features.filter(Boolean).length >= 3,
+    data.steps.filter(Boolean).length >= 2,
+    data.ikHeb.length > 0,
+    data.werking.length > 0,
+    data.categories.length > 0,
+    !!document.getElementById('seoTitle').value,
+  ];
+  const filled = checks.filter(Boolean).length;
+  const pct = Math.round((filled / checks.length) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+
+  // Tab dots
+  const dot1 = document.getElementById('dot1');
+  const dot2 = document.getElementById('dot2');
+  const dot3 = document.getElementById('dot3');
+  const dot4 = document.getElementById('dot4');
+  if (dot1) dot1.className = 'tab-dot' + (checks[0] && checks[1] ? ' filled' : (checks[0] || checks[1] ? ' partial' : ''));
+  if (dot2) dot2.className = 'tab-dot' + (checks[2] && checks[3] && checks[4] && checks[5] ? ' filled' : (checks[2] || checks[3] ? ' partial' : ''));
+  if (dot3) dot3.className = 'tab-dot' + (checks[6] && checks[7] ? ' filled' : (checks[6] || checks[7] ? ' partial' : ''));
+  if (dot4) dot4.className = 'tab-dot' + (checks[9] ? ' filled' : '');
+}
+
+// ─── Copy helpers ───
+function copyText(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    if (event && event.target) {
+      event.target.textContent = '✓';
+      event.target.classList.add('copied');
+      setTimeout(() => { event.target.textContent = 'Kopieer'; event.target.classList.remove('copied'); }, 1500);
+    }
+    showToast('Gekopieerd naar klembord', 'success');
+  });
+}
+function copyField(id) {
+  const val = document.getElementById(id).value;
+  if (!val) { showToast('Veld is leeg — vul eerst data in', 'error'); return; }
+  navigator.clipboard.writeText(val).then(() => {
+    if (event && event.target) {
+      event.target.textContent = '✓';
+      event.target.classList.add('copied');
+      setTimeout(() => { event.target.textContent = 'Kopieer'; event.target.classList.remove('copied'); }, 1500);
+    }
+    showToast('Gekopieerd naar klembord', 'success');
+  });
+}
+
+// ─── Word count ───
+function updateWordCounts() {
+  const short = document.getElementById('shortDescription').value;
+  const desc = document.getElementById('description').value;
+  document.getElementById('shortWordCount').textContent = short.split(/\s+/).filter(Boolean).length + ' woorden';
+  document.getElementById('descWordCount').textContent = desc.split(/\s+/).filter(Boolean).length + ' woorden';
+}
+document.addEventListener('input', (e) => {
+  if (e.target.id === 'shortDescription' || e.target.id === 'description') updateWordCounts();
+});
+
+// ─── Product Type Badges ───
+function renderProductTypeBadges() {
+  const c = document.getElementById('productTypeBadges');
+  c.innerHTML = '';
+  PRODUCT_TYPES.forEach(t => {
+    const btn = document.createElement('button');
+    btn.className = 'badge' + (document.getElementById('productType').value === t ? ' active' : '');
+    btn.textContent = t;
+    btn.onclick = () => { document.getElementById('productType').value = t; renderProductTypeBadges(); };
+    c.appendChild(btn);
+  });
+}
+
+// ─── Toggle Badges ───
+function renderToggleBadges(containerId, options, dataKey, infoId) {
+  const c = document.getElementById(containerId);
+  const searchId = containerId + 'Search';
+  const toggleId = containerId + 'Toggle';
+  const searchTerm = document.getElementById(searchId)?.value?.toLowerCase() || '';
+  const VISIBLE_COUNT = 20;
+
+  // Filter options by search
+  let filtered = options;
+  if (searchTerm) {
+    filtered = options.filter(opt => opt.toLowerCase().includes(searchTerm));
+  }
+
+  // Determine which are expanded
+  const isExpanded = c.dataset.expanded === 'true';
+
+  // Split into visible and hidden
+  const visibleOpts = searchTerm ? filtered : (isExpanded ? filtered : filtered.slice(0, VISIBLE_COUNT));
+  const hiddenCount = searchTerm ? 0 : Math.max(0, filtered.length - VISIBLE_COUNT);
+
+  // Build search input (only once)
+  let html = '';
+  if (!document.getElementById(searchId)) {
+    // Will be rendered by the caller
+  }
+
+  // Build badges
+  c.innerHTML = '';
+  const badgeWrap = document.createElement('div');
+  badgeWrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;';
+  visibleOpts.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'badge' + (data[dataKey].includes(opt) ? ' active' : '');
+    btn.textContent = opt;
+    btn.onclick = () => {
+      const idx = data[dataKey].indexOf(opt);
+      if (idx >= 0) data[dataKey].splice(idx, 1); else data[dataKey].push(opt);
+      renderToggleBadges(containerId, options, dataKey, infoId);
+    };
+    badgeWrap.appendChild(btn);
+  });
+  c.appendChild(badgeWrap);
+
+  // Show more/less toggle
+  if (hiddenCount > 0 && !searchTerm) {
+    const toggleBtn = document.createElement('button');
+    toggleBtn.id = toggleId;
+    toggleBtn.style.cssText = 'margin-top:10px;padding:6px 16px;border:1.5px dashed #e0c5b6;border-radius:8px;background:transparent;color:#bf8d7a;font-size:12px;font-weight:600;cursor:pointer;font-family:Poppins,sans-serif;';
+    toggleBtn.textContent = isExpanded ? '▲ Minder tonen' : '▼ Toon alle ' + filtered.length + ' opties (+' + hiddenCount + ')';
+    toggleBtn.onclick = () => {
+      c.dataset.expanded = isExpanded ? 'false' : 'true';
+      renderToggleBadges(containerId, options, dataKey, infoId);
+    };
+    c.appendChild(toggleBtn);
+  }
+
+  // Selected info
+  const info = document.getElementById(infoId);
+  info.innerHTML = data[dataKey].length > 0 ? 'Geselecteerd: <strong>' + data[dataKey].join(', ') + '</strong>' : '';
+}
+
+// ─── Features ───
+function renderFeatures() {
+  const c = document.getElementById('featuresContainer');
+  c.innerHTML = '';
+  data.features.forEach((f, i) => {
+    const row = document.createElement('div');
+    row.className = 'list-row';
+    row.innerHTML = `<span class="list-num">${i+1}</span><input class="field-input" value="${escHTML(f)}" placeholder="Eigenschap ${i+1}..." oninput="data.features[${i}]=this.value">`;
+    c.appendChild(row);
+  });
+}
+
+// ─── Steps ───
+function renderSteps() {
+  const c = document.getElementById('stepsContainer');
+  c.innerHTML = '';
+  data.steps.forEach((s, i) => {
+    const row = document.createElement('div');
+    row.className = 'list-row';
+    row.innerHTML = `<span class="list-num">${i+1}.</span><input class="field-input" value="${escHTML(s)}" placeholder="Stap ${i+1}..." oninput="data.steps[${i}]=this.value">` +
+      (data.steps.length > 2 ? `<button class="remove-btn" onclick="removeStep(${i})">×</button>` : '');
+    c.appendChild(row);
+  });
+}
+function addStep() { data.steps.push(''); renderSteps(); }
+function removeStep(i) { data.steps.splice(i, 1); renderSteps(); }
+
+// ─── Categories ───
+function renderCategories() {
+  const c = document.getElementById('categoriesContainer');
+  c.innerHTML = '';
+  data.categories.forEach((cat, i) => {
+    const tag = document.createElement('span');
+    tag.className = 'cat-tag';
+    tag.innerHTML = escHTML(cat) + `<button onclick="removeCategory(${i})">×</button>`;
+    c.appendChild(tag);
+  });
+}
+function addCategory() {
+  const input = document.getElementById('newCatInput');
+  if (input.value.trim()) { data.categories.push(input.value.trim()); input.value = ''; renderCategories(); }
+}
+function removeCategory(i) { data.categories.splice(i, 1); renderCategories(); }
+
+// ─── SEO ───
+function autoGenerateSEO() {
+  const name = document.getElementById('productName').value;
+  if (!name) { alert('Vul eerst de productnaam in bij het tabblad Productinfo.'); return; }
+  // Productnaam zonder liggende streepjes voor SEO velden
+  const cleanName = name.replace(/\s*[-–—]\s*/g, ' ').replace(/\s+/g, ' ').trim();
+  const urlKey = name.toLowerCase().replace(/[^a-z0-9\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'');
+  document.getElementById('urlKey').value = urlKey;
+  document.getElementById('metaTitle').value = cleanName;
+  document.getElementById('seoTitle').value = cleanName + ' - morgen in huis✓';
+  document.getElementById('seoDescription').value = cleanName + ' bestel je voordelig op Haarshop.nl ✓ Morgen in Huis ✓ Achteraf betalen ✓ GRATIS verzending vanaf €35,-';
+  updateGooglePreview();
+}
+function updateGooglePreview() {
+  const title = document.getElementById('seoTitle').value;
+  const url = document.getElementById('urlKey').value;
+  const desc = document.getElementById('seoDescription').value;
+  const preview = document.getElementById('googlePreview');
+  if (title) {
+    preview.style.display = 'block';
+    document.getElementById('previewTitle').textContent = title;
+    document.getElementById('previewUrl').textContent = 'haarshop.nl › ' + (url || '...');
+    document.getElementById('previewDesc').textContent = desc || '...';
+  } else { preview.style.display = 'none'; }
+}
+
+// ─── API Key Modal ───
+// ─── API Key Management ───
+function showApiModal() {
+  const key = localStorage.getItem('haarshop_ai_key') || '';
+  const msg = key ? '✓ API key is ingesteld. Je kunt deze hier wijzigen.' : 'Voer je Anthropic API key in om AI-generatie te activeren.';
+  const newKey = prompt(msg, key);
+  if (newKey !== null) {
+    localStorage.setItem('haarshop_ai_key', newKey.trim());
+    showToast(newKey.trim() ? 'API key opgeslagen.' : 'API key verwijderd.', 'success');
+  }
+}
+function closeApiModal() {}
+function saveApiKey() {}
+
+// ─── AI Generation (PRODUCTIE) ───
+async function generateWithAI() {
+  const input = document.getElementById('aiInput').value.trim();
+  if (!input) { showToast('Voer een productnaam in.', 'error'); return; }
+
+  const apiKey = localStorage.getItem('haarshop_ai_key') || '';
+  if (!apiKey) {
+    showToast('Stel eerst je API key in via het 🔑 icoon.', 'error');
+    showApiModal();
+    return;
+  }
+
+  const btn = document.getElementById('generateBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinning">⟳</span> Genereren...';
+
+  const refUrl = document.getElementById('aiUrl').value.trim();
+
+  // Build prompt
+  let userPrompt = `Genereer een complete Haarshop.nl productopvoer voor: "${input}"`;
+  if (refUrl) userPrompt += `\n\nReferentie URL: ${refUrl}`;
+  if (aiUploadedFiles.length > 0) userPrompt += `\n\nEr zijn ${aiUploadedFiles.length} bestanden geüpload als extra referentie.`;
+
+  userPrompt += `\n\nGeef je antwoord UITSLUITEND als JSON object (geen markdown, geen backticks) met exact deze velden:
+{
+  "productName": "exacte productnaam zoals op verpakking",
+  "brand": "merknaam",
+  "line": "productlijn",
+  "subLine": "sublijn of leeg",
+  "productType": "producttype",
+  "subProductType": "sub-producttype of leeg",
+  "content": "inhoudsmaat bijv. 250 ml",
+  "shortDescription": "korte beschrijving 15-20 woorden, zonder productnaam",
+  "description": "productomschrijving ~100 woorden, begin NIET met productnaam (die wordt er automatisch voor gezet)",
+  "keyFeatures": ["eigenschap 1.", "eigenschap 2.", "etc. (6-7 stuks, elke zin eindigt met punt)"],
+  "usageSteps": ["stap 1.", "stap 2.", "etc."],
+  "crossSellText": "cross-sell tekst met HTML link naar gerelateerd product",
+  "ingredients": "volledige INCI ingrediëntenlijst",
+  "categories": ["categorie1", "categorie2", "etc. - altijd inclusief Nieuw en merk-categorie"],
+  "ikHeb": ["haartype1", "haartype2"],
+  "werking": ["werking1", "werking2"],
+  "vrijVan": ["stof1", "stof2"]
+}
+
+Schrijf in foutloos, overtuigend Nederlands. Toon is professioneel, inspirerend en toegankelijk. Vermijd overdreven claims en vakjargon. Gebruik geen wij/onze tenzij het vanuit Haarshop is.`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 4000,
+        messages: [{ role: 'user', content: userPrompt }]
+      })
+    });
+
+    if (!response.ok) {
+      const errData = await response.json().catch(() => ({}));
+      throw new Error(errData?.error?.message || `API fout (${response.status})`);
+    }
+
+    const result = await response.json();
+    const text = result.content?.map(b => b.text || '').join('') || '';
+    const clean = text.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(clean);
+
+    // Fill all fields
+    document.getElementById('productName').value = parsed.productName || '';
+    document.getElementById('brand').value = parsed.brand || '';
+    document.getElementById('line').value = parsed.line || '';
+    document.getElementById('subLine').value = parsed.subLine || '';
+    document.getElementById('contentSize').value = parsed.content || '';
+    document.getElementById('productType').value = parsed.productType || '';
+    document.getElementById('subProductType').value = parsed.subProductType || '';
+    document.getElementById('shortDescription').value = parsed.shortDescription || '';
+    document.getElementById('description').value = parsed.description || '';
+    document.getElementById('crossSellText').value = parsed.crossSellText || '';
+    document.getElementById('ingredients').value = parsed.ingredients || '';
+
+    if (parsed.keyFeatures) { data.features = [...parsed.keyFeatures, ...Array(7).fill('')].slice(0, 7); }
+    if (parsed.usageSteps) { data.steps = parsed.usageSteps; }
+    if (parsed.categories) { data.categories = parsed.categories; }
+    if (parsed.ikHeb) { data.ikHeb = parsed.ikHeb; }
+    if (parsed.werking) { data.werking = parsed.werking; }
+    if (parsed.vrijVan) { data.vrijVan = parsed.vrijVan; }
+
+    // Auto SEO (zonder streepjes)
+    const name = parsed.productName || '';
+    if (name) {
+      const cleanName = name.replace(/\s*[-–—]\s*/g, ' ').replace(/\s+/g, ' ').trim();
+      const urlKey = name.toLowerCase().replace(/[^a-z0-9\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'');
+      document.getElementById('urlKey').value = urlKey;
+      document.getElementById('metaTitle').value = cleanName;
+      document.getElementById('seoTitle').value = cleanName + ' - morgen in huis✓';
+      document.getElementById('seoDescription').value = cleanName + ' bestel je voordelig op Haarshop.nl ✓ Morgen in Huis ✓ Achteraf betalen ✓ GRATIS verzending vanaf €35,-';
+    }
+
+    renderAll();
+    updateWordCounts();
+    updateProgress();
+    switchTab(1);
+    showToast('Product gegenereerd — controleer alle tabbladen', 'success');
+  } catch (err) {
+    console.error('AI generation error:', err);
+    showToast('AI fout: ' + err.message, 'error');
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '✦ Genereer met AI';
+}
+
+// ─── Build HTML ───
+function buildShortHTML() {
+  return '<p>' + document.getElementById('shortDescription').value + '</p>';
+}
+function buildFullHTML() {
+  const rawName = document.getElementById('productName').value || '[PRODUCTNAAM]';
+  // Productnaam zonder liggende streepjes in de omschrijving
+  const name = rawName.replace(/\s*[-–—]\s*/g, ' ').replace(/\s+/g, ' ').trim();
+  const desc = document.getElementById('description').value;
+  const features = data.features.filter(Boolean);
+  const steps = data.steps.filter(Boolean);
+  const crossSell = document.getElementById('crossSellText').value;
+
+  let html = `<p><strong>${name}</strong> ${desc}</p>\n\n`;
+  html += `<h2><strong>Belangrijkste eigenschappen</strong></h2>\n<ul>\n`;
+  features.forEach(f => html += `<li>${f}</li>\n`);
+  html += `</ul>\n\n`;
+  html += `<h2><strong>Gebruiksaanwijzing</strong></h2>\n<ol>\n`;
+  steps.forEach(s => html += `<li>${s}</li>\n`);
+  if (crossSell) html += `<li>${crossSell}</li>\n`;
+  html += `</ol>\n\n`;
+  html += `<h3><strong>${name} online kopen bij Haarshop.nl</strong></h3>\n`;
+  html += `<p>Shop dus nu de <strong>${name}</strong>, dan zorgen wij dat deze snel bij je thuis wordt bezorgd!</p>`;
+  return html;
+}
+function buildStructuredText() {
+  return [
+    'Producttype: ' + document.getElementById('productType').value,
+    'Merk: ' + document.getElementById('brand').value,
+    'Lijn: ' + document.getElementById('line').value,
+    'Sub-lijn: ' + document.getElementById('subLine').value,
+    'Inhoud: ' + document.getElementById('contentSize').value,
+    'SEO-titel: ' + document.getElementById('seoTitle').value,
+    'SEO-beschrijving: ' + document.getElementById('seoDescription').value,
+    'URL key: ' + document.getElementById('urlKey').value,
+    'Categorieën: ' + data.categories.join(', '),
+    'Ik heb: ' + data.ikHeb.join(', '),
+    'Werking: ' + data.werking.join(', '),
+    'Vrij van: ' + data.vrijVan.join(', '),
+    'Ingrediënten: ' + document.getElementById('ingredients').value,
+  ].join('\n');
+}
+
+// ─── Export rendering ───
+function updateExport() {
+  document.getElementById('exportShortHTML').textContent = buildShortHTML();
+  document.getElementById('exportFullHTML').textContent = buildFullHTML();
+  document.getElementById('exportPreview').innerHTML = buildFullHTML();
+  document.getElementById('exportIngredients').textContent = document.getElementById('ingredients').value || 'Nog geen ingrediënten ingevuld.';
+
+  const rows = [
+    ['Producttype', document.getElementById('productType').value],
+    ['Merk', document.getElementById('brand').value],
+    ['Lijn', document.getElementById('line').value],
+    ['Sub-lijn', document.getElementById('subLine').value],
+    ['Inhoud', document.getElementById('contentSize').value],
+    ['SEO-titel', document.getElementById('seoTitle').value],
+    ['URL key', document.getElementById('urlKey').value],
+    ['Categorieën', data.categories.join(', ')],
+    ['Ik heb', data.ikHeb.join(', ')],
+    ['Werking', data.werking.join(', ')],
+    ['Vrij van', data.vrijVan.join(', ')],
+  ];
+  document.getElementById('exportDataTable').innerHTML = rows.map(([l,v]) =>
+    `<div class="data-row"><span class="data-label">${l}</span><span class="data-value">${v || '—'}</span></div>`
+  ).join('');
+}
+
+// ─── File Upload for AI Generator ───
+let aiUploadedFiles = [];
+function handleAiFileUpload(files) {
+  const maxFiles = 5;
+  const allowed = ['.pdf','.jpg','.jpeg','.png','.webp','.txt','.csv','.doc','.docx'];
+  for (const file of files) {
+    if (aiUploadedFiles.length >= maxFiles) { showToast('Maximum 5 bestanden bereikt.', 'error'); break; }
+    const ext = '.' + file.name.split('.').pop().toLowerCase();
+    if (!allowed.includes(ext)) { showToast(`${file.name}: bestandstype niet ondersteund.`, 'error'); continue; }
+    aiUploadedFiles.push(file);
+  }
+  renderAiFileList();
+}
+function removeAiFile(index) {
+  aiUploadedFiles.splice(index, 1);
+  renderAiFileList();
+}
+function renderAiFileList() {
+  const container = document.getElementById('aiFileList');
+  if (aiUploadedFiles.length === 0) { container.innerHTML = ''; return; }
+  container.innerHTML = aiUploadedFiles.map((f, i) => {
+    const ext = f.name.split('.').pop().toLowerCase();
+    const icon = ['pdf'].includes(ext) ? '📄' : ['jpg','jpeg','png','webp'].includes(ext) ? '🖼️' : '📝';
+    const sizeMB = (f.size / (1024*1024)).toFixed(1);
+    return `<div style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;background:rgba(224,197,182,0.08);border:1px solid rgba(224,197,182,0.15);border-radius:6px;font-size:11px;color:rgba(255,255,255,0.4);margin:3px 4px 3px 0;">
+      ${icon} <span style="color:rgba(255,255,255,0.6);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${f.name}</span>
+      <span style="color:rgba(255,255,255,0.2);">${sizeMB}MB</span>
+      <span onclick="removeAiFile(${i})" style="cursor:pointer;color:#bf8d7a;font-weight:700;margin-left:2px;" title="Verwijder">×</span>
+    </div>`;
+  }).join('');
+}
+
+// ─── Cross-sell Link Builder ───
+function insertCrossSellLink() {
+  const linkText = document.getElementById('crossSellLinkText').value.trim();
+  const linkUrl = document.getElementById('crossSellLinkUrl').value.trim();
+  const crossSellInput = document.getElementById('crossSellText');
+  const currentText = crossSellInput.value;
+
+  if (!linkText) { showToast('Vul een linktekst in.', 'error'); return; }
+  if (!linkUrl) { showToast('Vul een URL in.', 'error'); return; }
+
+  const htmlLink = `<a href="${linkUrl}">${linkText}</a>`;
+
+  if (currentText.includes(linkText)) {
+    // Replace plain text with link
+    crossSellInput.value = currentText.replace(linkText, htmlLink);
+    showToast('Link ingevoegd in bestaande tekst.', 'success');
+  } else {
+    // Append to end if word not found
+    crossSellInput.value = currentText ? currentText + ' ' + htmlLink : htmlLink;
+    showToast('Link toegevoegd aan cross-sell tekst.', 'info');
+  }
+
+  // Show preview
+  const preview = document.getElementById('crossSellPreview');
+  const previewContent = document.getElementById('crossSellPreviewContent');
+  preview.style.display = 'block';
+  previewContent.innerHTML = crossSellInput.value;
+
+  // Clear link fields
+  document.getElementById('crossSellLinkText').value = '';
+  document.getElementById('crossSellLinkUrl').value = '';
+}
+
+// Update cross-sell preview on input
+document.addEventListener('DOMContentLoaded', () => {
+  const csInput = document.getElementById('crossSellText');
+  if (csInput) {
+    csInput.addEventListener('input', () => {
+      const preview = document.getElementById('crossSellPreview');
+      const previewContent = document.getElementById('crossSellPreviewContent');
+      if (csInput.value.includes('<a ')) {
+        preview.style.display = 'block';
+        previewContent.innerHTML = csInput.value;
+      } else {
+        preview.style.display = 'none';
+      }
+    });
+  }
+});
+
+// ─── Ingredients Fetch from URL ───
+async function fetchIngredientsFromUrl() {
+  const url = document.getElementById('ingredientsFetchUrl').value.trim();
+  if (!url) { showToast('Vul een URL in om ingrediënten op te halen.', 'error'); return; }
+  if (!url.startsWith('http')) { showToast('Voer een geldige URL in (begin met http).', 'error'); return; }
+
+  const apiKey = localStorage.getItem('haarshop_ai_key') || '';
+  if (!apiKey) {
+    showToast('Stel eerst je API key in via het 🔑 icoon.', 'error');
+    showApiModal();
+    return;
+  }
+
+  const btn = document.getElementById('ingredientsFetchBtn');
+  const status = document.getElementById('ingredientsFetchStatus');
+  btn.disabled = true;
+  btn.textContent = '⟳ Ophalen...';
+  status.style.display = 'block';
+  status.style.color = 'rgba(255,255,255,0.3)';
+  status.textContent = 'Ingrediënten ophalen via AI...';
+
+  try {
+    // Use Anthropic API with web search to fetch ingredients from URL
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 2000,
+        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+        messages: [{ role: 'user', content: `Ga naar deze URL en zoek de volledige INCI ingrediëntenlijst: ${url}\n\nGeef ALLEEN de ingrediëntenlijst terug, zonder uitleg. Geef de ingrediënten als komma-gescheiden tekst, precies zoals ze op de verpakking staan.` }]
+      })
+    });
+
+    if (!response.ok) {
+      const errData = await response.json().catch(() => ({}));
+      throw new Error(errData?.error?.message || `API fout (${response.status})`);
+    }
+
+    const result = await response.json();
+    const fetchedIngredients = result.content
+      ?.filter(b => b.type === 'text')
+      .map(b => b.text)
+      .join('')
+      .trim() || '';
+
+    if (!fetchedIngredients || fetchedIngredients.length < 10) {
+      throw new Error('Geen ingrediëntenlijst gevonden op deze pagina.');
+    }
+
+    const currentIngredients = document.getElementById('ingredients').value.trim();
+
+    if (currentIngredients) {
+      status.innerHTML = `<div style="margin-bottom:6px;color:#e0c5b6;">✓ Ingrediënten opgehaald</div>
+        <div style="padding:8px;background:rgba(255,255,255,0.03);border-radius:6px;margin-bottom:6px;">
+          <div style="font-size:10px;color:rgba(255,255,255,0.25);margin-bottom:4px;">OPGEHAALDE LIJST:</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.45);line-height:1.5;font-family:'Space Mono',monospace;word-break:break-word;">${escHTML(fetchedIngredients)}</div>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:8px;">
+          <button onclick="applyFetchedIngredients(this)" data-ingredients="${encodeURIComponent(fetchedIngredients)}" style="padding:5px 12px;background:#428e8c;color:#fff;border:none;border-radius:5px;cursor:pointer;font-size:11px;font-weight:500;">✓ Vervangen</button>
+          <button onclick="document.getElementById('ingredientsFetchStatus').style.display='none'" style="padding:5px 12px;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.4);border:none;border-radius:5px;cursor:pointer;font-size:11px;">Annuleren</button>
+        </div>`;
+    } else {
+      document.getElementById('ingredients').value = fetchedIngredients;
+      status.innerHTML = '<span style="color:#428e8c;">✓ Ingrediënten ingevuld</span>';
+      setTimeout(() => status.style.display = 'none', 3000);
+    }
+  } catch (err) {
+    console.error('Ingredients fetch error:', err);
+    status.style.color = '#e57373';
+    status.textContent = 'Fout: ' + err.message;
+  }
+
+  btn.disabled = false;
+  btn.textContent = '🔍 Ophalen';
+}
+
+function applyFetchedIngredients(btnEl) {
+  const ingredients = decodeURIComponent(btnEl.dataset.ingredients);
+  document.getElementById('ingredients').value = ingredients;
+  document.getElementById('ingredientsFetchStatus').style.display = 'none';
+  showToast('Ingrediëntenlijst vervangen.', 'success');
+}
+
+// ─── Reset ───
+function resetAll() {
+  if (!confirm('Weet je zeker dat je alle velden wilt wissen?')) return;
+  document.querySelectorAll('input.field-input, textarea.field-textarea').forEach(el => el.value = '');
+  document.getElementById('aiInput').value = '';
+  document.getElementById('aiUrl').value = '';
+  aiUploadedFiles = [];
+  renderAiFileList();
+  document.getElementById('crossSellLinkText').value = '';
+  document.getElementById('crossSellLinkUrl').value = '';
+  document.getElementById('crossSellPreview').style.display = 'none';
+  document.getElementById('ingredientsFetchUrl').value = '';
+  document.getElementById('ingredientsFetchStatus').style.display = 'none';
+  data.features = ['','','','','','',''];
+  data.steps = ['','','',''];
+  data.categories = [];
+  data.ikHeb = [];
+  data.werking = [];
+  data.vrijVan = [];
+  renderAll();
+  updateWordCounts();
+  switchTab(0);
+}
+
+// ─── Helpers ───
+function escHTML(s) { return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function renderAll() {
+  renderProductTypeBadges();
+  renderFeatures();
+  renderSteps();
+  renderCategories();
+  renderToggleBadges('ikHebBadges', IK_HEB, 'ikHeb', 'ikHebSelected');
+  renderToggleBadges('werkingBadges', WERKING, 'werking', 'werkingSelected');
+  renderToggleBadges('vrijVanBadges', VRIJ_VAN, 'vrijVan', 'vrijVanSelected');
+  updateProgress();
+}
+
+// ─── Init ───
+renderAll();
+updateWordCounts();
+updateProgress();
+
+// Live progress tracking
+['productName','brand','shortDescription','description','seoTitle'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', updateProgress);
+});
+
+// ──────────────────────────────────────────────
+// MAGENTO INTEGRATION
+// ──────────────────────────────────────────────
+
+let magentoCategories = [];
+let selectedMagentoCatIds = [];
+
+// ─── Save/Load config ───
+function saveMagentoConfig() {
+  const url = document.getElementById('magentoUrl')?.value.trim();
+  const key = document.getElementById('magentoApiKey')?.value.trim();
+  if (!url || !key) { addLog('error', 'Vul zowel de Magento URL als API key in.'); return; }
+  localStorage.setItem('haarshop_magento_url', url);
+  localStorage.setItem('haarshop_magento_key', key);
+  addLog('success', '✓ Magento instellingen opgeslagen.');
+  showToast('Magento instellingen opgeslagen.', 'success');
+}
+
+function loadMagentoConfig() {
+  const url = localStorage.getItem('haarshop_magento_url') || '';
+  const key = localStorage.getItem('haarshop_magento_key') || '';
+  if (document.getElementById('magentoUrl')) document.getElementById('magentoUrl').value = url;
+  if (document.getElementById('magentoApiKey')) document.getElementById('magentoApiKey').value = key;
+}
+
+// ─── Magento 2 REST API ───
+async function proxyRequest(action, method = 'GET', body = null) {
+  const baseUrl = (localStorage.getItem('haarshop_magento_url') || '').replace(/\/+$/, '');
+  const apiKey = localStorage.getItem('haarshop_magento_key') || '';
+
+  if (!baseUrl || !apiKey) {
+    throw new Error('Magento URL en API key zijn niet geconfigureerd. Ga naar de Magento-tab om deze in te stellen.');
+  }
+
+  const headers = {
+    'Authorization': `Bearer ${apiKey}`,
+    'Content-Type': 'application/json'
+  };
+
+  if (action === 'test-magento') {
+    const res = await fetch(`${baseUrl}/rest/V1/store/storeConfigs`, { method: 'GET', headers });
+    if (!res.ok) throw new Error(`Magento verbinding mislukt (${res.status})`);
+    const stores = await res.json();
+    const storeName = stores?.[0]?.base_url || baseUrl;
+    return { status: 'connected', store: storeName };
+  }
+
+  if (action === 'categories') {
+    const res = await fetch(`${baseUrl}/rest/V1/categories`, { method: 'GET', headers });
+    if (!res.ok) throw new Error(`Categorieën laden mislukt (${res.status})`);
+    const tree = await res.json();
+    // Flatten category tree
+    function flattenCats(node) {
+      let result = [];
+      if (node.id && node.id > 1) result.push({ id: node.id, name: node.name });
+      if (node.children_data) {
+        for (const child of node.children_data) {
+          result = result.concat(flattenCats(child));
+        }
+      }
+      return result;
+    }
+    // Build structured tree for display
+    function buildTree(node) {
+      let cats = [];
+      if (node.children_data) {
+        for (const child of node.children_data) {
+          const entry = { id: child.id, name: child.name };
+          if (child.children_data?.length) entry.children = buildTree(child);
+          cats.push(entry);
+        }
+      }
+      return cats;
+    }
+    return { categories: buildTree(tree), flat: flattenCats(tree) };
+  }
+
+  if (action.startsWith('search-products')) {
+    const q = new URLSearchParams(action.split('?')[1] || '').get('q') || '';
+    const searchUrl = `${baseUrl}/rest/V1/products?searchCriteria[filter_groups][0][filters][0][field]=name&searchCriteria[filter_groups][0][filters][0][value]=%25${encodeURIComponent(q)}%25&searchCriteria[filter_groups][0][filters][0][condition_type]=like&searchCriteria[pageSize]=10`;
+    const res = await fetch(searchUrl, { method: 'GET', headers });
+    if (!res.ok) throw new Error(`Product zoeken mislukt (${res.status})`);
+    const data = await res.json();
+    return { items: (data.items || []).map(p => ({ sku: p.sku, name: p.name, status: p.status, price: p.price })) };
+  }
+
+  if (action.startsWith('product-detail')) {
+    const sku = action.split('?sku=')[1] || '';
+    const res = await fetch(`${baseUrl}/rest/V1/products/${encodeURIComponent(sku)}`, { method: 'GET', headers });
+    if (!res.ok) throw new Error(`Product laden mislukt (${res.status})`);
+    const p = await res.json();
+    // Map custom attributes to flat object
+    const attrs = {};
+    if (p.custom_attributes) {
+      for (const attr of p.custom_attributes) {
+        attrs[attr.attribute_code] = attr.value;
+      }
+    }
+    return {
+      product: {
+        id: p.id, sku: p.sku, name: p.name, status: p.status, price: p.price,
+        weight: p.weight, visibility: p.visibility,
+        custom_attributes: attrs,
+        media_gallery_entries: p.media_gallery_entries || [],
+        category_ids: p.extension_attributes?.category_links?.map(c => parseInt(c.category_id)) || []
+      }
+    };
+  }
+
+  if (action === 'update-fields') {
+    const sku = body?.sku;
+    if (!sku) throw new Error('Geen SKU opgegeven voor update.');
+
+    // Build Magento product update payload
+    const productPayload = { product: {} };
+    const customAttrs = [];
+    const fields = body?.fields || {};
+
+    // Standard fields
+    if (fields.name) productPayload.product.name = fields.name;
+    if (fields.price) productPayload.product.price = parseFloat(fields.price);
+    if (fields.weight) productPayload.product.weight = parseFloat(fields.weight);
+    if (fields.status) productPayload.product.status = parseInt(fields.status);
+
+    // Custom attributes
+    const customFieldKeys = ['description','short_description','meta_title','meta_description','url_key',
+      'brand','product_line','sub_line','content_size','ingredients','ik_heb','werking','vrij_van',
+      'product_type','sub_product_type','cross_sell_text'];
+    for (const key of customFieldKeys) {
+      if (fields[key] !== undefined) customAttrs.push({ attribute_code: key, value: fields[key] });
+    }
+    if (customAttrs.length) productPayload.product.custom_attributes = customAttrs;
+
+    // Category assignment
+    if (fields.category_ids) {
+      productPayload.product.extension_attributes = {
+        category_links: fields.category_ids.map((id, idx) => ({ category_id: String(id), position: idx }))
+      };
+    }
+
+    const res = await fetch(`${baseUrl}/rest/V1/products/${encodeURIComponent(sku)}`, {
+      method: 'PUT', headers, body: JSON.stringify(productPayload)
+    });
+    if (!res.ok) {
+      const errBody = await res.json().catch(() => ({}));
+      throw new Error(errBody?.message || `Update mislukt (${res.status})`);
+    }
+    return { success: true, updated_fields: Object.keys(fields).length, product: body };
+  }
+
+  if (action === 'upload-image') {
+    const sku = body?.sku;
+    const imageData = body?.image;
+    if (!sku || !imageData) throw new Error('SKU en afbeelding zijn vereist.');
+
+    const res = await fetch(`${baseUrl}/rest/V1/products/${encodeURIComponent(sku)}/media`, {
+      method: 'POST', headers,
+      body: JSON.stringify({
+        entry: {
+          media_type: 'image',
+          label: imageData.label || '',
+          position: imageData.position || 0,
+          disabled: false,
+          types: imageData.types || [],
+          content: {
+            base64_encoded_data: imageData.base64,
+            type: imageData.mimeType || 'image/jpeg',
+            name: imageData.filename || 'product-image.jpg'
+          }
+        }
+      })
+    });
+    if (!res.ok) {
+      const errBody = await res.json().catch(() => ({}));
+      throw new Error(errBody?.message || `Afbeelding upload mislukt (${res.status})`);
+    }
+    return { success: true, id: await res.json() };
+  }
+
+  return {};
+}
+
+// ─── Log helper ───
+function addLog(type, message) {
+  const log = document.getElementById('magentoLog');
+  log.style.display = 'block';
+  const time = new Date().toLocaleTimeString('nl-NL');
+  const entry = document.createElement('div');
+  entry.className = 'magento-log-entry ' + type;
+  const prefix = type === 'success' ? '✓' : type === 'error' ? '✗' : type === 'warn' ? '⚠' : '→';
+  entry.textContent = `[${time}] ${prefix} ${message}`;
+  log.appendChild(entry);
+  log.scrollTop = log.scrollHeight;
+}
+
+// ─── Test connection ───
+async function testMagentoConnection() {
+  addLog('info', 'Verbinding testen...');
+  const statusEl = document.getElementById('magentoStatus');
+  try {
+    // First test proxy itself
+    const proxyTest = await proxyRequest('test-magento');
+    if (proxyTest.status === 'connected') {
+      statusEl.className = 'magento-status connected';
+      statusEl.innerHTML = '<span class="status-dot green"></span><span>Verbonden met Magento 2 — ' + (proxyTest.store || '') + '</span>';
+      addLog('success', 'Succesvol verbonden met Magento! Store: ' + (proxyTest.store || 'onbekend'));
+    } else {
+      throw new Error(proxyTest.message || 'Onbekende fout');
+    }
+  } catch (err) {
+    statusEl.className = 'magento-status error';
+    statusEl.innerHTML = '<span class="status-dot red"></span><span>Verbindingsfout: ' + err.message + '</span>';
+    addLog('error', 'Verbinding mislukt: ' + err.message);
+  }
+}
+
+// ─── Load categories from Magento ───
+async function loadMagentoCategories() {
+  addLog('info', 'Categorieën ophalen uit Magento...');
+  try {
+    const result = await proxyRequest('categories');
+    if (result.categories) {
+      // Flatten for dropdown: build flat list with paths
+      function flattenForDropdown(cats, path = '') {
+        let flat = [];
+        for (const c of cats) {
+          const fullPath = path ? `${path} > ${c.name}` : c.name;
+          flat.push({ id: c.id, name: c.name, path: fullPath });
+          if (c.children) flat = flat.concat(flattenForDropdown(c.children, fullPath));
+        }
+        return flat;
+      }
+      magentoCategories = result.flat || flattenForDropdown(result.categories);
+      addLog('success', magentoCategories.length + ' categorieën geladen.');
+      renderMagentoCatDropdown();
+    } else {
+      throw new Error('Onverwacht antwoord');
+    }
+  } catch (err) {
+    addLog('error', 'Categorieën laden mislukt: ' + err.message);
+  }
+}
+
+function renderMagentoCatDropdown(filter = '') {
+  const dd = document.getElementById('magentoCatDropdown');
+  const filtered = filter
+    ? magentoCategories.filter(c => c.name.toLowerCase().includes(filter.toLowerCase()) || c.path.toLowerCase().includes(filter.toLowerCase()))
+    : magentoCategories;
+  dd.innerHTML = filtered.slice(0, 30).map(c =>
+    `<div class="category-option" onmousedown="selectMagentoCat(${c.id}, '${escHTML(c.name)}')">
+      <strong>${escHTML(c.name)}</strong>
+      <div class="path">${escHTML(c.path)}</div>
+    </div>`
+  ).join('');
+}
+
+function filterMagentoCategories() {
+  const val = document.getElementById('magentoCatSearch').value;
+  renderMagentoCatDropdown(val);
+  document.getElementById('magentoCatDropdown').classList.add('open');
+}
+
+function selectMagentoCat(id, name) {
+  if (!selectedMagentoCatIds.find(c => c.id === id)) {
+    selectedMagentoCatIds.push({ id, name });
+    renderMagentoCatTags();
+  }
+  document.getElementById('magentoCatSearch').value = '';
+  document.getElementById('magentoCatDropdown').classList.remove('open');
+}
+
+function removeMagentoCat(id) {
+  selectedMagentoCatIds = selectedMagentoCatIds.filter(c => c.id !== id);
+  renderMagentoCatTags();
+}
+
+function renderMagentoCatTags() {
+  const container = document.getElementById('magentoCatTags');
+  container.innerHTML = selectedMagentoCatIds.map(c =>
+    `<span class="cat-tag">${escHTML(c.name)} <small style="opacity:0.6">(${c.id})</small><button onclick="removeMagentoCat(${c.id})">×</button></span>`
+  ).join('');
+}
+
+// ─── Update summary before push ───
+// ─── Opvoer: Product zoeken & koppelen ───
+let opvoerProduct = null; // { sku, name, id, status, price, custom_attributes, category_ids }
+
+async function searchOpvoerProduct() {
+  const query = document.getElementById('opvoerProductSearch').value.trim();
+  if (!query) return;
+  const container = document.getElementById('opvoerSearchResults');
+  container.style.display = 'block';
+  container.innerHTML = '<p style="color:#888;font-size:13px;padding:8px;">🔍 Zoeken...</p>';
+  try {
+    const result = await proxyRequest('search-products?q=' + encodeURIComponent(query));
+    if (result.items && result.items.length > 0) {
+      container.innerHTML = result.items.map(p =>
+        `<div class="img-search-result" ondblclick="linkOpvoerProduct('${escHTML(p.sku)}')">
+          <div>
+            <div class="name">${escHTML(p.name)}</div>
+            <div class="meta">SKU: ${escHTML(p.sku)} · €${parseFloat(p.price).toFixed(2)} · ${p.status == 1 ? '🟢 Actief' : '🔴 Uit'}</div>
+          </div>
+          <button class="select-btn" onclick="event.stopPropagation();linkOpvoerProduct('${escHTML(p.sku)}')">Koppelen →</button>
+        </div>`
+      ).join('') + `<p style="font-size:11px;color:#bbb;margin-top:8px;">${result.items.length} resultaten</p>`;
+    } else {
+      container.innerHTML = '<p style="color:#999;font-size:13px;padding:8px;">Geen producten gevonden.</p>';
+    }
+  } catch (err) {
+    container.innerHTML = '<p style="color:#e74c3c;font-size:13px;padding:8px;">Fout: ' + err.message + '</p>';
+  }
+}
+
+async function linkOpvoerProduct(sku) {
+  try {
+    const result = await proxyRequest('product-detail?sku=' + encodeURIComponent(sku));
+    if (result.product) {
+      opvoerProduct = result.product;
+      document.getElementById('opvoerSearchResults').style.display = 'none';
+      document.getElementById('opvoerProductSearch').value = '';
+      renderOpvoerLinked();
+    }
+  } catch (err) {
+    alert('Kon product niet ophalen: ' + err.message);
+  }
+}
+
+function unlinkOpvoerProduct() {
+  opvoerProduct = null;
+  document.getElementById('opvoerLinkedBanner').style.display = 'none';
+  document.getElementById('opvoerFieldMapCard').style.display = 'none';
+  document.getElementById('opvoerPushCard').style.display = 'none';
+}
+
+function renderOpvoerLinked() {
+  if (!opvoerProduct) return;
+  const banner = document.getElementById('opvoerLinkedBanner');
+  banner.style.display = 'block';
+  document.getElementById('opvoerLinkedName').textContent = opvoerProduct.name;
+  document.getElementById('opvoerLinkedSku').textContent = '(' + opvoerProduct.sku + ')';
+  document.getElementById('opvoerLinkedStatus').innerHTML = opvoerProduct.status == 1 ? '🟢 Actief' : '🔴 Uitgeschakeld';
+  
+  const ca = opvoerProduct.custom_attributes || {};
+  const filledAttrs = Object.keys(ca).filter(k => ca[k] && ca[k] !== '');
+  document.getElementById('opvoerLinkedMeta').textContent = 
+    `€${parseFloat(opvoerProduct.price || 0).toFixed(2)} · ${opvoerProduct.image_count || 0} afbeelding(en) · ${filledAttrs.length} attributen ingevuld · ${(opvoerProduct.category_ids || []).length} categorieën`;
+
+  // Pre-fill price if set
+  if (opvoerProduct.price) document.getElementById('magentoPrice').value = opvoerProduct.price;
+
+  document.getElementById('opvoerFieldMapCard').style.display = 'block';
+  document.getElementById('opvoerPushCard').style.display = 'block';
+  buildFieldMap();
+}
+
+// ─── Veldmapping overzicht bouwen ───
+function buildFieldMap() {
+  const fields = [
+    { key: 'name',             label: 'Productnaam',       magento: 'name',              getValue: () => document.getElementById('productName').value },
+    { key: 'shortDescription', label: 'Short description', magento: 'short_description', getValue: () => document.getElementById('shortDescription').value },
+    { key: 'descriptionHTML',  label: 'Omschrijving HTML', magento: 'description',       getValue: () => buildFullHTML() },
+    { key: 'metaTitle',        label: 'Meta titel (SEO)',  magento: 'meta_title',        getValue: () => document.getElementById('metaTitle').value },
+    { key: 'seoDescription',   label: 'SEO beschrijving',  magento: 'meta_description',  getValue: () => document.getElementById('seoDescription').value },
+    { key: 'urlKey',           label: 'URL key',           magento: 'url_key',           getValue: () => document.getElementById('urlKey').value },
+    { key: 'ingredients',      label: 'Ingrediënten',      magento: 'ingredients',       getValue: () => document.getElementById('ingredients').value },
+    { key: 'brand',            label: 'Merk',              magento: 'brand',             getValue: () => document.getElementById('brand').value },
+    { key: 'line',             label: 'Lijn',              magento: 'product_line',      getValue: () => document.getElementById('line').value },
+    { key: 'productType',      label: 'Producttype',       magento: 'product_type_custom', getValue: () => document.getElementById('productType').value },
+    { key: 'contentSize',      label: 'Inhoud',            magento: 'content_size',      getValue: () => document.getElementById('contentSize').value },
+    { key: 'ikHeb',            label: 'Ik heb',            magento: 'ik_heb',            getValue: () => data.ikHeb.join(', ') },
+    { key: 'werking',          label: 'Werking',           magento: 'werking',           getValue: () => data.werking.join(', ') },
+    { key: 'vrijVan',          label: 'Vrij van',          magento: 'vrij_van',          getValue: () => data.vrijVan.join(', ') },
+    { key: 'metaKeywords',     label: 'Meta keywords',     magento: 'meta_keyword',      getValue: () => [...data.ikHeb, ...data.werking, document.getElementById('brand').value].filter(Boolean).join(', ') },
+  ];
+
+  const ca = opvoerProduct?.custom_attributes || {};
+
+  const html = `
+    <table style="width:100%;border-collapse:collapse;font-size:13px;">
+      <thead>
+        <tr style="background:#f9f4ef;">
+          <th style="padding:10px 14px;text-align:left;font-weight:600;border-bottom:1px solid #e5dcd1;width:30px;">
+            <input type="checkbox" id="opvoerSelectAll" checked onchange="toggleAllOpvoerFields(this.checked)">
+          </th>
+          <th style="padding:10px 14px;text-align:left;font-weight:600;border-bottom:1px solid #e5dcd1;">Veld</th>
+          <th style="padding:10px 14px;text-align:left;font-weight:600;border-bottom:1px solid #e5dcd1;font-family:'Space Mono',monospace;font-size:11px;">Magento attribuut</th>
+          <th style="padding:10px 14px;text-align:left;font-weight:600;border-bottom:1px solid #e5dcd1;">Tool waarde</th>
+          <th style="padding:10px 14px;text-align:left;font-weight:600;border-bottom:1px solid #e5dcd1;">Huidige Magento waarde</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${fields.map(f => {
+          const toolVal = f.getValue();
+          const magentoVal = f.key === 'name' ? opvoerProduct.name : (ca[f.magento] || '');
+          const hasToolVal = toolVal && toolVal.trim() !== '';
+          const hasMagentoVal = magentoVal && String(magentoVal).trim() !== '';
+          const isOverwrite = hasToolVal && hasMagentoVal;
+          return `
+          <tr style="border-bottom:1px solid #f2ece4;" data-field="${f.key}">
+            <td style="padding:10px 14px;">
+              <input type="checkbox" class="opvoer-field-cb" data-key="${f.key}" ${hasToolVal ? 'checked' : ''} ${!hasToolVal ? 'disabled' : ''}>
+            </td>
+            <td style="padding:10px 14px;font-weight:500;">
+              ${f.label}
+              ${isOverwrite ? '<span style="color:#f39c12;font-size:10px;margin-left:4px;" title="Overschrijft bestaande waarde">⚠ overschrijft</span>' : ''}
+            </td>
+            <td style="padding:10px 14px;font-family:'Space Mono',monospace;font-size:11px;color:#888;">${f.magento}</td>
+            <td style="padding:10px 14px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+              ${hasToolVal ? '<span style="color:#27ae60;">✓</span> ' + escHTML(toolVal.substring(0, 60)) + (toolVal.length > 60 ? '…' : '') : '<span style="color:#ccc;">— leeg</span>'}
+            </td>
+            <td style="padding:10px 14px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#888;">
+              ${hasMagentoVal ? escHTML(String(magentoVal).substring(0, 60).replace(/<[^>]*>/g, '')) + (String(magentoVal).length > 60 ? '…' : '') : '<span style="color:#ccc;">— leeg</span>'}
+            </td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  `;
+  document.getElementById('opvoerFieldMap').innerHTML = html;
+  updateOpvoerPushSummary();
+}
+
+function toggleAllOpvoerFields(checked) {
+  document.querySelectorAll('.opvoer-field-cb:not(:disabled)').forEach(cb => cb.checked = checked);
+  updateOpvoerPushSummary();
+}
+
+function updateOpvoerPushSummary() {
+  if (!opvoerProduct) return;
+  const selectedFields = [...document.querySelectorAll('.opvoer-field-cb:checked')].map(cb => cb.dataset.key);
+  const price = document.getElementById('magentoPrice').value;
+  const cats = selectedMagentoCatIds.length;
+
+  document.getElementById('opvoerPushSummary').innerHTML = [
+    ['Product', opvoerProduct.name + ' (' + opvoerProduct.sku + ')'],
+    ['Te updaten velden', selectedFields.length + ' van ' + document.querySelectorAll('.opvoer-field-cb').length],
+    ['Prijs', price ? '€ ' + parseFloat(price).toFixed(2) : '<span style="color:#999;">— niet wijzigen</span>'],
+    ['Categorieën', cats > 0 ? cats + ' geselecteerd' : '<span style="color:#999;">— niet wijzigen</span>'],
+    ['Status', document.getElementById('magentoProductStatus').options[document.getElementById('magentoProductStatus').selectedIndex].text],
+  ].map(([l, v]) => `<div class="magento-summary-row"><span class="magento-summary-label">${l}</span><span class="magento-summary-value">${v}</span></div>`).join('');
+}
+
+// ─── Push alle velden naar Magento ───
+async function pushAllFieldsToMagento() {
+  if (!opvoerProduct) { alert('Koppel eerst een product.'); return; }
+
+  const selectedKeys = [...document.querySelectorAll('.opvoer-field-cb:checked')].map(cb => cb.dataset.key);
+  if (selectedKeys.length === 0 && !document.getElementById('magentoPrice').value) {
+    alert('Selecteer minimaal één veld om te pushen.'); return;
+  }
+
+  const btn = document.getElementById('pushBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinning">⟳</span> Velden bijwerken in Magento...';
+
+  addLog('info', 'Product "' + opvoerProduct.name + '" (' + opvoerProduct.sku + ') bijwerken...');
+  addLog('info', selectedKeys.length + ' veld(en) geselecteerd voor update');
+
+  // Build field getters
+  const fieldGetters = {
+    name:             () => document.getElementById('productName').value,
+    shortDescription: () => document.getElementById('shortDescription').value,
+    descriptionHTML:  () => buildFullHTML(),
+    metaTitle:        () => document.getElementById('metaTitle').value,
+    seoDescription:   () => document.getElementById('seoDescription').value,
+    urlKey:           () => document.getElementById('urlKey').value,
+    ingredients:      () => document.getElementById('ingredients').value,
+    brand:            () => document.getElementById('brand').value,
+    line:             () => document.getElementById('line').value,
+    productType:      () => document.getElementById('productType').value,
+    contentSize:      () => document.getElementById('contentSize').value,
+    ikHeb:            () => data.ikHeb,
+    werking:          () => data.werking,
+    vrijVan:          () => data.vrijVan,
+    metaKeywords:     () => [...data.ikHeb, ...data.werking, document.getElementById('brand').value].filter(Boolean).join(', '),
+  };
+
+  const payload = { sku: opvoerProduct.sku };
+
+  // Add selected fields
+  selectedKeys.forEach(key => {
+    if (fieldGetters[key]) {
+      payload[key] = fieldGetters[key]();
+    }
+  });
+
+  // Add price, qty, status, weight if set
+  const price = document.getElementById('magentoPrice').value;
+  if (price) payload.price = price;
+  
+  const qty = document.getElementById('magentoQty').value;
+  if (qty) payload.qty = qty;
+  
+  payload.status = document.getElementById('magentoProductStatus').value;
+  
+  const weight = document.getElementById('magentoWeight').value;
+  if (weight) payload.weight = weight;
+
+  // Categories
+  if (selectedMagentoCatIds.length > 0) {
+    payload.categoryIds = selectedMagentoCatIds.map(c => c.id);
+  }
+
+  try {
+    addLog('info', 'Payload versturen...');
+    const result = await proxyRequest('update-fields', 'POST', payload);
+    if (result.success) {
+      addLog('success', '✅ ' + (result.updated_fields || 0) + ' velden bijgewerkt.');
+      if (result.product?.id) {
+        addLog('info', 'Magento product ID: ' + result.product.id);
+      }
+      btn.innerHTML = '✅ Product bijgewerkt!';
+      btn.style.background = '#27ae60';
+      // Refresh product data
+      try {
+        const refreshed = await proxyRequest('product-detail?sku=' + encodeURIComponent(opvoerProduct.sku));
+        if (refreshed.product) {
+          opvoerProduct = refreshed.product;
+          buildFieldMap();
+          addLog('info', 'Productgegevens ververst.');
+        }
+      } catch (e) {}
+      setTimeout(() => {
+        btn.innerHTML = '🚀 Alle velden naar Magento pushen';
+        btn.style.background = '';
+        btn.disabled = false;
+      }, 4000);
+    } else {
+      throw new Error(result.message || 'Onbekende fout');
+    }
+  } catch (err) {
+    addLog('error', 'Fout: ' + err.message);
+    btn.innerHTML = '🚀 Alle velden naar Magento pushen';
+    btn.disabled = false;
+  }
+}
+
+// ─── Tab 6 auto-refresh ───
+const origSwitchTab = switchTab;
+switchTab = function(idx) {
+  document.querySelectorAll('.tab-content').forEach((el, i) => el.classList.toggle('active', i === idx));
+  document.querySelectorAll('.tab-btn').forEach((el, i) => el.classList.toggle('active', i === idx));
+  if (idx === 4) updateGooglePreview();
+  if (idx === 5) updateExport();
+  if (idx === 7 && opvoerProduct) buildFieldMap();
+};
+
+// ──────────────────────────────────────────────
+// IMAGE MANAGEMENT + MAGENTO LINKING
+// ──────────────────────────────────────────────
+
+let uploadedImages = [];
+let imgIdCounter = 0;
+let linkedProduct = null; // { sku, name, id, images[] }
+
+// ─── Product search & linking ───
+async function searchProductForImages() {
+  const query = document.getElementById('imgProductSearch').value.trim();
+  if (!query) return;
+  const container = document.getElementById('imgSearchResults');
+  container.style.display = 'block';
+  container.innerHTML = '<p style="color:#888;font-size:13px;padding:8px;">🔍 Zoeken...</p>';
+
+  try {
+    const result = await proxyRequest('search-products?q=' + encodeURIComponent(query));
+    if (result.items && result.items.length > 0) {
+      container.innerHTML = result.items.map(p =>
+        `<div class="img-search-result" ondblclick="linkProduct('${escHTML(p.sku)}')">
+          <div>
+            <div class="name">${escHTML(p.name)}</div>
+            <div class="meta">SKU: ${escHTML(p.sku)} · €${parseFloat(p.price).toFixed(2)} · ${p.status == 1 ? '🟢 Actief' : '🔴 Uit'}</div>
+          </div>
+          <button class="select-btn" onclick="event.stopPropagation();linkProduct('${escHTML(p.sku)}')">Koppelen →</button>
+        </div>`
+      ).join('') + `<p style="font-size:11px;color:#bbb;margin-top:8px;">${result.items.length} resultaten gevonden</p>`;
+    } else {
+      container.innerHTML = '<p style="color:#999;font-size:13px;padding:8px;">Geen producten gevonden voor "' + escHTML(query) + '"</p>';
+    }
+  } catch (err) {
+    container.innerHTML = '<p style="color:#e74c3c;font-size:13px;padding:8px;">Fout: ' + err.message + '</p>';
+  }
+}
+
+async function linkProduct(sku) {
+  try {
+    const result = await proxyRequest('product-detail?sku=' + encodeURIComponent(sku));
+    if (result.product) {
+      linkedProduct = result.product;
+      document.getElementById('imgSearchResults').style.display = 'none';
+      document.getElementById('imgProductSearch').value = '';
+      renderLinkedProduct();
+    }
+  } catch (err) {
+    alert('Kon product niet ophalen: ' + err.message);
+  }
+}
+
+function unlinkProduct() {
+  linkedProduct = null;
+  document.getElementById('linkedProductBanner').style.display = 'none';
+  document.getElementById('existingImagesCard').style.display = 'none';
+  document.getElementById('imgPushCard').style.display = 'none';
+}
+
+function renderLinkedProduct() {
+  if (!linkedProduct) return;
+  const banner = document.getElementById('linkedProductBanner');
+  banner.style.display = 'block';
+  document.getElementById('linkedProductName').textContent = linkedProduct.name;
+  document.getElementById('linkedProductSku').textContent = '(' + linkedProduct.sku + ')';
+  document.getElementById('linkedProductImages').textContent = linkedProduct.image_count + ' bestaande afbeelding(en) in Magento';
+
+  // Show existing images
+  const card = document.getElementById('existingImagesCard');
+  const grid = document.getElementById('existingImgGrid');
+  if (linkedProduct.images && linkedProduct.images.length > 0) {
+    card.style.display = 'block';
+    grid.innerHTML = linkedProduct.images.map(img =>
+      `<div class="existing-img-card">
+        <img src="${escHTML(img.url)}" alt="${escHTML(img.label)}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22><rect fill=%22%23f0f0f0%22 width=%22200%22 height=%22200%22/><text x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22 font-size=%2214%22>Niet beschikbaar</text></svg>'">
+        <div class="types">
+          ${img.types.map(t => `<span class="type-badge">${t}</span>`).join('')}
+        </div>
+      </div>`
+    ).join('');
+  } else {
+    card.style.display = 'block';
+    grid.innerHTML = '<p style="color:#999;font-size:13px;grid-column:1/-1;">Geen afbeeldingen gevonden bij dit product.</p>';
+  }
+
+  // Show push card
+  document.getElementById('imgPushCard').style.display = 'block';
+  updateImgPushSummary();
+}
+
+function updateImgPushSummary() {
+  if (!linkedProduct) return;
+  const mainImg = uploadedImages.find(i => i.isMain);
+  document.getElementById('imgPushSummary').innerHTML = [
+    ['Product', linkedProduct.name],
+    ['SKU', linkedProduct.sku],
+    ['Bestaande afbeeldingen', linkedProduct.image_count + ' stuks'],
+    ['Nieuwe afbeeldingen', uploadedImages.length + ' stuks'],
+    ['Hoofdafbeelding', mainImg ? '★ ' + mainImg.name : '<span style="color:#f39c12">⚠ Niet geselecteerd</span>'],
+  ].map(([l, v]) => `<div class="magento-summary-row"><span class="magento-summary-label">${l}</span><span class="magento-summary-value">${v}</span></div>`).join('');
+}
+
+// ─── Push images to Magento ───
+async function pushImagesToMagento() {
+  if (!linkedProduct) { alert('Koppel eerst een product.'); return; }
+  if (uploadedImages.length === 0) { alert('Upload eerst afbeeldingen.'); return; }
+
+  const btn = document.getElementById('imgPushBtn');
+  const log = document.getElementById('imgPushLog');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinning">⟳</span> Uploaden naar Magento...';
+  log.style.display = 'block';
+  log.innerHTML = '';
+
+  const addImgLog = (type, msg) => {
+    const time = new Date().toLocaleTimeString('nl-NL');
+    const prefix = type === 'success' ? '✓' : type === 'error' ? '✗' : type === 'warn' ? '⚠' : '→';
+    log.innerHTML += `<div class="magento-log-entry ${type}">[${time}] ${prefix} ${msg}</div>`;
+    log.scrollTop = log.scrollHeight;
+  };
+
+  addImgLog('info', `Start upload van ${uploadedImages.length} afbeelding(en) naar ${linkedProduct.sku}...`);
+
+  let successCount = 0;
+
+  for (let i = 0; i < uploadedImages.length; i++) {
+    const img = uploadedImages[i];
+    addImgLog('info', `(${i + 1}/${uploadedImages.length}) Uploaden: ${img.name}...`);
+
+    try {
+      // Convert current image URL to base64
+      const { canvas } = await loadImageToCanvas(img.currentUrl);
+
+      // Determine mime type and get base64
+      const isPng = img.name.endsWith('.png');
+      const mimeType = isPng ? 'image/png' : 'image/jpeg';
+      const dataUrl = canvas.toDataURL(mimeType, 0.95);
+      const base64 = dataUrl.replace(/^data:image\/\w+;base64,/, '');
+
+      // Determine types (roles) for this image
+      const types = img.isMain ? ['image', 'small_image', 'thumbnail'] : [];
+
+      const result = await proxyRequest('upload-image', 'POST', {
+        sku: linkedProduct.sku,
+        image: {
+          base64: base64,
+          filename: img.name.replace(/[^a-zA-Z0-9._-]/g, '_'),
+          label: img.isMain ? linkedProduct.name : '',
+          position: i + (linkedProduct.image_count || 0),
+          types: types,
+          mimeType: mimeType,
+        }
+      });
+
+      if (result.success) {
+        addImgLog('success', `${img.name} geüpload! (ID: ${result.id})${img.isMain ? ' ★ Hoofdafbeelding' : ''}`);
+        successCount++;
+      } else {
+        throw new Error(result.message || 'Onbekend');
+      }
+    } catch (err) {
+      addImgLog('error', `${img.name} mislukt: ${err.message}`);
+    }
+  }
+
+  addImgLog(successCount === uploadedImages.length ? 'success' : 'warn',
+    `Klaar! ${successCount} van ${uploadedImages.length} afbeeldingen geüpload.`);
+
+  if (successCount > 0) {
+    addImgLog('info', `Bekijk product in Magento Admin.`);
+    // Refresh product data
+    try {
+      const refreshed = await proxyRequest('product-detail?sku=' + encodeURIComponent(linkedProduct.sku));
+      if (refreshed.product) {
+        linkedProduct = refreshed.product;
+        renderLinkedProduct();
+      }
+    } catch (e) {}
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '🚀 Upload afbeeldingen naar Magento';
+}
+
+// ─── Drag & Drop ───
+const dropzone = document.getElementById('imgDropzone');
+dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
+dropzone.addEventListener('dragleave', () => { dropzone.classList.remove('dragover'); });
+dropzone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  dropzone.classList.remove('dragover');
+  handleImageUpload(e.dataTransfer.files);
+});
+
+function handleImageUpload(files) {
+  const remaining = 10 - uploadedImages.length;
+  if (remaining <= 0) { alert('Maximum van 10 afbeeldingen bereikt.'); return; }
+  const toAdd = Array.from(files).slice(0, remaining);
+  toAdd.forEach(file => {
+    if (!file.type.match(/^image\/(jpeg|png|webp)$/)) return;
+    const id = ++imgIdCounter;
+    const url = URL.createObjectURL(file);
+    uploadedImages.push({
+      id, file, name: file.name, originalUrl: url, currentUrl: url,
+      isMain: uploadedImages.length === 0, processing: false,
+    });
+  });
+  renderImageGrid();
+  if (linkedProduct) updateImgPushSummary();
+}
+
+function renderImageGrid() {
+  const grid = document.getElementById('imgGrid');
+  const counter = document.getElementById('imgCounter');
+  const bulkBar = document.getElementById('imgBulkBar');
+
+  counter.textContent = uploadedImages.length + ' / 10 afbeeldingen';
+  bulkBar.style.display = uploadedImages.length > 0 ? 'flex' : 'none';
+
+  grid.innerHTML = uploadedImages.map((img, idx) => `
+    <div class="img-card ${img.isMain ? 'main-image' : ''}" id="imgCard${img.id}">
+      ${img.isMain ? '<div class="img-badge-main">★ HOOFD</div>' : ''}
+      <div class="img-badge-index">${idx + 1}</div>
+      <img class="img-card-preview" src="${img.currentUrl}" alt="${escHTML(img.name)}">
+      <div class="img-card-bar">
+        <div class="img-card-name">${escHTML(img.name)}</div>
+        <div class="img-card-actions">
+          ${img.isMain
+            ? '<span class="img-action-btn star" style="cursor:default;">★ Hoofdafbeelding</span>'
+            : `<button class="img-action-btn primary" onclick="setMainImage(${img.id})">★ Maak hoofd</button>`
+          }
+          <button class="img-action-btn" onclick="removeBgSingle(${img.id})" ${img.processing ? 'disabled' : ''}>
+            ${img.processing ? '<span class="spinning">⟳</span>' : '🪄'} BG weg
+          </button>
+          <button class="img-action-btn" onclick="resizeSingle(${img.id})" ${img.processing ? 'disabled' : ''}>
+            📐 1200²
+          </button>
+          <button class="img-action-btn" onclick="downloadSingle(${img.id})">⬇</button>
+          <button class="img-action-btn danger" onclick="removeImage(${img.id})">✕</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function setMainImage(id) {
+  uploadedImages.forEach(img => img.isMain = (img.id === id));
+  renderImageGrid();
+  if (linkedProduct) updateImgPushSummary();
+}
+
+function removeImage(id) {
+  uploadedImages = uploadedImages.filter(img => img.id !== id);
+  if (uploadedImages.length > 0 && !uploadedImages.some(img => img.isMain)) {
+    uploadedImages[0].isMain = true;
+  }
+  renderImageGrid();
+  if (linkedProduct) updateImgPushSummary();
+}
+
+// ─── Load image to canvas helper ───
+function loadImageToCanvas(url) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      resolve({ canvas, ctx, img });
+    };
+    img.onerror = reject;
+    img.src = url;
+  });
+}
+
+// ─── Background Removal (client-side) ───
+// Uses edge detection + flood fill to detect and replace background with white
+// This is a heuristic approach; for production use, an API like remove.bg is recommended.
+
+function removeBgFromCanvas(canvas) {
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width;
+  const h = canvas.height;
+  const imageData = ctx.getImageData(0, 0, w, h);
+  const d = imageData.data;
+
+  // Sample corners to detect background color
+  const corners = [
+    getPixel(d, w, 0, 0),
+    getPixel(d, w, w - 1, 0),
+    getPixel(d, w, 0, h - 1),
+    getPixel(d, w, w - 1, h - 1),
+    getPixel(d, w, Math.floor(w * 0.1), Math.floor(h * 0.1)),
+    getPixel(d, w, Math.floor(w * 0.9), Math.floor(h * 0.1)),
+    getPixel(d, w, Math.floor(w * 0.1), Math.floor(h * 0.9)),
+    getPixel(d, w, Math.floor(w * 0.9), Math.floor(h * 0.9)),
+  ];
+
+  // Average corner color as background reference
+  const bgColor = {
+    r: Math.round(corners.reduce((s, c) => s + c.r, 0) / corners.length),
+    g: Math.round(corners.reduce((s, c) => s + c.g, 0) / corners.length),
+    b: Math.round(corners.reduce((s, c) => s + c.b, 0) / corners.length),
+  };
+
+  // Flood fill from edges - mark background pixels
+  const visited = new Uint8Array(w * h);
+  const isBg = new Uint8Array(w * h);
+  const tolerance = 60; // color distance tolerance
+  const shadowTolerance = 90; // extra tolerance for shadows (darker versions of bg)
+
+  const queue = [];
+
+  // Seed from all edge pixels
+  for (let x = 0; x < w; x++) {
+    queue.push(x); // top row
+    queue.push((h - 1) * w + x); // bottom row
+  }
+  for (let y = 0; y < h; y++) {
+    queue.push(y * w); // left col
+    queue.push(y * w + (w - 1)); // right col
+  }
+
+  // BFS flood fill
+  let head = 0;
+  while (head < queue.length) {
+    const idx = queue[head++];
+    if (idx < 0 || idx >= w * h || visited[idx]) continue;
+    visited[idx] = 1;
+
+    const px = idx % w;
+    const py = Math.floor(idx / w);
+    const pi = idx * 4;
+    const pr = d[pi], pg = d[pi + 1], pb = d[pi + 2];
+
+    // Check if pixel matches background (including shadows)
+    const dist = Math.sqrt((pr - bgColor.r) ** 2 + (pg - bgColor.g) ** 2 + (pb - bgColor.b) ** 2);
+    // Shadow detection: darker version of bg color with similar hue
+    const brightness = (pr + pg + pb) / 3;
+    const bgBrightness = (bgColor.r + bgColor.g + bgColor.b) / 3;
+    const isShadow = brightness < bgBrightness && dist < shadowTolerance;
+
+    if (dist < tolerance || isShadow) {
+      isBg[idx] = 1;
+      // Add neighbors
+      if (px > 0) queue.push(idx - 1);
+      if (px < w - 1) queue.push(idx + 1);
+      if (py > 0) queue.push(idx - w);
+      if (py < h - 1) queue.push(idx + w);
+    }
+  }
+
+  // Apply: replace background with white, smooth edges
+  for (let i = 0; i < w * h; i++) {
+    if (isBg[i]) {
+      const pi = i * 4;
+      d[pi] = 255;     // R
+      d[pi + 1] = 255; // G
+      d[pi + 2] = 255; // B
+      d[pi + 3] = 255; // A
+    }
+  }
+
+  // Edge smoothing: soften the transition between subject and white bg
+  const smoothed = new Uint8ClampedArray(d);
+  for (let y = 1; y < h - 1; y++) {
+    for (let x = 1; x < w - 1; x++) {
+      const idx = y * w + x;
+      if (!isBg[idx]) {
+        // Check if this pixel is at the edge of the subject
+        const neighbors = [idx - 1, idx + 1, idx - w, idx + w];
+        const bgNeighbors = neighbors.filter(n => isBg[n]).length;
+        if (bgNeighbors > 0 && bgNeighbors < 4) {
+          const pi = idx * 4;
+          const blend = bgNeighbors / 6; // gentle blend
+          smoothed[pi] = Math.round(d[pi] * (1 - blend) + 255 * blend);
+          smoothed[pi + 1] = Math.round(d[pi + 1] * (1 - blend) + 255 * blend);
+          smoothed[pi + 2] = Math.round(d[pi + 2] * (1 - blend) + 255 * blend);
+        }
+      }
+    }
+  }
+
+  const newImageData = new ImageData(smoothed, w, h);
+  ctx.putImageData(newImageData, 0, 0);
+  return canvas;
+}
+
+function getPixel(data, width, x, y) {
+  const i = (y * width + x) * 4;
+  return { r: data[i], g: data[i + 1], b: data[i + 2], a: data[i + 3] };
+}
+
+// ─── Resize to 1200x1200 with white padding ───
+function resizeToSquare(canvas, size) {
+  const outCanvas = document.createElement('canvas');
+  outCanvas.width = size;
+  outCanvas.height = size;
+  const ctx = outCanvas.getContext('2d');
+
+  // Fill white background
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(0, 0, size, size);
+
+  // Calculate scaling to fit within size while maintaining aspect ratio
+  const srcW = canvas.width;
+  const srcH = canvas.height;
+  const scale = Math.min(size / srcW, size / srcH) * 0.92; // 92% to add some padding
+  const drawW = srcW * scale;
+  const drawH = srcH * scale;
+  const offsetX = (size - drawW) / 2;
+  const offsetY = (size - drawH) / 2;
+
+  ctx.drawImage(canvas, offsetX, offsetY, drawW, drawH);
+  return outCanvas;
+}
+
+// ─── Single image operations ───
+async function removeBgSingle(id) {
+  const img = uploadedImages.find(i => i.id === id);
+  if (!img || img.processing) return;
+  img.processing = true;
+  renderImageGrid();
+
+  try {
+    const { canvas } = await loadImageToCanvas(img.currentUrl);
+    removeBgFromCanvas(canvas);
+    const newUrl = canvas.toDataURL('image/png');
+    img.currentUrl = newUrl;
+    img.name = img.name.replace(/\.[^.]+$/, '') + '-nobg.png';
+  } catch (err) {
+    alert('Fout bij verwerken: ' + err.message);
+  }
+  img.processing = false;
+  renderImageGrid();
+}
+
+async function resizeSingle(id) {
+  const img = uploadedImages.find(i => i.id === id);
+  if (!img || img.processing) return;
+  img.processing = true;
+  renderImageGrid();
+
+  try {
+    const { canvas } = await loadImageToCanvas(img.currentUrl);
+    const resized = resizeToSquare(canvas, 1200);
+    const newUrl = resized.toDataURL('image/jpeg', 0.95);
+    img.currentUrl = newUrl;
+    img.name = img.name.replace(/\.[^.]+$/, '') + '-1200x1200.jpg';
+  } catch (err) {
+    alert('Fout bij resizen: ' + err.message);
+  }
+  img.processing = false;
+  renderImageGrid();
+}
+
+function downloadSingle(id) {
+  const img = uploadedImages.find(i => i.id === id);
+  if (!img) return;
+  const a = document.createElement('a');
+  a.href = img.currentUrl;
+  a.download = img.name;
+  a.click();
+}
+
+// ─── Bulk operations ───
+async function bulkRemoveBg() {
+  const btn = document.getElementById('bulkBgBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinning">⟳</span> Achtergronden verwijderen...';
+
+  const progress = document.getElementById('imgProgress');
+  const progressFill = document.getElementById('imgProgressFill');
+  const progressText = document.getElementById('imgProgressText');
+  progress.style.display = 'block';
+
+  for (let i = 0; i < uploadedImages.length; i++) {
+    const img = uploadedImages[i];
+    progressText.textContent = `Verwerken: ${i + 1} / ${uploadedImages.length} — ${img.name}`;
+    progressFill.style.width = ((i + 1) / uploadedImages.length * 100) + '%';
+
+    try {
+      const { canvas } = await loadImageToCanvas(img.currentUrl);
+      removeBgFromCanvas(canvas);
+      img.currentUrl = canvas.toDataURL('image/png');
+      img.name = img.name.replace(/(-nobg|-1200x1200)?\.[^.]+$/, '') + '-nobg.png';
+    } catch (err) {
+      console.error('BG remove failed for', img.name, err);
+    }
+    renderImageGrid();
+
+    // Small delay so UI updates visually
+    await new Promise(r => setTimeout(r, 50));
+  }
+
+  progressText.textContent = '✓ Alle achtergronden verwijderd!';
+  btn.disabled = false;
+  btn.innerHTML = '🪄 Achtergrond verwijderen (alle)';
+  setTimeout(() => { progress.style.display = 'none'; }, 3000);
+}
+
+async function bulkResize() {
+  const btn = document.getElementById('bulkResizeBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinning">⟳</span> Resizen...';
+
+  const progress = document.getElementById('imgProgress');
+  const progressFill = document.getElementById('imgProgressFill');
+  const progressText = document.getElementById('imgProgressText');
+  progress.style.display = 'block';
+
+  for (let i = 0; i < uploadedImages.length; i++) {
+    const img = uploadedImages[i];
+    progressText.textContent = `Resizen: ${i + 1} / ${uploadedImages.length} — ${img.name}`;
+    progressFill.style.width = ((i + 1) / uploadedImages.length * 100) + '%';
+
+    try {
+      const { canvas } = await loadImageToCanvas(img.currentUrl);
+      const resized = resizeToSquare(canvas, 1200);
+      img.currentUrl = resized.toDataURL('image/jpeg', 0.95);
+      img.name = img.name.replace(/(-nobg|-1200x1200)?\.[^.]+$/, '') + '-1200x1200.jpg';
+    } catch (err) {
+      console.error('Resize failed for', img.name, err);
+    }
+    renderImageGrid();
+    await new Promise(r => setTimeout(r, 50));
+  }
+
+  progressText.textContent = '✓ Alle afbeeldingen geresized naar 1200×1200!';
+  btn.disabled = false;
+  btn.innerHTML = '📐 Resize naar 1200×1200 (alle)';
+  setTimeout(() => { progress.style.display = 'none'; }, 3000);
+}
+
+function bulkDownload() {
+  uploadedImages.forEach((img, i) => {
+    setTimeout(() => {
+      const a = document.createElement('a');
+      a.href = img.currentUrl;
+      a.download = img.name;
+      a.click();
+    }, i * 300); // stagger downloads
+  });
+}
+
+// Load saved config on startup
+loadMagentoConfig();
+</script>
+</body>
+</html>
