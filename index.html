@@ -140,30 +140,6 @@
   @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
   .spinning { animation: spin 1s linear infinite; display: inline-block; }
 
-  /* ── Web Search ── */
-  .search-results-box { background: #f9f4ef; border: 1px solid #efe7e1; border-radius: 10px; margin-top: 16px; overflow: hidden; }
-  .search-result-item { padding: 14px 18px; border-bottom: 1px solid #efe7e1; }
-  .search-result-item:last-child { border-bottom: none; }
-  .search-result-title { font-size: 13px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
-  .search-result-url { font-size: 10px; color: #27ae60; font-family: 'Space Mono', monospace; margin-bottom: 6px; word-break: break-all; }
-  .search-result-snippet { font-size: 12px; color: #666; line-height: 1.6; }
-  .search-result-actions { display: flex; gap: 6px; margin-top: 8px; }
-  .search-fetch-btn { padding: 5px 12px; border-radius: 5px; border: 1px solid #e0c5b6; background: #fff; color: #1a1a1a; font-size: 11px; font-weight: 600; cursor: pointer; font-family: 'Poppins', sans-serif; transition: all .15s; }
-  .search-fetch-btn:hover { background: #fdf9f6; border-color: #bf8d7a; }
-  .search-fetch-btn:disabled { opacity: 0.4; cursor: wait; }
-  .search-fetch-btn.fetched { background: #e8f8ef; border-color: #27ae60; color: #1a7a4c; }
-  .search-extracted { margin-top: 10px; padding: 12px; background: #fff; border-radius: 8px; border: 1px solid #e8e0d8; }
-  .search-extracted-label { font-size: 10px; font-weight: 600; color: #bf8d7a; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
-  .search-extracted-content { font-size: 12px; color: #333; line-height: 1.7; max-height: 200px; overflow-y: auto; }
-  .search-extracted-content.mono { font-family: 'Space Mono', monospace; font-size: 11px; }
-  .search-use-btn { margin-top: 8px; padding: 5px 14px; border-radius: 5px; border: none; background: #27ae60; color: #fff; font-size: 11px; font-weight: 600; cursor: pointer; font-family: 'Poppins', sans-serif; }
-  .search-use-btn:hover { background: #219a52; }
-  .search-section-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; background: rgba(224,197,182,0.15); font-size: 12px; font-weight: 600; color: #888; }
-  .search-config-bar { display: flex; align-items: center; gap: 8px; padding: 10px 0; margin-bottom: 10px; }
-  .search-config-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .search-config-dot.green { background: #27ae60; }
-  .search-config-dot.red { background: #e74c3c; }
-
   /* ── Toast notifications ── */
   .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); padding: 12px 24px; border-radius: 8px; font-size: 13px; font-weight: 600; font-family: 'Poppins', sans-serif; z-index: 999; animation: toastIn 0.3s ease; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
   .toast.success { background: #1a1a1a; color: #27ae60; }
@@ -284,6 +260,7 @@
     <div class="header-sub">Productopvoer Mattie</div>
   </div>
   <div class="header-right">
+    <button onclick="showApiModal()" style="background:none;border:1.5px solid rgba(224,197,182,0.3);color:#e0c5b6;padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:all .15s;display:flex;align-items:center;gap:5px;" onmouseover="this.style.background='rgba(224,197,182,0.1)';this.style.borderColor='#e0c5b6'" onmouseout="this.style.background='none';this.style.borderColor='rgba(224,197,182,0.3)'">🔑 <span id="apiKeyStatus">API Key</span></button>
     <span class="header-badge" style="background:#428e8c;">PRODUCTIE</span>
     <span class="header-badge version">v4</span>
   </div>
@@ -303,21 +280,29 @@
 <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
 
 <!-- API Key Modal -->
-<div class="modal-overlay" id="apiModal" style="display:none;">
-  <div class="modal">
-    <h3>🔑 Anthropic API Key</h3>
-    <p>Om de AI-generator te gebruiken heb je een Anthropic API key nodig. Deze wordt alleen lokaal in je browser opgeslagen en nooit verstuurd naar andere servers dan Anthropic.</p>
-    <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-..." />
-    <p style="font-size:11px;color:#bbb;">Nog geen key? Maak er een aan op <a href="https://console.anthropic.com/" target="_blank" style="color:#1a0dab;">console.anthropic.com</a></p>
-    <div class="modal-actions">
-      <button class="modal-btn secondary" onclick="closeApiModal()">Annuleren</button>
-      <button class="modal-btn primary" onclick="saveApiKey()">Opslaan</button>
+<div class="modal-overlay" id="apiModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9999;justify-content:center;align-items:center;" onclick="if(event.target===this)closeApiModal()">
+  <div style="background:#1e1e1e;border-radius:12px;padding:28px;max-width:480px;width:90%;border:1px solid rgba(224,197,182,0.15);box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <h3 style="margin:0;color:#e0c5b6;font-size:16px;font-weight:600;">🔑 Anthropic API Key</h3>
+      <button onclick="closeApiModal()" style="background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;font-size:20px;padding:0;line-height:1;">&times;</button>
+    </div>
+    <p style="font-size:12.5px;color:rgba(255,255,255,0.4);margin-bottom:16px;line-height:1.6;">De API key wordt alleen lokaal in je browser opgeslagen (localStorage) en wordt uitsluitend verstuurd naar de Anthropic API voor AI-generatie.</p>
+    <div style="margin-bottom:16px;">
+      <label style="display:block;font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:6px;font-weight:500;text-transform:uppercase;letter-spacing:0.5px;">API Key</label>
+      <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-..." style="width:100%;padding:10px 14px;background:#141414;border:1.5px solid rgba(224,197,182,0.2);border-radius:8px;color:#fff;font-size:13px;font-family:'Space Mono',monospace;outline:none;box-sizing:border-box;transition:border-color .15s;" onfocus="this.style.borderColor='#e0c5b6'" onblur="this.style.borderColor='rgba(224,197,182,0.2)'">
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;">
+      <div id="apiKeyStatusDot" style="width:8px;height:8px;border-radius:50%;flex-shrink:0;"></div>
+      <span id="apiKeyStatusText" style="font-size:11px;color:rgba(255,255,255,0.35);"></span>
+    </div>
+    <p style="font-size:11px;color:rgba(255,255,255,0.25);margin-bottom:20px;">Nog geen key? Maak er een aan op <a href="https://console.anthropic.com/" target="_blank" style="color:#e0c5b6;text-decoration:none;">console.anthropic.com</a></p>
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <button onclick="removeApiKey()" style="padding:8px 16px;background:none;border:1px solid rgba(255,100,100,0.3);color:rgba(255,100,100,0.6);border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:all .15s;" onmouseover="this.style.background='rgba(255,100,100,0.08)'" onmouseout="this.style.background='none'">Verwijderen</button>
+      <button onclick="closeApiModal()" style="padding:8px 16px;background:rgba(255,255,255,0.06);border:none;color:rgba(255,255,255,0.5);border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;">Annuleren</button>
+      <button onclick="saveApiKey()" style="padding:8px 20px;background:#e0c5b6;border:none;color:#1a1a1a;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;transition:background .15s;" onmouseover="this.style.background='#d9afa0'" onmouseout="this.style.background='#e0c5b6'">Opslaan</button>
     </div>
   </div>
 </div>
-
-<!-- Google Search API Modal -->
-<!-- Google API modal verwijderd - niet meer nodig -->
 
 <div class="content">
 
@@ -334,9 +319,37 @@
 
 
       <div class="ai-box">
-        <div style="margin-bottom:16px;">
-          <label class="ai-label">Productnaam *</label>
-          <input class="ai-input" id="aiInput" type="text" placeholder="Bijv. Paul Mitchell Curls Spring Loaded Frizz-Fighting Shampoo 250 ml">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+          <div>
+            <label class="ai-label">Productnaam *</label>
+            <input class="ai-input" id="aiInput" type="text" placeholder="Bijv. Paul Mitchell Curls Spring Loaded Frizz-Fighting Shampoo 250 ml">
+          </div>
+          <div>
+            <label class="ai-label">Product Set *</label>
+            <select id="aiProductSet" class="ai-input" style="height:46px;background:#1e1e1e;color:#fff;border:1.5px solid rgba(224,197,182,0.2);border-radius:8px;font-size:13.5px;padding:0 12px;cursor:pointer;" onchange="onProductSetChange()">
+              <option value="">— Kies een product set —</option>
+              <option value="Haarverzorging">Haarverzorging</option>
+              <option value="Haarstyling">Haarstyling</option>
+              <option value="Haarkleuringen">Haarkleuringen</option>
+              <option value="Blondeermiddel">Blondeermiddel</option>
+              <option value="Developers">Developers</option>
+              <option value="Huidverzorging">Huidverzorging</option>
+              <option value="Lichaam">Lichaam</option>
+              <option value="Make-Up">Make-Up</option>
+              <option value="Föhns">Föhns</option>
+              <option value="Föhnborstels">Föhnborstels</option>
+              <option value="Krultangen">Krultangen</option>
+              <option value="Krulsets">Krulsets</option>
+              <option value="Stijltangen">Stijltangen</option>
+              <option value="Haarborstels">Haarborstels</option>
+              <option value="Haarkammen">Haarkammen</option>
+              <option value="Haarrollers">Haarrollers</option>
+              <option value="Hair Extensions">Hair Extensions</option>
+              <option value="Elastiekjes & Klemmen">Elastiekjes &amp; Klemmen</option>
+              <option value="Kappersscharen">Kappersscharen</option>
+              <option value="Epileren">Epileren</option>
+            </select>
+          </div>
         </div>
         <div style="margin-bottom:20px;">
           <label class="ai-label ai-label-sub">Referentie URL (optioneel)</label>
@@ -366,50 +379,6 @@
           5. Controleer en pas aan waar nodig in de verschillende tabbladen<br><br>
           <strong>⚙ Magento-koppeling</strong><br>
           Configureer je Magento 2 API-gegevens in de Magento-tab om producten direct te kunnen opvoeren.
-        </p>
-      </div>
-    </div>
-
-    <!-- Web Search sectie -->
-    <div class="card">
-      <div class="section-header">
-        <div class="top">
-          <div class="section-number">🔍</div>
-          <h2 class="section-title">Productinfo Opzoeken</h2>
-        </div>
-        <p class="section-sub">Zoek ingrediënten en productinfo op via bekende webshops — geen API key nodig</p>
-      </div>
-
-      <div class="search-config-bar">
-        <span class="search-config-dot" id="googleConfigDot"></span>
-        <span style="font-size:12px;color:#888;" id="googleConfigStatus"></span>
-      </div>
-
-      <div class="ai-box">
-        <div style="margin-bottom:16px;">
-          <label class="ai-label">Productnaam zoeken</label>
-          <input class="ai-input" id="searchProductInput" type="text" placeholder="Bijv. Olaplex No. 3 Hair Perfector">
-        </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="ai-generate-btn" id="searchBtn" onclick="searchProductInfo()" style="flex:1;">
-            🔍 Zoek ingrediënten & productinfo
-          </button>
-        </div>
-      </div>
-
-      <div id="searchResults" style="display:none;">
-        <div class="search-results-box" id="searchResultsList"></div>
-      </div>
-
-      <div class="info-box" style="margin-top:16px;">
-        <p>
-          <strong>💡 Zo werkt productinfo opzoeken</strong><br>
-          1. Voer de productnaam in en klik op zoeken<br>
-          2. De tool opent zoeklinks naar bekende webshops (Douglas, Beautyplaza, etc.)<br>
-          3. Vind de juiste productpagina en kopieer de URL<br>
-          4. Plak de URL in het invoerveld en klik op "Ophalen & extraheren"<br>
-          5. Gevonden ingrediënten en omschrijvingen kun je direct overnemen<br><br>
-          <strong>✓ Geen API key nodig</strong> — werkt direct!
         </p>
       </div>
     </div>
@@ -517,7 +486,7 @@
       </div>
     </div>
 
-    <div class="card">
+    <div class="card" id="ingredientenSection">
       <div class="section-header">
         <div class="top"><div class="section-number">6</div><h2 class="section-title">Ingrediënten</h2></div>
         <p class="section-sub">Volledige INCI-lijst</p>
@@ -545,32 +514,32 @@
 
   <!-- TAB 3: Eigenschappen -->
   <div class="tab-content" id="tab3">
-    <div class="card">
+    <div class="card" id="ikHebSection">
       <div class="section-header">
-        <div class="top"><div class="section-number">7</div><h2 class="section-title">Ik heb</h2></div>
+        <div class="top"><div class="section-number">7</div><h2 class="section-title">Ik heb</h2><span id="activeProductSetBadge" style="display:none;margin-left:10px;padding:3px 10px;background:#428e8c;color:#fff;border-radius:12px;font-size:10px;font-weight:600;vertical-align:middle;"></span></div>
         <p class="section-sub">Selecteer de relevante haar-/huidtypes en problemen</p>
       </div>
-      <input class="field-input" id="ikHebBadgesSearch" placeholder="🔍 Zoek in 'Ik heb'..." style="margin-bottom:12px;font-size:13px;" oninput="renderToggleBadges('ikHebBadges',IK_HEB,'ikHeb','ikHebSelected')">
+      <input class="field-input" id="ikHebBadgesSearch" placeholder="🔍 Zoek in 'Ik heb'..." style="margin-bottom:12px;font-size:13px;" oninput="renderToggleBadges('ikHebBadges',getActiveIkHeb(),'ikHeb','ikHebSelected')">
       <div class="badge-container" id="ikHebBadges"></div>
       <div class="selected-info" id="ikHebSelected"></div>
     </div>
 
-    <div class="card">
+    <div class="card" id="werkingSection">
       <div class="section-header">
         <div class="top"><div class="section-number">8</div><h2 class="section-title">Werking</h2></div>
         <p class="section-sub">Wat doet het product?</p>
       </div>
-      <input class="field-input" id="werkingBadgesSearch" placeholder="🔍 Zoek in 'Werking'..." style="margin-bottom:12px;font-size:13px;" oninput="renderToggleBadges('werkingBadges',WERKING,'werking','werkingSelected')">
+      <input class="field-input" id="werkingBadgesSearch" placeholder="🔍 Zoek in 'Werking'..." style="margin-bottom:12px;font-size:13px;" oninput="renderToggleBadges('werkingBadges',getActiveWerking(),'werking','werkingSelected')">
       <div class="badge-container" id="werkingBadges"></div>
       <div class="selected-info" id="werkingSelected"></div>
     </div>
 
-    <div class="card">
+    <div class="card" id="vrijVanSection">
       <div class="section-header">
         <div class="top"><div class="section-number">9</div><h2 class="section-title">Vrij van</h2></div>
         <p class="section-sub">Stoffen waar het product vrij van is</p>
       </div>
-      <input class="field-input" id="vrijVanBadgesSearch" placeholder="🔍 Zoek in 'Vrij van'..." style="margin-bottom:12px;font-size:13px;" oninput="renderToggleBadges('vrijVanBadges',VRIJ_VAN,'vrijVan','vrijVanSelected')">
+      <input class="field-input" id="vrijVanBadgesSearch" placeholder="🔍 Zoek in 'Vrij van'..." style="margin-bottom:12px;font-size:13px;" oninput="renderToggleBadges('vrijVanBadges',getActiveVrijVan(),'vrijVan','vrijVanSelected')">
       <div class="badge-container" id="vrijVanBadges"></div>
       <div class="selected-info" id="vrijVanSelected"></div>
     </div>
@@ -935,6 +904,141 @@ const data = {
 };
 
 const PRODUCT_TYPES = ['Shampoo','Conditioner','Haarmasker','Leave-in Conditioner','Haarolie','Haarlak','Mousse','Gel','Wax','Crème','Serum','Spray','Treatment','Peeling','Droogshampoo','Shampoo Bar','Balsem','Styling Paste','Pommade','Volume Poeder','Hitte Beschermend Spray','Schuimversteviger','Primer','Scrub','Tonic','Ampullen','Elixer','Mist','Lotion','Booster'];
+
+// ─── Product Set Configuration ───
+const PRODUCT_SET_CONFIG = {
+  'Haarverzorging': {
+    productTypes: ['Shampoo','Conditioner','Haarmasker','Leave-in Conditioner','Haarolie','Treatment','Peeling','Droogshampoo','Shampoo Bar','Scrub','Tonic','Ampullen','Elixer','Mist','Lotion','Booster','Serum'],
+    ikHeb: ['Krullend haar','Steil haar','Golvend haar','Fijn haar','Dik haar','Droog haar','Vet haar','Normaal haar','Gekleurd haar','Beschadigd haar','Pluizig haar','Dun haar','Grijs haar','Blond haar','Lang haar','Kort haar','Breekbaar haar','Futloos haar','Poreus haar','Weerbarstig haar','Extensions','Hoofdhuidproblemen','Roos','Gevoelige hoofdhuid','Droge hoofdhuid','Vettige hoofdhuid','Jeukende hoofdhuid','Schilferende hoofdhuid','Haaruitval','Dunner wordend haar','Gespleten punten','Verwaarloosd haar','Chemisch behandeld haar','Geblondeerd haar','Highlighted haar','Afro haar','Kroeshaar','Coily haar','Baby & Kinderen','Mannen'],
+    werking: ['Hydraterend','Voedend','Herstellend','Versterkend','Volume gevend','Glad makend','Anti-pluis','Anti-frizz','Kruldefinitie','Kleur beschermend','Glans gevend','Reinigend','Ontwarrend','Hitte beschermend','UV-bescherming','Anti-roos','Verdikkend','Verfrissend','Kalmerend','Beschermt tegen haarbreuk','Verzacht het haar','Elasticiteit herstellend','Definiërend','Diep reinigend','Neutraliserend','Anti-geel','Zilvershampoo','Kleur opfrissend','Kleur verdiepend','Detox','Zuiverend','Pluiscontrole','Beschermt de hoofdhuid','Kalmeert de hoofdhuid','Verwijdert dode huidcellen','Verzorgt de hoofdhuid','Stimuleert haargroei','Verbetert de doorbloeding','Reguleert talgproductie','Exfolierend'],
+    vrijVan: ['Sulfaten','SLS/SLES','Parabenen','Siliconen','Ftalaten','Gluten','Minerale oliën','Alcohol','Kunstmatige kleurstoffen','Kunstmatige geurstoffen','Microplastics','PEG','Fosfaten','Formaldehyde','MIT/CMIT','Propyleenglycol','Natriumchloride','Petroleumderivaten','Dierlijke ingrediënten','Palmolie','Vegan','Dierproefvrij','Biologisch','Natuurlijk','CG Proof (Curly Girl)','CO2-neutraal','Gerecyclede verpakking','Certified B Corp'],
+    showIngredients: true, showTechSpecs: false, showBeautySpecs: false
+  },
+  'Haarstyling': {
+    productTypes: ['Haarlak','Mousse','Gel','Wax','Crème','Spray','Styling Paste','Pommade','Volume Poeder','Hitte Beschermend Spray','Schuimversteviger','Primer','Styling Klei','Texture Spray','Sea Salt Spray','Finishing Spray'],
+    ikHeb: ['Krullend haar','Steil haar','Golvend haar','Fijn haar','Dik haar','Droog haar','Normaal haar','Pluizig haar','Dun haar','Lang haar','Kort haar','Weerbarstig haar','Mannen'],
+    werking: ['Lichte fixatie','Middelhoge fixatie','Sterke fixatie','Extreme fixatie','Flexibele hold','Matt effect','Wet look','Natuurlijk effect','Strandlook','Textuur','Body & bounce','Fixerend','Texturiserend','Volume gevend','Glans gevend','Anti-pluis','Hitte beschermend'],
+    vrijVan: ['Sulfaten','Parabenen','Siliconen','Alcohol','Kunstmatige geurstoffen','Microplastics','Vegan','Dierproefvrij'],
+    showIngredients: true, showTechSpecs: false, showBeautySpecs: true, beautyFields: ['finish']
+  },
+  'Haarkleuringen': {
+    productTypes: ['Permanente kleuring','Semi-permanente kleuring','Toner','Kleurshampoo','Kleurconditioner','Kleurmousse','Uitgroei spray','Uitgroei stift','Color Gloss','Direct Dye'],
+    ikHeb: ['Krullend haar','Steil haar','Golvend haar','Fijn haar','Dik haar','Droog haar','Normaal haar','Gekleurd haar','Beschadigd haar','Grijs haar','Blond haar','Geblondeerd haar','Highlighted haar'],
+    werking: ['Grijsdekking','Kleurintensivering','Kleur opfrissend','Neutraliserend','Anti-geel','Toning','Glans gevend'],
+    vrijVan: ['Sulfaten','Parabenen','Siliconen','Alcohol','Vegan','Dierproefvrij'],
+    showIngredients: true, showTechSpecs: false, showBeautySpecs: true, beautyFields: ['kleurTint','dekking','oxidatietijd','mengverhouding']
+  },
+  'Blondeermiddel': {
+    productTypes: ['Blondeerpoeder','Blondeercrème','Blondeerlotion','Highlift kleuring'],
+    ikHeb: ['Gekleurd haar','Beschadigd haar','Blond haar','Geblondeerd haar','Highlighted haar'],
+    werking: ['Kleurintensivering','Neutraliserend','Anti-geel','Glans gevend'],
+    vrijVan: ['Vegan','Dierproefvrij'],
+    showIngredients: true, showTechSpecs: false, showBeautySpecs: true, beautyFields: ['oxidatietijd','mengverhouding','volumeSterkte']
+  },
+  'Developers': {
+    productTypes: ['Oxidatie crème','Oxidatie lotion','Waterstofperoxide'],
+    ikHeb: [],
+    werking: [],
+    vrijVan: [],
+    showIngredients: false, showTechSpecs: false, showBeautySpecs: true, beautyFields: ['mengverhouding','volumeSterkte']
+  },
+  'Huidverzorging': {
+    productTypes: ['Gezichtscrème','Gezichtsreiniger','Gezichtsserum','Gezichtsmasker','Gezichtsscrub','Toner','Oogcrème','Oogserum','Dagcrème','Nachtcrème','LED apparaat'],
+    ikHeb: ['Droge huid','Vette huid','Gevoelige huid','Normale huid','Gemengde huid','Rijpe huid','Acne-gevoelige huid','Geïrriteerde huid','Gedehydrateerde huid'],
+    werking: ['Anti-aging','Versteviging','Egalisering','Hydraterend','Voedend','Kalmerend','Verfrissend','Verstevigend','Liftend','Poriën verfijnend','Reinigend','Exfolierend'],
+    vrijVan: ['Parabenen','Siliconen','Ftalaten','Minerale oliën','Alcohol','Kunstmatige kleurstoffen','Kunstmatige geurstoffen','Microplastics','PEG','SLS/SLES','Parfum','Vegan','Dierproefvrij','Biologisch','Natuurlijk','Dermatologisch getest','Hypoallergeen'],
+    showIngredients: true, showTechSpecs: false, showBeautySpecs: true, beautyFields: ['huidskleur','spf']
+  },
+  'Lichaam': {
+    productTypes: ['Body Lotion','Body Wash','Douchegel','Handcrème','Bodyscrub','Huidolie','Huidserum','Huidcrème','Deodorant','Tanning Mousse','Tanning Spray','Tanning Lotion'],
+    ikHeb: ['Droge huid','Vette huid','Gevoelige huid','Normale huid','Gemengde huid','Rijpe huid','Geïrriteerde huid','Gedehydrateerde huid'],
+    werking: ['Hydraterend','Voedend','Versteviging','Egalisering','Cellulite verminderend','Bruinend','Zelfbruinend','Verkoelend','Ontspannend','Verstevigend','Reinigend','Exfolierend'],
+    vrijVan: ['Parabenen','Siliconen','Ftalaten','Minerale oliën','Alcohol','Kunstmatige geurstoffen','Microplastics','PEG','SLS/SLES','Vegan','Dierproefvrij','Biologisch','Natuurlijk','Dermatologisch getest'],
+    showIngredients: true, showTechSpecs: false, showBeautySpecs: true, beautyFields: ['spf']
+  },
+  'Make-Up': {
+    productTypes: ['Foundation','Concealer','Mascara','Lipliner','Lipstick','Lipgloss','Oogschaduw','Eyeliner','Blush','Bronzer','Highlighter','Setting Spray','Primer','Wenkbrauwgel','Wenkbrauwpotlood','Wenkbrauwpoeder','Wenkbrauwverf','Wenkbrauwserum','Wimperserum','Wimperverf'],
+    ikHeb: ['Droge huid','Vette huid','Gevoelige huid','Normale huid','Gemengde huid'],
+    werking: ['Langhoudend','Waterproof','Smudge-proof','Dekkend','Licht dekkend','Matterend','Glanzend','Voedend','Hydraterend'],
+    vrijVan: ['Parabenen','Ftalaten','Minerale oliën','Kunstmatige kleurstoffen','Microplastics','Talk','Vegan','Dierproefvrij','Dermatologisch getest','Hypoallergeen'],
+    showIngredients: true, showTechSpecs: false, showBeautySpecs: true, beautyFields: ['kleurTint','dekking','huidskleur','spf','finish']
+  },
+  'Föhns': {
+    productTypes: ['Professionele föhn','Reisföhn','Stille föhn','Föhn met diffuser','Draadloze föhn'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: true, showBeautySpecs: false,
+    techFields: ['wattage','temperatuurstanden','snelheidsstanden','ionentechnologie','coolShot','opzetstukken','snoerlengte','gewicht','autoShutoff','geschiktHaartype','kleurUitvoering']
+  },
+  'Föhnborstels': {
+    productTypes: ['Ronde föhnborstel','Warme lucht borstel','2-in-1 föhnborstel','Roterende föhnborstel'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: true, showBeautySpecs: false,
+    techFields: ['wattage','maxTemperatuur','temperatuurstanden','plaatmateriaal','diameter','opzetstukken','snoerlengte','gewicht','opwarmtijd','autoShutoff','coolShot','kleurUitvoering']
+  },
+  'Krultangen': {
+    productTypes: ['Krultang met klem','Conische krultang','Marcel krultang','Automatische krultang','Triple barrel krultang','Wafeltang'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: true, showBeautySpecs: false,
+    techFields: ['maxTemperatuur','temperatuurstanden','plaatmateriaal','diameter','snoerlengte','gewicht','opwarmtijd','autoShutoff','ionentechnologie','geschiktHaartype','kleurUitvoering']
+  },
+  'Stijltangen': {
+    productTypes: ['Keramische stijltang','Titanium stijltang','Stoom stijltang','Draadloze stijltang','2-in-1 hetelucht stijltang','Mini stijltang'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: true, showBeautySpecs: false,
+    techFields: ['maxTemperatuur','temperatuurstanden','plaatmateriaal','plaatbreedte','snoerlengte','gewicht','opwarmtijd','autoShutoff','ionentechnologie','geschiktHaartype','kleurUitvoering']
+  },
+  'Krulsets': {
+    productTypes: ['Krulset','Verwarmde krulset'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: true, showBeautySpecs: false,
+    techFields: ['maxTemperatuur','temperatuurstanden','plaatmateriaal','diameter','opzetstukken','snoerlengte','gewicht','autoShutoff','kleurUitvoering']
+  },
+  'Haarborstels': {
+    productTypes: ['Paddle brush','Ronde borstel','Vent brush','Detangling brush','Zwijnenhaar borstel','Skeleton brush','Toupeerborstel'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: false, showBeautySpecs: true, beautyFields: ['materiaal','maatLengte','diameter','kleurUitvoering','geschiktHaartype']
+  },
+  'Haarkammen': {
+    productTypes: ['Staart kam','Brede tand kam','Knipkam','Kleurkam','Styling kam'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: false, showBeautySpecs: true, beautyFields: ['materiaal','maatLengte','kleurUitvoering','geschiktHaartype']
+  },
+  'Haarrollers': {
+    productTypes: ['Klittenband rollers','Verwarmde rollers','Foam rollers','Flexi rods'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: false, showBeautySpecs: true, beautyFields: ['materiaal','diameter','maatLengte']
+  },
+  'Hair Extensions': {
+    productTypes: ['Clip-in extensions','Tape extensions','Micro ring extensions','Ponytail extensions','Halo extensions'],
+    ikHeb: ['Krullend haar','Steil haar','Golvend haar','Fijn haar','Dik haar'],
+    werking: [],
+    vrijVan: [],
+    showIngredients: false, showTechSpecs: false, showBeautySpecs: true, beautyFields: ['kleurTint','materiaal','maatLengte']
+  },
+  'Elastiekjes & Klemmen': {
+    productTypes: ['Haarelastiek','Scrunchie','Haarklem','Bobby pin','Haarclip','Haarband','Krokodillenklem'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: false, showBeautySpecs: true, beautyFields: ['materiaal','maatLengte','kleurUitvoering']
+  },
+  'Kappersscharen': {
+    productTypes: ['Knipschaar','Effileerschaar','Linkshandige schaar','Modelleerschaar'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: false, showBeautySpecs: true, beautyFields: ['materiaal','maatLengte','gewicht','kleurUitvoering']
+  },
+  'Epileren': {
+    productTypes: ['Epilator','Epileerstrips','Harspatroon','Wax apparaat','Wax verwarmer'],
+    ikHeb: ['Gevoelige huid','Normale huid'],
+    werking: [],
+    vrijVan: [],
+    showIngredients: false, showTechSpecs: true, showBeautySpecs: false,
+    techFields: ['wattage','snoerlengte','gewicht','kleurUitvoering']
+  }
+};
+
+// Current active product set
+let activeProductSet = '';
+
+// Fallback flat arrays (used when no product set selected)
 const IK_HEB = [
   // Haartype
   'Krullend haar','Steil haar','Golvend haar','Fijn haar','Dik haar','Droog haar','Vet haar','Normaal haar',
@@ -1062,11 +1166,39 @@ document.addEventListener('input', (e) => {
   if (e.target.id === 'shortDescription' || e.target.id === 'description') updateWordCounts();
 });
 
+// ─── Product Set Change Handler ───
+function onProductSetChange() {
+  activeProductSet = document.getElementById('aiProductSet').value;
+  renderAll();
+  updateProgress();
+  if (activeProductSet) {
+    showToast(`Product set: ${activeProductSet}`, 'info');
+  }
+}
+
+// Get current options based on active product set
+function getActiveProductTypes() {
+  if (activeProductSet && PRODUCT_SET_CONFIG[activeProductSet]) return PRODUCT_SET_CONFIG[activeProductSet].productTypes;
+  return PRODUCT_TYPES;
+}
+function getActiveIkHeb() {
+  if (activeProductSet && PRODUCT_SET_CONFIG[activeProductSet]) return PRODUCT_SET_CONFIG[activeProductSet].ikHeb;
+  return IK_HEB;
+}
+function getActiveWerking() {
+  if (activeProductSet && PRODUCT_SET_CONFIG[activeProductSet]) return PRODUCT_SET_CONFIG[activeProductSet].werking;
+  return WERKING;
+}
+function getActiveVrijVan() {
+  if (activeProductSet && PRODUCT_SET_CONFIG[activeProductSet]) return PRODUCT_SET_CONFIG[activeProductSet].vrijVan;
+  return VRIJ_VAN;
+}
+
 // ─── Product Type Badges ───
 function renderProductTypeBadges() {
   const c = document.getElementById('productTypeBadges');
   c.innerHTML = '';
-  PRODUCT_TYPES.forEach(t => {
+  getActiveProductTypes().forEach(t => {
     const btn = document.createElement('button');
     btn.className = 'badge' + (document.getElementById('productType').value === t ? ' active' : '');
     btn.textContent = t;
@@ -1210,16 +1342,59 @@ function updateGooglePreview() {
 // ─── API Key Modal ───
 // ─── API Key Management ───
 function showApiModal() {
+  const modal = document.getElementById('apiModal');
+  const input = document.getElementById('apiKeyInput');
   const key = localStorage.getItem('haarshop_ai_key') || '';
-  const msg = key ? '✓ API key is ingesteld. Je kunt deze hier wijzigen.' : 'Voer je Anthropic API key in om AI-generatie te activeren.';
-  const newKey = prompt(msg, key);
-  if (newKey !== null) {
-    localStorage.setItem('haarshop_ai_key', newKey.trim());
-    showToast(newKey.trim() ? 'API key opgeslagen.' : 'API key verwijderd.', 'success');
+  input.value = key;
+  modal.style.display = 'flex';
+  updateApiKeyStatusInModal();
+  setTimeout(() => input.focus(), 100);
+}
+function closeApiModal() {
+  document.getElementById('apiModal').style.display = 'none';
+}
+function saveApiKey() {
+  const key = document.getElementById('apiKeyInput').value.trim();
+  if (key && !key.startsWith('sk-ant-')) {
+    showToast('API key moet beginnen met sk-ant-', 'error');
+    return;
+  }
+  localStorage.setItem('haarshop_ai_key', key);
+  updateApiKeyStatusInModal();
+  updateApiKeyHeaderBadge();
+  closeApiModal();
+  showToast(key ? 'API key opgeslagen.' : 'API key verwijderd.', 'success');
+}
+function removeApiKey() {
+  if (!confirm('Weet je zeker dat je de API key wilt verwijderen?')) return;
+  localStorage.removeItem('haarshop_ai_key');
+  document.getElementById('apiKeyInput').value = '';
+  updateApiKeyStatusInModal();
+  updateApiKeyHeaderBadge();
+  closeApiModal();
+  showToast('API key verwijderd.', 'info');
+}
+function updateApiKeyStatusInModal() {
+  const key = localStorage.getItem('haarshop_ai_key') || '';
+  const dot = document.getElementById('apiKeyStatusDot');
+  const text = document.getElementById('apiKeyStatusText');
+  if (key) {
+    dot.style.background = '#428e8c';
+    text.textContent = 'API key is ingesteld (' + key.substring(0, 12) + '...)';
+    text.style.color = '#428e8c';
+  } else {
+    dot.style.background = '#e57373';
+    text.textContent = 'Geen API key ingesteld — AI-generatie is niet beschikbaar';
+    text.style.color = '#e57373';
   }
 }
-function closeApiModal() {}
-function saveApiKey() {}
+function updateApiKeyHeaderBadge() {
+  const key = localStorage.getItem('haarshop_ai_key') || '';
+  const badge = document.getElementById('apiKeyStatus');
+  if (badge) badge.textContent = key ? '✓ API Key' : 'API Key';
+}
+// Init header badge on load
+document.addEventListener('DOMContentLoaded', () => { updateApiKeyHeaderBadge(); });
 
 // ─── AI Generation (PRODUCTIE) ───
 async function generateWithAI() {
@@ -1238,11 +1413,28 @@ async function generateWithAI() {
   btn.innerHTML = '<span class="spinning">⟳</span> Genereren...';
 
   const refUrl = document.getElementById('aiUrl').value.trim();
+  const productSet = document.getElementById('aiProductSet').value;
+  const cfg = productSet ? PRODUCT_SET_CONFIG[productSet] : null;
 
   // Build prompt
   let userPrompt = `Genereer een complete Haarshop.nl productopvoer voor: "${input}"`;
-  if (refUrl) userPrompt += `\n\nReferentie URL: ${refUrl}`;
-  if (aiUploadedFiles.length > 0) userPrompt += `\n\nEr zijn ${aiUploadedFiles.length} bestanden geüpload als extra referentie.`;
+  if (productSet) userPrompt += `\n\nProduct set: ${productSet}`;
+  if (refUrl) userPrompt += `\nReferentie URL: ${refUrl}`;
+  if (aiUploadedFiles.length > 0) userPrompt += `\nEr zijn ${aiUploadedFiles.length} bestanden geüpload als extra referentie.`;
+
+  // Add product-set-specific context
+  if (cfg) {
+    userPrompt += `\n\nDit is een "${productSet}" product. Houd rekening met het volgende:`;
+    userPrompt += `\n- Kies productType uit: ${cfg.productTypes.join(', ')}`;
+    if (cfg.ikHeb.length > 0) userPrompt += `\n- Kies ikHeb uit: ${cfg.ikHeb.join(', ')}`;
+    else userPrompt += `\n- ikHeb: leeg laten (niet van toepassing voor dit producttype)`;
+    if (cfg.werking.length > 0) userPrompt += `\n- Kies werking uit: ${cfg.werking.join(', ')}`;
+    else userPrompt += `\n- werking: leeg laten (niet van toepassing voor dit producttype)`;
+    if (cfg.vrijVan.length > 0) userPrompt += `\n- Kies vrijVan uit: ${cfg.vrijVan.join(', ')}`;
+    else userPrompt += `\n- vrijVan: leeg laten (niet van toepassing voor dit producttype)`;
+    if (!cfg.showIngredients) userPrompt += `\n- ingredients: leeg laten (geen INCI bij dit producttype)`;
+    if (cfg.showTechSpecs) userPrompt += `\n- Voeg technische specificaties toe in de beschrijving en eigenschappen (bijv. wattage, temperatuur, materiaal, snoerlengte)`;
+  }
 
   userPrompt += `\n\nGeef je antwoord UITSLUITEND als JSON object (geen markdown, geen backticks) met exact deze velden:
 {
@@ -1252,17 +1444,17 @@ async function generateWithAI() {
   "subLine": "sublijn of leeg",
   "productType": "producttype",
   "subProductType": "sub-producttype of leeg",
-  "content": "inhoudsmaat bijv. 250 ml",
+  "content": "inhoudsmaat bijv. 250 ml (of leeg bij tools)",
   "shortDescription": "korte beschrijving 15-20 woorden, zonder productnaam",
   "description": "productomschrijving ~100 woorden, begin NIET met productnaam (die wordt er automatisch voor gezet)",
   "keyFeatures": ["eigenschap 1.", "eigenschap 2.", "etc. (6-7 stuks, elke zin eindigt met punt)"],
   "usageSteps": ["stap 1.", "stap 2.", "etc."],
   "crossSellText": "cross-sell tekst met HTML link naar gerelateerd product",
-  "ingredients": "volledige INCI ingrediëntenlijst",
+  "ingredients": "volledige INCI ingrediëntenlijst of leeg bij tools/accessoires",
   "categories": ["categorie1", "categorie2", "etc. - altijd inclusief Nieuw en merk-categorie"],
-  "ikHeb": ["haartype1", "haartype2"],
-  "werking": ["werking1", "werking2"],
-  "vrijVan": ["stof1", "stof2"]
+  "ikHeb": ["optie1", "optie2"],
+  "werking": ["optie1", "optie2"],
+  "vrijVan": ["optie1", "optie2"]
 }
 
 Schrijf in foutloos, overtuigend Nederlands. Toon is professioneel, inspirerend en toegankelijk. Vermijd overdreven claims en vakjargon. Gebruik geen wij/onze tenzij het vanuit Haarshop is.`;
@@ -1583,6 +1775,8 @@ function resetAll() {
   document.querySelectorAll('input.field-input, textarea.field-textarea').forEach(el => el.value = '');
   document.getElementById('aiInput').value = '';
   document.getElementById('aiUrl').value = '';
+  document.getElementById('aiProductSet').value = '';
+  activeProductSet = '';
   aiUploadedFiles = [];
   renderAiFileList();
   document.getElementById('crossSellLinkText').value = '';
@@ -1609,10 +1803,30 @@ function renderAll() {
   renderFeatures();
   renderSteps();
   renderCategories();
-  renderToggleBadges('ikHebBadges', IK_HEB, 'ikHeb', 'ikHebSelected');
-  renderToggleBadges('werkingBadges', WERKING, 'werking', 'werkingSelected');
-  renderToggleBadges('vrijVanBadges', VRIJ_VAN, 'vrijVan', 'vrijVanSelected');
+  renderToggleBadges('ikHebBadges', getActiveIkHeb(), 'ikHeb', 'ikHebSelected');
+  renderToggleBadges('werkingBadges', getActiveWerking(), 'werking', 'werkingSelected');
+  renderToggleBadges('vrijVanBadges', getActiveVrijVan(), 'vrijVan', 'vrijVanSelected');
   updateProgress();
+  // Toggle section visibility based on product set
+  const cfg = activeProductSet ? PRODUCT_SET_CONFIG[activeProductSet] : null;
+  const showIkHeb = !cfg || cfg.ikHeb.length > 0;
+  const showWerking = !cfg || cfg.werking.length > 0;
+  const showVrijVan = !cfg || cfg.vrijVan.length > 0;
+  const showIngr = !cfg || cfg.showIngredients !== false;
+  const ikHebSection = document.getElementById('ikHebSection');
+  const werkingSection = document.getElementById('werkingSection');
+  const vrijVanSection = document.getElementById('vrijVanSection');
+  const ingredientenSection = document.getElementById('ingredientenSection');
+  if (ikHebSection) ikHebSection.style.display = showIkHeb ? '' : 'none';
+  if (werkingSection) werkingSection.style.display = showWerking ? '' : 'none';
+  if (vrijVanSection) vrijVanSection.style.display = showVrijVan ? '' : 'none';
+  if (ingredientenSection) ingredientenSection.style.display = showIngr ? '' : 'none';
+  // Show product set badge in tab 1
+  const psBadge = document.getElementById('activeProductSetBadge');
+  if (psBadge) {
+    psBadge.style.display = activeProductSet ? 'inline-block' : 'none';
+    psBadge.textContent = activeProductSet || '';
+  }
 }
 
 // ─── Init ───
@@ -2719,354 +2933,8 @@ function bulkDownload() {
   });
 }
 
-// ─── Product Search (URL-gebaseerd) ───
-const SEARCH_SOURCES = {
-  google: [
-    { name: '🔍 Google — ingrediënten', urlTemplate: (q) => `https://www.google.nl/search?q=${encodeURIComponent(q + ' ingrediënten INCI lijst')}` },
-    { name: '🔍 Google — productinfo', urlTemplate: (q) => `https://www.google.nl/search?q=${encodeURIComponent(q + ' productomschrijving')}` },
-  ],
-  webshops: [
-    { name: 'Douglas.nl', urlTemplate: (q) => `https://www.douglas.nl/nl/zoeken?query=${encodeURIComponent(q)}` },
-    { name: 'Beautyplaza.com', urlTemplate: (q) => `https://www.beautyplaza.com/catalogsearch/result/?q=${encodeURIComponent(q)}` },
-    { name: 'Notino.nl', urlTemplate: (q) => `https://www.notino.nl/zoeken/?q=${encodeURIComponent(q)}` },
-    { name: 'Bol.com', urlTemplate: (q) => `https://www.bol.com/nl/nl/s/?searchtext=${encodeURIComponent(q)}` },
-    { name: 'Lookfantastic.nl', urlTemplate: (q) => `https://www.lookfantastic.nl/elysium.search?search=${encodeURIComponent(q)}` },
-    { name: 'JohnBeerens.com', urlTemplate: (q) => `https://www.johnbeerens.com/zoeken?q=${encodeURIComponent(q)}` },
-    { name: 'Salontopper.nl', urlTemplate: (q) => `https://www.salontopper.nl/zoeken?zoekterm=${encodeURIComponent(q)}` },
-    { name: 'Haibu.nl', urlTemplate: (q) => `https://www.haibu.nl/search?q=${encodeURIComponent(q)}` },
-    { name: 'Haarspullen.nl', urlTemplate: (q) => `https://www.haarspullen.nl/zoeken?q=${encodeURIComponent(q)}` },
-    { name: 'Amazon.nl', urlTemplate: (q) => `https://www.amazon.nl/s?k=${encodeURIComponent(q)}` },
-    { name: 'Parfumswinkel.nl', urlTemplate: (q) => `https://www.parfumswinkel.nl/catalogsearch/result/?q=${encodeURIComponent(q)}` },
-    { name: 'Drogisterij.net', urlTemplate: (q) => `https://www.drogisterij.net/search?q=${encodeURIComponent(q)}` },
-    { name: 'Kapperskorting.com', urlTemplate: (q) => `https://www.kapperskorting.com/search?q=${encodeURIComponent(q)}` },
-    { name: 'Cosmeticawinkel.com', urlTemplate: (q) => `https://www.cosmeticawinkel.com/search?q=${encodeURIComponent(q)}` },
-    { name: 'Headmasters.nl', urlTemplate: (q) => `https://www.headmasters.nl/zoeken?q=${encodeURIComponent(q)}` },
-  ],
-  leveranciers: [
-    { name: 'Redken (US)', urlTemplate: (q) => `https://www.redken.com/search?q=${encodeURIComponent(q)}` },
-    { name: 'Kérastase (US)', urlTemplate: (q) => `https://www.kerastase.com/search?q=${encodeURIComponent(q)}` },
-    { name: 'L\'Oréal Professionnel', urlTemplate: (q) => `https://www.lorealprofessionnel.com/search?q=${encodeURIComponent(q)}` },
-    { name: 'Olaplex', urlTemplate: (q) => `https://www.olaplex.com/search?q=${encodeURIComponent(q)}` },
-    { name: 'Moroccanoil', urlTemplate: (q) => `https://www.moroccanoil.com/us_en/search?q=${encodeURIComponent(q)}` },
-    { name: 'Living Proof', urlTemplate: (q) => `https://www.livingproof.com/search?q=${encodeURIComponent(q)}` },
-    { name: 'Schwarzkopf Pro', urlTemplate: (q) => `https://www.schwarzkopf-professional.com/search.html?q=${encodeURIComponent(q)}` },
-    { name: 'Wella Professionals', urlTemplate: (q) => `https://www.wella.com/professional/en-EN/search?q=${encodeURIComponent(q)}` },
-    { name: 'Goldwell', urlTemplate: (q) => `https://www.goldwell.com/search?q=${encodeURIComponent(q)}` },
-    { name: 'Matrix', urlTemplate: (q) => `https://www.matrix.com/search?q=${encodeURIComponent(q)}` },
-    { name: 'Sebastian Professional', urlTemplate: (q) => `https://www.sebastianprofessional.com/search?q=${encodeURIComponent(q)}` },
-    { name: 'Paul Mitchell', urlTemplate: (q) => `https://www.paulmitchell.com/search?q=${encodeURIComponent(q)}` },
-    { name: 'Biolage', urlTemplate: (q) => `https://www.biolage.com/search?q=${encodeURIComponent(q)}` },
-    { name: 'TIGI / Bed Head', urlTemplate: (q) => `https://www.tigiprofessional.com/search?q=${encodeURIComponent(q)}` },
-    { name: 'Pureology', urlTemplate: (q) => `https://www.pureology.com/search?q=${encodeURIComponent(q)}` },
-    { name: 'American Crew', urlTemplate: (q) => `https://www.americancrew.com/search?q=${encodeURIComponent(q)}` },
-    { name: 'Kevin Murphy', urlTemplate: (q) => `https://www.google.nl/search?q=${encodeURIComponent('site:kevinmurphy.com.au ' + q)}` },
-    { name: 'Eleven Australia', urlTemplate: (q) => `https://www.google.nl/search?q=${encodeURIComponent('site:elevenaustralia.com ' + q)}` },
-    { name: 'Maria Nila', urlTemplate: (q) => `https://www.google.nl/search?q=${encodeURIComponent('site:marianila.com ' + q)}` },
-    { name: 'Davines', urlTemplate: (q) => `https://www.google.nl/search?q=${encodeURIComponent('site:davines.com ' + q)}` },
-    { name: 'Milkshake (z.one)', urlTemplate: (q) => `https://www.google.nl/search?q=${encodeURIComponent('site:z-oneconceptusa.com ' + q + ' ingredients')}` },
-    { name: 'Alfaparf Milano', urlTemplate: (q) => `https://www.google.nl/search?q=${encodeURIComponent('site:alfaparfmilano.com ' + q)}` },
-    { name: 'Revlon Professional', urlTemplate: (q) => `https://www.google.nl/search?q=${encodeURIComponent('site:revlonprofessional.com ' + q)}` },
-    { name: 'Biosilk', urlTemplate: (q) => `https://www.google.nl/search?q=${encodeURIComponent('site:biosilk.com ' + q)}` },
-    { name: 'CHI Haircare', urlTemplate: (q) => `https://www.google.nl/search?q=${encodeURIComponent('site:chi.com ' + q)}` },
-    { name: 'Joico', urlTemplate: (q) => `https://www.google.nl/search?q=${encodeURIComponent('site:joico.com ' + q)}` },
-    { name: 'Kenra Professional', urlTemplate: (q) => `https://www.google.nl/search?q=${encodeURIComponent('site:kenraprofessional.com ' + q)}` },
-    { name: 'Olivia Garden (tools)', urlTemplate: (q) => `https://www.google.nl/search?q=${encodeURIComponent('site:oliviagarden.com ' + q)}` },
-  ],
-  ingredienten: [
-    { name: 'INCIDecoder.com', urlTemplate: (q) => `https://incidecoder.com/search?query=${encodeURIComponent(q)}` },
-    { name: 'CosDNA.com', urlTemplate: (q) => `https://www.cosdna.com/eng/product.php?q=${encodeURIComponent(q)}` },
-    { name: 'Skincarisma.com', urlTemplate: (q) => `https://www.skincarisma.com/search?q=${encodeURIComponent(q)}` },
-  ],
-};
-
-function updateSearchStatus() {
-  const dot = document.getElementById('googleConfigDot');
-  const status = document.getElementById('googleConfigStatus');
-  dot.className = 'search-config-dot green';
-  status.textContent = 'Klaar om te zoeken — geen API key vereist';
-}
-
-async function searchProductInfo() {
-  const query = document.getElementById('searchProductInput').value.trim();
-  if (!query) { showToast('Voer een productnaam in', 'error'); return; }
-
-  const btn = document.getElementById('searchBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinning">⟳</span> Zoeken...';
-
-  const resultsContainer = document.getElementById('searchResults');
-  const resultsList = document.getElementById('searchResultsList');
-  resultsList.innerHTML = '';
-  resultsContainer.style.display = 'block';
-
-  // Helper functie voor compacte link grid
-  function buildLinkGrid(sources, query) {
-    return `<div style="display:flex;flex-wrap:wrap;gap:6px;">${sources.map(s => {
-      const url = s.urlTemplate(query);
-      return `<a href="${url}" target="_blank" style="display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border-radius:6px;border:1px solid #e8e0d8;background:#fff;color:#1a1a1a;font-size:11px;text-decoration:none;font-family:'Poppins',sans-serif;transition:all 0.15s;cursor:pointer;" onmouseover="this.style.background='#f5f0eb';this.style.borderColor='#78c7c9'" onmouseout="this.style.background='#fff';this.style.borderColor='#e8e0d8'">${s.name} ↗</a>`;
-    }).join('')}</div>`;
-  }
-
-  // Sectie 1: Google zoeklinks
-  resultsList.innerHTML += `
-    <div class="search-section-header">🔍 Google Zoeken</div>
-    <div class="search-result-item" style="padding:12px;">
-      ${buildLinkGrid(SEARCH_SOURCES.google, query)}
-    </div>
-  `;
-
-  // Sectie 2: Ingrediënten databases
-  resultsList.innerHTML += `
-    <div class="search-section-header">🧪 Ingrediënten Databases</div>
-    <div class="search-result-item" style="padding:12px;">
-      ${buildLinkGrid(SEARCH_SOURCES.ingredienten, query)}
-    </div>
-  `;
-
-  // Sectie 3: Webshops / concurrenten
-  resultsList.innerHTML += `
-    <div class="search-section-header">🛒 Webshops & Concurrenten</div>
-    <div class="search-result-item" style="padding:12px;">
-      ${buildLinkGrid(SEARCH_SOURCES.webshops, query)}
-    </div>
-  `;
-
-  // Sectie 4: Leverancier / merk websites
-  resultsList.innerHTML += `
-    <div class="search-section-header">🏭 Leverancier & Merk Websites</div>
-    <div class="search-result-item" style="padding:12px;">
-      ${buildLinkGrid(SEARCH_SOURCES.leveranciers, query)}
-    </div>
-  `;
-
-  // Sectie 5: URL ophalen
-  resultsList.innerHTML += `
-    <div class="search-section-header">📋 Productpagina ophalen — plak de URL van de productpagina</div>
-    <div class="search-result-item" style="background:#fff;">
-      <p style="font-size:12px;color:#888;margin-bottom:12px;">Heb je de productpagina gevonden? Plak de URL hieronder om ingrediënten en omschrijving automatisch op te halen.</p>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <input class="field-input" id="fetchUrlInput" placeholder="https://www.douglas.nl/nl/..." style="flex:1;min-width:250px;font-size:12px;">
-        <button class="search-fetch-btn" id="fetchUrlBtn" onclick="fetchProductPage()" style="background:#1a1a1a;color:#fff;border-color:#1a1a1a;padding:8px 16px;">
-          📄 Ophalen & extraheren
-        </button>
-      </div>
-      <div id="fetchResults" style="margin-top:12px;"></div>
-    </div>
-  `;
-
-  btn.disabled = false;
-  btn.innerHTML = '🔍 Zoek ingrediënten & productinfo';
-}
-
-async function fetchProductPage() {
-  const url = document.getElementById('fetchUrlInput').value.trim();
-  if (!url) { showToast('Plak eerst een URL', 'error'); return; }
-
-  const btn = document.getElementById('fetchUrlBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinning">⟳</span> Ophalen...';
-
-  const fetchResults = document.getElementById('fetchResults');
-  fetchResults.innerHTML = '<div style="font-size:12px;color:#888;">Pagina wordt opgehaald...</div>';
-
-  try {
-    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-    const res = await fetch(proxyUrl);
-    if (!res.ok) throw new Error('Kan pagina niet ophalen (status ' + res.status + ')');
-    const html = await res.text();
-
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, 'text/html');
-    doc.querySelectorAll('script, style, nav, header, footer, iframe').forEach(el => el.remove());
-
-    const ingredients = extractIngredients(doc, html);
-    const description = extractDescription(doc);
-
-    let resultsHTML = '';
-
-    if (ingredients) {
-      const safeIngr = escapeAttr(ingredients);
-      resultsHTML += `
-        <div class="search-extracted">
-          <div class="search-extracted-label">✓ Ingrediënten gevonden</div>
-          <div class="search-extracted-content mono">${escapeHTML(ingredients)}</div>
-          <button class="search-use-btn" onclick="useExtractedIngredients(this, '${safeIngr}')">✓ Gebruik deze ingrediënten</button>
-        </div>
-      `;
-    } else {
-      resultsHTML += '<div style="padding:8px 0;font-size:12px;color:#e07a5f;">⚠ Geen ingrediëntenlijst gevonden op deze pagina.</div>';
-    }
-
-    if (description) {
-      const safeDesc = escapeAttr(description);
-      resultsHTML += `
-        <div class="search-extracted" style="margin-top:10px;">
-          <div class="search-extracted-label">✓ Productomschrijving gevonden</div>
-          <div class="search-extracted-content">${escapeHTML(description)}</div>
-          <button class="search-use-btn" onclick="copyExtractedText(this, '${safeDesc}')">📋 Kopieer naar klembord</button>
-        </div>
-      `;
-    } else {
-      resultsHTML += '<div style="padding:8px 0;font-size:12px;color:#e07a5f;">⚠ Geen productomschrijving gevonden op deze pagina.</div>';
-    }
-
-    // Ook altijd ruwe tekst tonen als fallback
-    const bodyText = (doc.body?.textContent || '').replace(/\s+/g, ' ').trim();
-    const preview = bodyText.substring(0, 2000);
-    resultsHTML += `
-      <details style="margin-top:12px;">
-        <summary style="font-size:11px;color:#999;cursor:pointer;">Toon ruwe paginatekst (voor handmatig zoeken)</summary>
-        <div style="margin-top:8px;padding:10px;background:#f5f0eb;border-radius:6px;font-size:11px;color:#666;max-height:300px;overflow-y:auto;line-height:1.6;font-family:'Space Mono',monospace;">
-          ${escapeHTML(preview)}${bodyText.length > 2000 ? '...' : ''}
-        </div>
-      </details>
-    `;
-
-    fetchResults.innerHTML = resultsHTML;
-    showToast('Pagina opgehaald!', 'success');
-
-  } catch (err) {
-    fetchResults.innerHTML = `<div style="font-size:12px;color:#e07a5f;">Fout: ${escapeHTML(err.message)}<br><br>
-      <strong>Tips:</strong><br>
-      • Sommige sites blokkeren ophalen — probeer een andere bron<br>
-      • Kopieer eventueel de ingrediënten handmatig van de pagina
-    </div>`;
-    showToast('Fout bij ophalen', 'error');
-  }
-
-  btn.disabled = false;
-  btn.innerHTML = '📄 Ophalen & extraheren';
-}
-
-function escapeHTML(str) {
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
-}
-
-function escapeAttr(str) {
-  return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n').replace(/\r/g, '');
-}
-
-function extractIngredients(doc, rawHtml) {
-  const text = doc.body?.textContent || '';
-
-  // Methode 1: Zoek naar INCI-achtige patronen
-  const patterns = [
-    /(?:ingredients|ingredi[eë]nten|inci|samenstelling|bestanddelen)\s*[:\-]\s*((?:aqua|water|alcohol|cetyl|sodium|cocamido|glycerin|parfum|limonene|linalool|citronellol)[^\n]{20,})/i,
-    /(?:ingredients|ingredi[eë]nten|inci|samenstelling|bestanddelen)\s*[:\-]\s*([A-Z][a-z]+(?:\s*[\(\)\/,\.\-\s]+[A-Za-z\d\s\(\)\/\.\-]+){10,})/,
-  ];
-
-  for (const pattern of patterns) {
-    const match = text.match(pattern);
-    if (match && match[1]) {
-      let result = match[1].trim();
-      const endMarkers = ['\n\n', 'Waarschuwing', 'Let op', 'Gebruiksaanwijzing', 'Hoe gebruik', 'Tips:'];
-      for (const marker of endMarkers) {
-        const idx = result.indexOf(marker);
-        if (idx > 50) result = result.substring(0, idx);
-      }
-      if (result.length > 30) return result.trim();
-    }
-  }
-
-  // Methode 2: Zoek in specifieke HTML elementen
-  const selectors = [
-    '[class*="ingredient"]', '[id*="ingredient"]',
-    '[class*="inci"]', '[id*="inci"]',
-    '[class*="composition"]', '[class*="samenstelling"]',
-    '[data-tab*="ingredient"]'
-  ];
-
-  for (const sel of selectors) {
-    try {
-      const el = doc.querySelector(sel);
-      if (el) {
-        const content = el.textContent.trim();
-        if (content.length > 30 && content.length < 5000) {
-          const lower = content.toLowerCase();
-          if (lower.includes('aqua') || lower.includes('water') || lower.includes('sodium') ||
-              lower.includes('glycerin') || lower.includes('alcohol') || lower.includes('parfum')) {
-            return content.replace(/^[^A-Za-z]+/, '').trim();
-          }
-        }
-      }
-    } catch(e) {}
-  }
-
-  // Methode 3: Brute force INCI sequentie
-  const inciMatch = text.match(/(Aqua(?:\s*\([^)]+\))?\s*,\s*(?:[A-Z][a-z]+[^.]{5,})){1}/i);
-  if (inciMatch && inciMatch[0].length > 50) {
-    let result = inciMatch[0];
-    const endIdx = result.search(/\.\s*[A-Z][a-z]+\s+[a-z]/);
-    if (endIdx > 50) result = result.substring(0, endIdx + 1);
-    return result.trim();
-  }
-
-  return null;
-}
-
-function extractDescription(doc) {
-  const selectors = [
-    '[class*="product-description"]', '[class*="product-info"]',
-    '[class*="productDescription"]', '[class*="productInfo"]',
-    '[id*="description"]', '[id*="product-info"]',
-    '[class*="beschrijving"]', '[class*="omschrijving"]',
-    '.product-detail__description', '.product__description',
-    '[itemprop="description"]',
-    'meta[name="description"]'
-  ];
-
-  for (const sel of selectors) {
-    try {
-      const el = doc.querySelector(sel);
-      if (el) {
-        let content = '';
-        if (el.tagName === 'META') {
-          content = el.getAttribute('content') || '';
-        } else {
-          content = el.textContent.trim();
-        }
-        if (content.length > 30 && content.length < 3000) {
-          return content.substring(0, 1500);
-        }
-      }
-    } catch(e) {}
-  }
-
-  const paragraphs = doc.querySelectorAll('p');
-  let best = '';
-  paragraphs.forEach(p => {
-    const t = p.textContent.trim();
-    if (t.length > best.length && t.length > 50 && t.length < 2000) {
-      best = t;
-    }
-  });
-
-  return best || null;
-}
-
-function useExtractedIngredients(btn, ingredients) {
-  const decoded = ingredients.replace(/\\n/g, '\n').replace(/\\'/g, "'").replace(/\\\\/g, '\\');
-  document.getElementById('ingredients').value = decoded;
-  btn.textContent = '✓ Overgenomen!';
-  btn.style.background = '#1a7a4c';
-  showToast('Ingrediënten overgenomen', 'success');
-  switchTab(2);
-}
-
-function copyExtractedText(btn, text) {
-  const decoded = text.replace(/\\n/g, '\n').replace(/\\'/g, "'").replace(/\\\\/g, '\\');
-  navigator.clipboard.writeText(decoded).then(() => {
-    btn.textContent = '✓ Gekopieerd!';
-    btn.style.background = '#1a7a4c';
-    showToast('Omschrijving gekopieerd naar klembord', 'success');
-  });
-}
-
 // Load saved config on startup
 loadMagentoConfig();
-updateSearchStatus();
 </script>
 </body>
 </html>
