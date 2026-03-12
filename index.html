@@ -544,6 +544,15 @@
       <div class="selected-info" id="vrijVanSelected"></div>
     </div>
 
+    <!-- Dynamic Specs Fields (rendered by JS based on product set) -->
+    <div class="card" id="dynamicFieldsSection" style="display:none;">
+      <div class="section-header">
+        <div class="top"><div class="section-number">⚙</div><h2 class="section-title" id="dynamicFieldsTitle">Specificaties</h2></div>
+        <p class="section-sub" id="dynamicFieldsSub">Vul de productspecifieke velden in</p>
+      </div>
+      <div id="dynamicFieldsContainer"></div>
+    </div>
+
     <div class="card">
       <div class="section-header">
         <div class="top"><div class="section-number">10</div><h2 class="section-title">Categorieën</h2></div>
@@ -1194,6 +1203,85 @@ function getActiveVrijVan() {
   return VRIJ_VAN;
 }
 
+// ─── Dynamic Field Definitions ───
+const FIELD_DEFS = {
+  // Tech specs
+  wattage:            { label: 'Wattage',              placeholder: 'Bijv. 2200W',               type: 'text' },
+  maxTemperatuur:     { label: 'Max. temperatuur',     placeholder: 'Bijv. 230°C',               type: 'text' },
+  temperatuurstanden: { label: 'Temperatuurstanden',   placeholder: 'Bijv. 3 standen / variabel', type: 'text' },
+  plaatmateriaal:     { label: 'Plaatmateriaal',       placeholder: 'Bijv. Keramisch / Titanium / Toermalijn', type: 'text' },
+  plaatbreedte:       { label: 'Plaatbreedte',         placeholder: 'Bijv. 25 mm',               type: 'text' },
+  snoerlengte:        { label: 'Snoerlengte',          placeholder: 'Bijv. 2,7 m',               type: 'text' },
+  gewicht:            { label: 'Gewicht',              placeholder: 'Bijv. 490 gram',            type: 'text' },
+  opwarmtijd:         { label: 'Opwarmtijd',           placeholder: 'Bijv. 30 seconden',         type: 'text' },
+  autoShutoff:        { label: 'Auto shut-off',        placeholder: 'Bijv. Ja, na 30 min',       type: 'text' },
+  ionentechnologie:   { label: 'Ionentechnologie',     placeholder: 'Bijv. Ja / Nee',            type: 'text' },
+  snelheidsstanden:   { label: 'Snelheidsstanden',     placeholder: 'Bijv. 2 snelheden',         type: 'text' },
+  coolShot:           { label: 'Cool shot',            placeholder: 'Bijv. Ja',                  type: 'text' },
+  opzetstukken:       { label: 'Opzetstukken',         placeholder: 'Bijv. Diffuser, concentrator', type: 'text' },
+  diameter:           { label: 'Diameter (mm)',        placeholder: 'Bijv. 32 mm',               type: 'text' },
+  geschiktHaartype:   { label: 'Geschikt haartype',    placeholder: 'Bijv. Alle haartypes / Dik haar', type: 'text' },
+  kleurUitvoering:    { label: 'Kleur/Uitvoering',     placeholder: 'Bijv. Zwart / Roségoud',    type: 'text' },
+  // Beauty specs
+  kleurTint:          { label: 'Kleur/Tint',           placeholder: 'Bijv. 6.0 Donkerblond',     type: 'text' },
+  dekking:            { label: 'Dekking',              placeholder: 'Bijv. 100% grijsdekking / Transparant', type: 'text' },
+  oxidatietijd:       { label: 'Oxidatietijd',         placeholder: 'Bijv. 30-45 minuten',       type: 'text' },
+  mengverhouding:     { label: 'Mengverhouding',       placeholder: 'Bijv. 1:1 / 1:1,5',         type: 'text' },
+  volumeSterkte:      { label: 'Volume/Sterkte (%)',   placeholder: 'Bijv. 6% / 9% / 12%',       type: 'text' },
+  materiaal:          { label: 'Materiaal',            placeholder: 'Bijv. Keramiek / Hout / Nylon', type: 'text' },
+  maatLengte:         { label: 'Maat/Lengte',          placeholder: 'Bijv. 40 cm / 5,5 inch',    type: 'text' },
+  huidskleur:         { label: 'Huidskleur geschiktheid', placeholder: 'Bijv. Alle huidskleuren / Lichte huid', type: 'text' },
+  spf:                { label: 'SPF',                  placeholder: 'Bijv. SPF 30',              type: 'text' },
+  finish:             { label: 'Finish',               placeholder: 'Bijv. Mat / Glans / Satijn', type: 'text' },
+};
+
+// Store dynamic field values
+let dynamicFieldValues = {};
+
+function renderDynamicFields() {
+  const section = document.getElementById('dynamicFieldsSection');
+  const container = document.getElementById('dynamicFieldsContainer');
+  const titleEl = document.getElementById('dynamicFieldsTitle');
+  const subEl = document.getElementById('dynamicFieldsSub');
+  const cfg = activeProductSet ? PRODUCT_SET_CONFIG[activeProductSet] : null;
+
+  if (!cfg) { section.style.display = 'none'; return; }
+
+  const techFields = cfg.techFields || [];
+  const beautyFields = cfg.beautyFields || [];
+  const allFields = [...techFields, ...beautyFields];
+
+  if (allFields.length === 0) { section.style.display = 'none'; return; }
+
+  section.style.display = '';
+
+  // Set title based on type
+  if (techFields.length > 0 && beautyFields.length > 0) {
+    titleEl.textContent = 'Technische & Productspecificaties';
+    subEl.textContent = 'Vul de specificaties in voor dit product';
+  } else if (techFields.length > 0) {
+    titleEl.textContent = 'Technische Specificaties';
+    subEl.textContent = 'Vul de technische gegevens in van de tool';
+  } else {
+    titleEl.textContent = 'Productspecificaties';
+    subEl.textContent = 'Vul de productspecifieke gegevens in';
+  }
+
+  // Render fields
+  let html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">';
+  for (const fieldKey of allFields) {
+    const def = FIELD_DEFS[fieldKey];
+    if (!def) continue;
+    const val = dynamicFieldValues[fieldKey] || '';
+    html += `<div class="field">
+      <label class="field-label">${def.label}</label>
+      <input class="field-input" id="dynField_${fieldKey}" value="${escHTML(val)}" placeholder="${def.placeholder}" oninput="dynamicFieldValues['${fieldKey}']=this.value" style="font-size:13px;">
+    </div>`;
+  }
+  html += '</div>';
+  container.innerHTML = html;
+}
+
 // ─── Product Type Badges ───
 function renderProductTypeBadges() {
   const c = document.getElementById('productTypeBadges');
@@ -1433,7 +1521,14 @@ async function generateWithAI() {
     if (cfg.vrijVan.length > 0) userPrompt += `\n- Kies vrijVan uit: ${cfg.vrijVan.join(', ')}`;
     else userPrompt += `\n- vrijVan: leeg laten (niet van toepassing voor dit producttype)`;
     if (!cfg.showIngredients) userPrompt += `\n- ingredients: leeg laten (geen INCI bij dit producttype)`;
-    if (cfg.showTechSpecs) userPrompt += `\n- Voeg technische specificaties toe in de beschrijving en eigenschappen (bijv. wattage, temperatuur, materiaal, snoerlengte)`;
+    // Request specific tech/beauty fields
+    const allDynFields = [...(cfg.techFields || []), ...(cfg.beautyFields || [])];
+    if (allDynFields.length > 0) {
+      userPrompt += `\n- Vul ook het veld "specs" in het JSON object in met deze specifieke velden:`;
+      for (const fk of allDynFields) {
+        if (FIELD_DEFS[fk]) userPrompt += `\n  - "${fk}": "${FIELD_DEFS[fk].label}" (${FIELD_DEFS[fk].placeholder})`;
+      }
+    }
   }
 
   userPrompt += `\n\nGeef je antwoord UITSLUITEND als JSON object (geen markdown, geen backticks) met exact deze velden:
@@ -1454,7 +1549,8 @@ async function generateWithAI() {
   "categories": ["categorie1", "categorie2", "etc. - altijd inclusief Nieuw en merk-categorie"],
   "ikHeb": ["optie1", "optie2"],
   "werking": ["optie1", "optie2"],
-  "vrijVan": ["optie1", "optie2"]
+  "vrijVan": ["optie1", "optie2"],
+  "specs": {"veldnaam": "waarde", "...": "..."}
 }
 
 Schrijf in foutloos, overtuigend Nederlands. Toon is professioneel, inspirerend en toegankelijk. Vermijd overdreven claims en vakjargon. Gebruik geen wij/onze tenzij het vanuit Haarshop is.`;
@@ -1504,6 +1600,17 @@ Schrijf in foutloos, overtuigend Nederlands. Toon is professioneel, inspirerend 
     if (parsed.ikHeb) { data.ikHeb = parsed.ikHeb; }
     if (parsed.werking) { data.werking = parsed.werking; }
     if (parsed.vrijVan) { data.vrijVan = parsed.vrijVan; }
+
+    // Fill dynamic spec fields from AI response
+    if (parsed.specs && typeof parsed.specs === 'object') {
+      dynamicFieldValues = {};
+      for (const [key, val] of Object.entries(parsed.specs)) {
+        if (FIELD_DEFS[key] && val) dynamicFieldValues[key] = String(val);
+      }
+    }
+
+    // Set product set from dropdown if selected
+    activeProductSet = productSet;
 
     // Auto SEO (zonder streepjes)
     const name = parsed.productName || '';
@@ -1556,7 +1663,7 @@ function buildFullHTML() {
   return html;
 }
 function buildStructuredText() {
-  return [
+  const lines = [
     'Producttype: ' + document.getElementById('productType').value,
     'Merk: ' + document.getElementById('brand').value,
     'Lijn: ' + document.getElementById('line').value,
@@ -1570,7 +1677,12 @@ function buildStructuredText() {
     'Werking: ' + data.werking.join(', '),
     'Vrij van: ' + data.vrijVan.join(', '),
     'Ingrediënten: ' + document.getElementById('ingredients').value,
-  ].join('\n');
+  ];
+  // Add dynamic fields
+  for (const [key, val] of Object.entries(dynamicFieldValues)) {
+    if (val && FIELD_DEFS[key]) lines.push(FIELD_DEFS[key].label + ': ' + val);
+  }
+  return lines.join('\n');
 }
 
 // ─── Export rendering ───
@@ -1593,6 +1705,10 @@ function updateExport() {
     ['Werking', data.werking.join(', ')],
     ['Vrij van', data.vrijVan.join(', ')],
   ];
+  // Add dynamic field rows
+  for (const [key, val] of Object.entries(dynamicFieldValues)) {
+    if (val && FIELD_DEFS[key]) rows.push([FIELD_DEFS[key].label, val]);
+  }
   document.getElementById('exportDataTable').innerHTML = rows.map(([l,v]) =>
     `<div class="data-row"><span class="data-label">${l}</span><span class="data-value">${v || '—'}</span></div>`
   ).join('');
@@ -1790,6 +1906,7 @@ function resetAll() {
   data.ikHeb = [];
   data.werking = [];
   data.vrijVan = [];
+  dynamicFieldValues = {};
   renderAll();
   updateWordCounts();
   switchTab(0);
@@ -1806,6 +1923,7 @@ function renderAll() {
   renderToggleBadges('ikHebBadges', getActiveIkHeb(), 'ikHeb', 'ikHebSelected');
   renderToggleBadges('werkingBadges', getActiveWerking(), 'werking', 'werkingSelected');
   renderToggleBadges('vrijVanBadges', getActiveVrijVan(), 'vrijVan', 'vrijVanSelected');
+  renderDynamicFields();
   updateProgress();
   // Toggle section visibility based on product set
   const cfg = activeProductSet ? PRODUCT_SET_CONFIG[activeProductSet] : null;
