@@ -348,6 +348,21 @@
               <option value="Elastiekjes & Klemmen">Elastiekjes &amp; Klemmen</option>
               <option value="Kappersscharen">Kappersscharen</option>
               <option value="Epileren">Epileren</option>
+              <option value="Messen">Messen</option>
+              <option value="Nagelverzorging">Nagelverzorging</option>
+              <option value="Oefenhoofden">Oefenhoofden</option>
+              <option value="Omvorming">Omvorming</option>
+              <option value="Accessoires">Accessoires</option>
+              <option value="Opzetkammen">Opzetkammen</option>
+              <option value="Parfum & Geuren">Parfum &amp; Geuren</option>
+              <option value="Professional">Professional</option>
+              <option value="Scheren">Scheren</option>
+              <option value="Snijkoppen">Snijkoppen</option>
+              <option value="Styling Brush">Styling Brush</option>
+              <option value="Stylingtool">Stylingtool</option>
+              <option value="Trimmers & Tondeuses">Trimmers &amp; Tondeuses</option>
+              <option value="Wenkbrauw & Wimper">Wenkbrauw &amp; Wimper</option>
+              <option value="Wimperverlenging">Wimperverlenging</option>
             </select>
           </div>
         </div>
@@ -1040,7 +1055,107 @@ const PRODUCT_SET_CONFIG = {
     werking: [],
     vrijVan: [],
     showIngredients: false, showTechSpecs: true, showBeautySpecs: false,
-    techFields: ['wattage','snoerlengte','gewicht','kleurUitvoering']
+    techFields: ['wattage','snoerlengte','gewicht','oplaadtijd','gebruikstijdDraadloos','kleurUitvoering']
+  },
+  'Messen': {
+    productTypes: ['Scheermes','Uitdunmes','Sculpteringmes','Mesbladen (navulling)'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: false, showBeautySpecs: true,
+    beautyFields: ['materiaal','maatLengte','meslengte','aantalTanden','gewicht','kleurUitvoering']
+  },
+  'Nagelverzorging': {
+    productTypes: ['Nagelvijl','Nagelknipper','Nagelriemverzorging','Nagelset','Nagellak'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: false, showBeautySpecs: true,
+    beautyFields: ['materiaal','maatLengte','kleurTint','kleurUitvoering']
+  },
+  'Oefenhoofden': {
+    productTypes: ['Oefenhoofd met echt haar','Oefenhoofd met synthetisch haar','Oefenhoofd kaal','Statiefklem'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: false, showBeautySpecs: true,
+    beautyFields: ['materiaal','maatLengte','haartypeExtensions','kleurTint']
+  },
+  'Omvorming': {
+    productTypes: ['Permanentvloeistof','Fixeervloeistof','Krulvloeistof','Ontkrullingscrème'],
+    ikHeb: ['Krullend haar','Steil haar','Golvend haar','Fijn haar','Dik haar','Beschadigd haar','Normaal haar','Gekleurd haar'],
+    werking: ['Kruldefinitie','Glad makend','Verzacht het haar','Herstellend'],
+    vrijVan: ['Vegan','Dierproefvrij'],
+    showIngredients: true, showTechSpecs: false, showBeautySpecs: true,
+    beautyFields: ['oxidatietijd','mengverhouding','volumeSterkte']
+  },
+  'Accessoires': {
+    productTypes: ['Verfkom','Verfkwast','Kappersmantel','Aluminium folie','Knipkappe','Tipkam','Waterspuit','Kapperstas'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: false, showBeautySpecs: true,
+    beautyFields: ['materiaal','maatLengte','kleurUitvoering']
+  },
+  'Opzetkammen': {
+    productTypes: ['Opzetkam 3mm','Opzetkam 6mm','Opzetkam 9mm','Opzetkam 12mm','Opzetkamset'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: false, showBeautySpecs: true,
+    beautyFields: ['materiaal','maatLengte','kleurUitvoering']
+  },
+  'Parfum & Geuren': {
+    productTypes: ['Eau de Parfum','Eau de Toilette','Body Mist','Haarparfum','Geursticks'],
+    ikHeb: [],
+    werking: [],
+    vrijVan: ['Alcohol','Ftalaten','Kunstmatige geurstoffen','Vegan','Dierproefvrij'],
+    showIngredients: true, showTechSpecs: false, showBeautySpecs: true,
+    beautyFields: ['geurtype']
+  },
+  'Professional': {
+    productTypes: ['Kappersstoel','Wasbak','Spiegel','Kapperskar','Sterilisator','Kappersbenodigdheden'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: false, showBeautySpecs: true,
+    beautyFields: ['materiaal','maatLengte','kleurUitvoering']
+  },
+  'Scheren': {
+    productTypes: ['Scheermachine','Scheergel','Scheerschuim','Aftershave','Scheerkwast','Scheermes'],
+    ikHeb: ['Gevoelige huid','Normale huid','Geïrriteerde huid'],
+    werking: ['Hydraterend','Kalmerend','Verfrissend','Verzachtend','Anti-irritatie'],
+    vrijVan: [],
+    showIngredients: true, showTechSpecs: true, showBeautySpecs: false,
+    techFields: ['oplaadtijd','gebruikstijdDraadloos','snoerlengte','gewicht','kleurUitvoering']
+  },
+  'Snijkoppen': {
+    productTypes: ['Snijkop tondeuse','Snijkop trimmer','Universele snijkop'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: false, showBeautySpecs: true,
+    beautyFields: ['materiaal','maatLengte','meslengte','aantalTanden','kleurUitvoering']
+  },
+  'Styling Brush': {
+    productTypes: ['Ronde styling brush','Paddle styling brush','Verwarmde styling brush'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: true, showBeautySpecs: false,
+    techFields: ['maxTemperatuur','temperatuurstanden','plaatmateriaal','diameter','snoerlengte','gewicht','opwarmtijd','autoShutoff','ionentechnologie','geschiktHaartype','kleurUitvoering']
+  },
+  'Stylingtool': {
+    productTypes: ['Multistyler','Airwrap','Heteluchtborstel','2-in-1 styler'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: true, showBeautySpecs: false,
+    techFields: ['wattage','maxTemperatuur','temperatuurstanden','plaatmateriaal','opzetstukken','snoerlengte','gewicht','opwarmtijd','autoShutoff','ionentechnologie','coolShot','geschiktHaartype','kleurUitvoering']
+  },
+  'Trimmers & Tondeuses': {
+    productTypes: ['Tondeuse','Baardtrimmer','Haartrimmer','Neustrimmer','Detailtrimmer','Draadloze trimmer'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: true, showBeautySpecs: false,
+    techFields: ['wattage','snelheidsstanden','opzetstukken','snoerlengte','gewicht','oplaadtijd','gebruikstijdDraadloos','meslengte','aantalTanden','kleurUitvoering']
+  },
+  'Wenkbrauw & Wimper': {
+    productTypes: ['Wenkbrauwverf','Wimperverf','Wenkbrauwgel','Wenkbrauwserum','Wimperserum','Wimperkruller','Wenkbrauwpotlood'],
+    ikHeb: ['Gevoelige huid','Normale huid'],
+    werking: [],
+    vrijVan: ['Parabenen','Ftalaten','Kunstmatige kleurstoffen','Vegan','Dierproefvrij','Dermatologisch getest'],
+    showIngredients: true, showTechSpecs: false, showBeautySpecs: true,
+    beautyFields: ['kleurTint','dekking']
+  },
+  'Wimperverlenging': {
+    productTypes: ['Individuele wimpers','Cluster wimpers','Strip wimpers','Wimperlijm','Wimperverwijderaar','Wimperkruller (verlenging)'],
+    ikHeb: [],
+    werking: [],
+    vrijVan: ['Parabenen','Ftalaten','Kunstmatige kleurstoffen','Vegan','Dierproefvrij','Dermatologisch getest'],
+    showIngredients: true, showTechSpecs: false, showBeautySpecs: true,
+    beautyFields: ['kleurTint','maatLengte','materiaal','haartypeExtensions']
   }
 };
 
@@ -1233,6 +1348,14 @@ const FIELD_DEFS = {
   huidskleur:         { label: 'Huidskleur geschiktheid', placeholder: 'Bijv. Alle huidskleuren / Lichte huid', type: 'text' },
   spf:                { label: 'SPF',                  placeholder: 'Bijv. SPF 30',              type: 'text' },
   finish:             { label: 'Finish',               placeholder: 'Bijv. Mat / Glans / Satijn', type: 'text' },
+  // New fields for added product sets
+  meslengte:          { label: 'Meslengte',            placeholder: 'Bijv. 45 mm / 2 inch',     type: 'text' },
+  aantalTanden:       { label: 'Aantal tanden/snijvlak', placeholder: 'Bijv. 40 tanden / Enkel snijvlak', type: 'text' },
+  oplaadtijd:         { label: 'Oplaadtijd',           placeholder: 'Bijv. 90 minuten',         type: 'text' },
+  gebruikstijdDraadloos: { label: 'Gebruikstijd (draadloos)', placeholder: 'Bijv. 60 minuten', type: 'text' },
+  geurtype:           { label: 'Geurtype',             placeholder: 'Bijv. Bloemig / Houtachtig / Citrus / Orientaals', type: 'text' },
+  haartypeExtensions: { label: 'Haartype (extensions)', placeholder: 'Bijv. Echt haar / Synthetisch / Remy', type: 'text' },
+  verzachtend:        { label: 'Verzachtend',          placeholder: 'Bijv. Ja',                 type: 'text' },
 };
 
 // Store dynamic field values
