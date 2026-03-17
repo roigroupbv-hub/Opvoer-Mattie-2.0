@@ -2382,9 +2382,12 @@ function resetAll() {
   data.werking = [];
   data.vrijVan = [];
   dynamicFieldValues = {};
+  // Clear saved state
+  localStorage.removeItem(SAVE_KEY);
   renderAll();
   updateWordCounts();
   switchTab(0);
+  showToast('Alle velden gewist.', 'info');
 }
 
 // ─── Helpers ───
@@ -2422,10 +2425,86 @@ function renderAll() {
   }
 }
 
+// ─── Autosave / Autoload ───
+const SAVE_KEY = 'haarshop_productopvoer_state';
+const SAVE_FIELDS = ['productName','brand','line','subLine','contentSize','productType','subProductType',
+  'shortDescription','description','crossSellText','ingredients','urlKey','metaTitle','seoTitle','seoDescription',
+  'aiInput','aiUrl'];
+
+function saveState() {
+  try {
+    const state = {};
+    // Text fields
+    SAVE_FIELDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) state[id] = el.value;
+    });
+    // Data arrays
+    state._features = data.features;
+    state._steps = data.steps;
+    state._categories = data.categories;
+    state._ikHeb = data.ikHeb;
+    state._werking = data.werking;
+    state._vrijVan = data.vrijVan;
+    // Product set
+    state._activeProductSet = activeProductSet;
+    const psEl = document.getElementById('aiProductSet');
+    if (psEl) state._aiProductSetValue = psEl.value;
+    // Dynamic field values
+    state._dynamicFieldValues = dynamicFieldValues;
+    localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+  } catch (e) { /* silently fail */ }
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return false;
+    const state = JSON.parse(raw);
+    // Text fields
+    SAVE_FIELDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && state[id] !== undefined) el.value = state[id];
+    });
+    // Data arrays
+    if (state._features) data.features = state._features;
+    if (state._steps) data.steps = state._steps;
+    if (state._categories) data.categories = state._categories;
+    if (state._ikHeb) data.ikHeb = state._ikHeb;
+    if (state._werking) data.werking = state._werking;
+    if (state._vrijVan) data.vrijVan = state._vrijVan;
+    // Product set
+    if (state._activeProductSet) {
+      activeProductSet = state._activeProductSet;
+      const psEl = document.getElementById('aiProductSet');
+      if (psEl && state._aiProductSetValue) psEl.value = state._aiProductSetValue;
+    }
+    // Dynamic field values
+    if (state._dynamicFieldValues) dynamicFieldValues = state._dynamicFieldValues;
+    return true;
+  } catch (e) { return false; }
+}
+
+// Autosave on any input change (debounced)
+let saveTimer = null;
+function triggerAutosave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveState, 500);
+}
+document.addEventListener('input', triggerAutosave);
+document.addEventListener('click', function(e) {
+  // Save when badges are clicked (ikHeb, werking, vrijVan toggles)
+  if (e.target.classList?.contains('badge')) setTimeout(saveState, 100);
+});
+
 // ─── Init ───
+const hadSavedState = loadState();
 renderAll();
 updateWordCounts();
 updateProgress();
+if (hadSavedState) {
+  showToast('Vorige sessie hersteld.', 'info');
+}
 
 // Live progress tracking
 ['productName','brand','shortDescription','description','seoTitle'].forEach(id => {
