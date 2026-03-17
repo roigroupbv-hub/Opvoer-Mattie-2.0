@@ -2213,8 +2213,8 @@ Antwoord UITSLUITEND als JSON object met deze velden:
   "shortDescription": "1 zin, 15-20 woorden, wat voor product is het en waarvoor. Gebruik de productnaam hier NIET (staat er al dikgedrukt boven). Neutraal geschreven.",
   "description": "~100 woorden platte tekst. Begin NIET met productnaam. Begin met wat het product is en voor wie. Vervolg met kernwerking, ingrediënten, verwacht resultaat. Mag <strong> en <em> tags bevatten voor nadruk. Geen andere HTML. Geen wij/onze.",
   "keyFeatures": ["6-7 concrete eigenschappen, elke zin eindigt met punt, noem ingrediënten waar relevant"],
-  "usageSteps": ["genummerde stappen, elke zin eindigt met punt, LAATSTE stap is cross-sell met <a href> link naar gerelateerd product op haarshop.nl"],
-  "crossSellText": "stimuleer aankoop volledige lijn met <a href=https://www.haarshop.nl/...>productnaam</a> link - gebruik ECHTE haarshop.nl URLs",
+  "usageSteps": ["genummerde stappen, elke zin eindigt met punt. LAATSTE stap = cross-sell met 1-2 producten als <a href=PRODUCT-URL>productnaam</a>. Elk genoemd product MOET een link hebben. Gebruik product-URLs uit de meegeleverde lijst, of categorie-URL als fallback."],
+  "crossSellText": "1 zin die aankoop van 1-2 gerelateerde producten stimuleert. Elk product MOET een <a href> link hebben. Gebruik bij voorkeur product-URLs, categorie-URL alleen als fallback.",
   "ingredients": "volledige INCI ingrediëntenlijst of leeg bij tools/accessoires",
   "categories": ["altijd inclusief Nieuw en merk-categorie bijv. Kérastase Shampoo"],
   "ikHeb": ["kies alleen uit de meegegeven opties"],
@@ -2272,12 +2272,15 @@ GEBRUIKSAANWIJZING (usageSteps):
 - Bij tools → link naar een hittebeschermend of verzorgend product
 - Gebruik de EXACTE product-URLs uit de meegeleverde lijst als die beschikbaar zijn
 
-CROSS-SELL (crossSellText):
-- Stimuleer de klant om de volledige productlijn te kopen
-- Link naar een specifiek product (niet alleen een categorie) als de URL beschikbaar is
-- Gebruik <a href="ECHTE_URL">productnaam</a> — NOOIT href="#"
-- Schrijf een leuke variatie, niet steeds dezelfde zin
-- Voorbeeld: "Maak de verzorgingsroutine compleet met de <a href="https://www.haarshop.nl/kerastase-resistance-ciment-anti-usure-200-ml">Kérastase Resistance Ciment Anti-Usure</a> voor optimaal herstel."
+CROSS-SELL REGELS:
+- Link bij voorkeur naar specifieke productpagina-URLs (niet naar categoriepagina's)
+- Als product-URLs beschikbaar zijn in de meegeleverde lijst → gebruik die exacte URLs
+- Je mag maximaal 2 gerelateerde producten noemen (bijv. bij shampoo: conditioner + masker)
+- Elke productnaam die je noemt MOET een <a href> link hebben — noem NOOIT een product zonder link
+- ALLEEN als er geen relevante product-URLs beschikbaar zijn mag je uitwijken naar een categorie-URL als fallback
+- Voorbeeld GOED (2 producten): "Maak de routine compleet met de <a href="https://www.haarshop.nl/wella-ultimate-color-conditioner-200-ml">Wella Ultimate Color Conditioner</a> en het <a href="https://www.haarshop.nl/wella-ultimate-color-mask-150-ml">Wella Ultimate Color Mask</a> voor het beste resultaat."
+- Voorbeeld GOED (fallback categorie): "Bekijk het volledige aanbod <a href="https://www.haarshop.nl/merken/wella-sp">Wella Professionals producten</a> voor een complete verzorgingsroutine."
+- Voorbeeld FOUT: "Gebruik hierna de Wella Ultimate Color Conditioner of de Ultimate Color Mask" (geen links)
 
 ANTWOORDFORMAAT:
 - Antwoord UITSLUITEND met een JSON object
