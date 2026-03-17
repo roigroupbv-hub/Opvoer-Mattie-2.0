@@ -453,7 +453,22 @@
       </div>
       <div class="field">
         <label class="field-label">Omschrijving</label>
-        <textarea class="field-textarea" id="description" rows="6" placeholder="Schrijf hier de productomschrijving (zonder productnaam aan het begin)..."></textarea>
+        <!-- Formatting toolbar -->
+        <div style="display:flex;gap:4px;margin-bottom:6px;padding:6px 8px;background:#1a1a1a;border-radius:6px 6px 0 0;border:1px solid rgba(224,197,182,0.12);border-bottom:none;">
+          <button type="button" onclick="wrapDescSelection('strong')" title="Dikgedrukt (Ctrl+B)" style="background:rgba(255,255,255,0.06);border:none;color:#e0c5b6;width:30px;height:28px;border-radius:4px;cursor:pointer;font-size:14px;font-weight:700;transition:background .12s;" onmouseover="this.style.background='rgba(224,197,182,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">B</button>
+          <button type="button" onclick="wrapDescSelection('em')" title="Schuingedrukt (Ctrl+I)" style="background:rgba(255,255,255,0.06);border:none;color:#e0c5b6;width:30px;height:28px;border-radius:4px;cursor:pointer;font-size:14px;font-style:italic;transition:background .12s;" onmouseover="this.style.background='rgba(224,197,182,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'"><em>I</em></button>
+          <div style="width:1px;background:rgba(255,255,255,0.08);margin:2px 4px;"></div>
+          <button type="button" onclick="insertDescTag('<br>')" title="Regeleinde" style="background:rgba(255,255,255,0.06);border:none;color:rgba(255,255,255,0.4);height:28px;border-radius:4px;cursor:pointer;font-size:10px;padding:0 8px;transition:background .12s;" onmouseover="this.style.background='rgba(224,197,182,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">&lt;br&gt;</button>
+          <button type="button" onclick="clearDescFormatting()" title="Opmaak verwijderen" style="background:rgba(255,255,255,0.06);border:none;color:rgba(255,255,255,0.4);height:28px;border-radius:4px;cursor:pointer;font-size:11px;padding:0 8px;transition:background .12s;" onmouseover="this.style.background='rgba(224,197,182,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">✕ Strip</button>
+          <div style="flex:1;"></div>
+          <button type="button" onclick="toggleDescPreview()" id="descPreviewToggle" title="Preview aan/uit" style="background:rgba(255,255,255,0.06);border:none;color:rgba(255,255,255,0.4);height:28px;border-radius:4px;cursor:pointer;font-size:11px;padding:0 10px;transition:background .12s;" onmouseover="this.style.background='rgba(224,197,182,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">👁 Preview</button>
+        </div>
+        <textarea class="field-textarea" id="description" rows="6" placeholder="Schrijf hier de productomschrijving (zonder productnaam aan het begin)..." style="border-radius:0 0 6px 6px;border-top:none;" oninput="updateDescPreview()"></textarea>
+        <!-- Live HTML preview -->
+        <div id="descPreviewPanel" style="display:none;margin-top:8px;padding:14px;background:#fff;border-radius:6px;color:#333;font-size:13.5px;line-height:1.7;border:1px solid #e0e0e0;">
+          <div style="font-size:10px;color:#999;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;">HTML Preview</div>
+          <div id="descPreviewContent"></div>
+        </div>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <span class="word-count" id="descWordCount">0 woorden</span>
@@ -1162,6 +1177,239 @@ const PRODUCT_SET_CONFIG = {
 // Current active product set
 let activeProductSet = '';
 
+// ─── Haarshop.nl Site Structure for Internal Linking ───
+// Last updated from live site navigation: March 2026
+const HAARSHOP_URLS = {
+  // ══════════════════════════════════════
+  // HAAR (HAARVERZORGING)
+  // ══════════════════════════════════════
+  'Haarverzorging':         'https://www.haarshop.nl/haarverzorging',
+  'Shampoo':                'https://www.haarshop.nl/haarverzorging/shampoo',
+  'Shampoo Bar':            'https://www.haarshop.nl/haarverzorging/shampoo/shampoo-bar',
+  'Conditioner':            'https://www.haarshop.nl/haarverzorging/conditioners',
+  'Leave-in Conditioner':   'https://www.haarshop.nl/haarverzorging/leave-in-conditioners',
+  'Haarmasker':             'https://www.haarshop.nl/haarverzorging/haarmasker',
+  'Haar Treatment':         'https://www.haarshop.nl/haarverzorging/treatment',
+  'Treatment':              'https://www.haarshop.nl/haarverzorging/treatment',
+  'Haarolie':               'https://www.haarshop.nl/haarverzorging/haarolie',
+  'Hoofdhuidproblemen':     'https://www.haarshop.nl/haarverzorging/hoofdhuid-oplossingen',
+  'Voordeelsets':           'https://www.haarshop.nl/haarverzorging/alle-voordeelsets',
+
+  // ══════════════════════════════════════
+  // HAARSTYLING
+  // ══════════════════════════════════════
+  'Haarstyling':            'https://www.haarshop.nl/haarverzorging/haarstyling',
+  'Krullen Creme':          'https://www.haarshop.nl/haarverzorging/haarstyling/krullen-creme',
+  'Haarcreme':              'https://www.haarshop.nl/haarverzorging/haarstyling/styling-creme-wax',
+  'Styling Paste':          'https://www.haarshop.nl/haarverzorging/haarstyling/haar-paste',
+  'Haarwax':                'https://www.haarshop.nl/haarverzorging/haarstyling/wax',
+  'Wax':                    'https://www.haarshop.nl/haarverzorging/haarstyling/wax',
+  'Volume Poeder':          'https://www.haarshop.nl/haarverzorging/haarstyling/volume-poeder',
+  'Gel':                    'https://www.haarshop.nl/haarverzorging/haarstyling/gel',
+  'Pommade':                'https://www.haarshop.nl/haarverzorging/haarstyling/pommade',
+  'Haarlak':                'https://www.haarshop.nl/haarverzorging/haarstyling/haarspray/haarlak',
+  'Haarspray':              'https://www.haarshop.nl/haarverzorging/haarstyling/haarspray/haarlak',
+  'Schuimverstevigers':     'https://www.haarshop.nl/haarverzorging/haarstyling/schuimverstevigers',
+  'Mousse':                 'https://www.haarshop.nl/haarverzorging/haarstyling/schuimverstevigers',
+
+  // ══════════════════════════════════════
+  // HAARKLEURINGEN
+  // ══════════════════════════════════════
+  'Haarkleuringen':         'https://www.haarshop.nl/haarverzorging/haarkleuringen',
+  'Haarverf':               'https://www.haarshop.nl/haarverzorging/haarkleuringen/haarverf',
+  'Haarspoelingen':         'https://www.haarshop.nl/haarverzorging/haarkleuringen/haarspoelingen',
+  'Blondeer poeders':       'https://www.haarshop.nl/haarverzorging/haarkleuringen/blondeer-poeders',
+  'Blondeermiddel':         'https://www.haarshop.nl/haarverzorging/haarkleuringen/blondeer-poeders',
+  'Waterstof Peroxide':     'https://www.haarshop.nl/haarverzorging/haarkleuringen/waterstof-peroxide',
+  'Kleur opfrissers':       'https://www.haarshop.nl/haarverzorging/haarkleuringen/kleur-opfrissers-kleur-onderhoud',
+  'Kleurmousse':            'https://www.haarshop.nl/haarverzorging/haarkleuringen/kleurmousse',
+  'Uitgroei Sprays':        'https://www.haarshop.nl/haarverzorging/haarkleuringen/uitgroei-sprays-stiften',
+
+  // ══════════════════════════════════════
+  // HAARMODE & EXTENSIONS
+  // ══════════════════════════════════════
+  'Haaraccessoires':        'https://www.haarshop.nl/haarverzorging/haaraccessoires',
+  'Haarelastiekjes':        'https://www.haarshop.nl/haarverzorging/haaraccessoires/haarelastiekjes',
+  'Scrunchies':             'https://www.haarshop.nl/haarverzorging/haaraccessoires/velvet-scrunchie',
+  'Haarklemmen':            'https://www.haarshop.nl/haarverzorging/haaraccessoires/haarklemmen',
+  'Hair Extensions':        'https://www.haarshop.nl/haarverzorging/extensions',
+  'Extensions':             'https://www.haarshop.nl/professioneel/extensions',
+  'Baby & Kind':            'https://www.haarshop.nl/baby-kind',
+
+  // ══════════════════════════════════════
+  // LICHAAM / HUIDVERZORGING
+  // ══════════════════════════════════════
+  'Huidverzorging':         'https://www.haarshop.nl/huidverzorging',
+  'Gezichtsverzorging':     'https://www.haarshop.nl/huidverzorging/gezicht',
+  'Gezichtsscrub':          'https://www.haarshop.nl/huidverzorging/gezicht/scrub',
+  'Gezichtsreiniger':       'https://www.haarshop.nl/huidverzorging/gezicht/reiniger',
+  'Gezichtstoner':          'https://www.haarshop.nl/huidverzorging/gezicht/toner',
+  'Gezichtscrème':          'https://www.haarshop.nl/huidverzorging/gezicht/creme',
+  'Dagcrème':               'https://www.haarshop.nl/huidverzorging/gezicht/creme/dagcreme',
+  'Nachtcrème':             'https://www.haarshop.nl/huidverzorging/gezicht/creme/nachtcreme',
+  'Gezichtsserum':          'https://www.haarshop.nl/huidverzorging/gezicht/serum',
+  'Gezichtsmasker':         'https://www.haarshop.nl/huidverzorging/gezicht/masker',
+  'LED':                    'https://www.haarshop.nl/huidverzorging/gezicht/led',
+  'Lichaamsverzorging':     'https://www.haarshop.nl/huidverzorging/lichaam',
+  'Handcrème':              'https://www.haarshop.nl/huidverzorging/lichaam/handcreme',
+  'Bodyscrub':              'https://www.haarshop.nl/huidverzorging/lichaam/bodyscrub',
+  'Douchegel':              'https://www.haarshop.nl/huidverzorging/lichaam/douchegel',
+  'Huidserum':              'https://www.haarshop.nl/huidverzorging/lichaam/huidserum',
+  'Bodylotion':             'https://www.haarshop.nl/huidverzorging/lichaam/bodylotion',
+  'Huidcrème':              'https://www.haarshop.nl/huidverzorging/lichaam/huidcreme',
+  'Huidolie':               'https://www.haarshop.nl/huidverzorging/lichaam/huidolie',
+  'Deodorant':              'https://www.haarshop.nl/huidverzorging/lichaam/deodorant',
+  'Ontharen':               'https://www.haarshop.nl/huidverzorging/ontharen',
+  'Oogverzorging':          'https://www.haarshop.nl/huidverzorging/oogverzorging',
+  'Oogcrème':               'https://www.haarshop.nl/huidverzorging/oogverzorging/oogcreme',
+  'Oogserum':               'https://www.haarshop.nl/huidverzorging/oogverzorging/oogserum',
+
+  // Tanning
+  'Tanning':                'https://www.haarshop.nl/huidverzorging/tanning',
+  'Tanning Spray':          'https://www.haarshop.nl/huidverzorging/tanning/bruinings-spray',
+  'Tanning Mousse':         'https://www.haarshop.nl/huidverzorging/tanning/mousse',
+  'Tanning Lotion':         'https://www.haarshop.nl/huidverzorging/tanning/lotion',
+  'Tanning Cream':          'https://www.haarshop.nl/huidverzorging/tanning/cream',
+
+  // Supplementen
+  'Supplementen':           'https://www.haarshop.nl/supplementen',
+  'Haar supplement':        'https://www.haarshop.nl/huidverzorging/supplementen/haar-supplement',
+
+  // ══════════════════════════════════════
+  // MAKE-UP
+  // ══════════════════════════════════════
+  'Make-Up':                'https://www.haarshop.nl/make-up',
+  'Wenkbrauwen':            'https://www.haarshop.nl/make-up/wenkbrauw',
+  'Wenkbrauwverf':          'https://www.haarshop.nl/make-up/verf',
+  'Wenkbrauwpotlood':       'https://www.haarshop.nl/make-up/wenkbrauw/potlood',
+  'Wenkbrauwpoeder':        'https://www.haarshop.nl/make-up/wenkbrauw/poeder',
+  'Wenkbrauwgel':           'https://www.haarshop.nl/make-up/wenkbrauw/gel',
+  'Wenkbrauwserum':         'https://www.haarshop.nl/make-up/wenkbrauw/serum',
+  'Oogschaduw':             'https://www.haarshop.nl/make-up/ogen/oogschaduw',
+  'Mascara':                'https://www.haarshop.nl/make-up/ogen/mascara',
+  'Eyeliner':               'https://www.haarshop.nl/make-up/ogen/eyeliner',
+  'Oogpotlood':             'https://www.haarshop.nl/make-up/ogen/oogpotlood',
+  'Oog Make-up Remover':    'https://www.haarshop.nl/make-up/ogen/remover',
+  'Lipstick':               'https://www.haarshop.nl/make-up/lippen/lipstick',
+  'Lipgloss':               'https://www.haarshop.nl/make-up/lippen/lipgloss',
+  'Lipliner':               'https://www.haarshop.nl/make-up/lippen/lipliner',
+  'Concealer':              'https://www.haarshop.nl/make-up/gezicht/concealer',
+  'Foundation':             'https://www.haarshop.nl/make-up/gezicht/foundation',
+  'Gezichtspoeder':         'https://www.haarshop.nl/make-up/gezicht/poeder',
+  'Bronzer':                'https://www.haarshop.nl/make-up/gezicht/bronzer',
+  'Highlighter':            'https://www.haarshop.nl/make-up/gezicht/highlighter',
+  'Blush':                  'https://www.haarshop.nl/make-up/gezicht/blush',
+  'Make-up Kwasten':        'https://www.haarshop.nl/make-up/accessoires/kwasten',
+  'Make-up Remover':        'https://www.haarshop.nl/make-up/accessoires/remover',
+  'Make-up Spons':          'https://www.haarshop.nl/make-up/accessoires/spons',
+
+  // ══════════════════════════════════════
+  // NAGELS
+  // ══════════════════════════════════════
+  'Nagels':                 'https://www.haarshop.nl/nagels',
+  'Acrylnagels':            'https://www.haarshop.nl/nagels/acryl-nagels',
+  'Gelnagels':              'https://www.haarshop.nl/nagels/brisa-gel-nagels',
+  'Nagellak':               'https://www.haarshop.nl/nagels/nagel-topcoat',
+  'Gellak':                 'https://www.haarshop.nl/nagels/shellac',
+  'Manicure':               'https://www.haarshop.nl/nagels/manicure',
+  'Nagelverzorging':        'https://www.haarshop.nl/nagels/nagelverzorging',
+  'Nagelvijl':              'https://www.haarshop.nl/nagels/vijlen',
+  'Pedicure':               'https://www.haarshop.nl/nagels/pedicure',
+
+  // ══════════════════════════════════════
+  // MAN
+  // ══════════════════════════════════════
+  'Man':                    'https://www.haarshop.nl/man',
+  'Man Shampoo':            'https://www.haarshop.nl/man/haarproducten/shampoos',
+  'Man Conditioner':        'https://www.haarshop.nl/man/haarproducten/conditioners',
+  'Man Haarkuur':           'https://www.haarshop.nl/man/haarproducten/haarkuren',
+  'Styling Wax':            'https://www.haarshop.nl/man/haarproducten/styling-wax',
+  'Styling Gel':            'https://www.haarshop.nl/haarverzorging/haarstyling/gel',
+  'Scheermesjes':           'https://www.haarshop.nl/man/scheerproducten/scheermesjes',
+  'Pre-Shave':              'https://www.haarshop.nl/man/scheerproducten/pre-shave',
+  'Scheerolie':             'https://www.haarshop.nl/man/scheerproducten/scheerolie',
+  'Scheerschuim':           'https://www.haarshop.nl/man/scheerproducten/scheerschuim',
+  'Scheergel':              'https://www.haarshop.nl/man/scheerproducten/scheergels',
+  'Scheerkwasten':          'https://www.haarshop.nl/man/scheerproducten/scheerkwasten',
+  'Baardproducten':         'https://www.haarshop.nl/man/baardproducten',
+  'Baardshampoo':           'https://www.haarshop.nl/man/baardproducten/baardshampoo',
+  'Baardolie':              'https://www.haarshop.nl/man/baardproducten/baardolie',
+  'Baardwax':               'https://www.haarshop.nl/man/baardproducten/baardwax',
+  'Baardbalsem':            'https://www.haarshop.nl/man/baardproducten/baardbalsem',
+
+  // ══════════════════════════════════════
+  // HAARTOOLS
+  // ══════════════════════════════════════
+  'Haartools':              'https://www.haarshop.nl/tools',
+  'Multistyler':            'https://www.haarshop.nl/tools/multistyler',
+  'Stijltang':              'https://www.haarshop.nl/tools/stijltangen',
+  'Stijltangen':            'https://www.haarshop.nl/tools/stijltangen',
+  'Krultang':               'https://www.haarshop.nl/tools/krultangen-warme-fohnborstels',
+  'Krultangen':             'https://www.haarshop.nl/tools/krultangen-warme-fohnborstels',
+  'Föhn':                   'https://www.haarshop.nl/tools/fohns',
+  'Föhns':                  'https://www.haarshop.nl/tools/fohns',
+  'Föhnborstel':            'https://www.haarshop.nl/tools/fohnborstel-krulborstel',
+  'Föhnborstels':           'https://www.haarshop.nl/tools/fohnborstel-krulborstel',
+  'Stijlborstel':           'https://www.haarshop.nl/tools/stijlborstel',
+  'Tondeuse':               'https://www.haarshop.nl/tools/tondeuses-trimmers',
+  'Trimmers & Tondeuses':   'https://www.haarshop.nl/tools/tondeuses-trimmers',
+  'Trimmer':                'https://www.haarshop.nl/tools/trimmers',
+  'Opzetkammen':            'https://www.haarshop.nl/tools/tondeuses-trimmers/opzetkammen',
+  'Haarrollers':            'https://www.haarshop.nl/tools/rollers-wikkels',
+  'Droogkap':               'https://www.haarshop.nl/tools/fohns/droogkap',
+  'Kappersschaar':          'https://www.haarshop.nl/tools/kappers-scharen',
+  'Kappersscharen':         'https://www.haarshop.nl/tools/kappers-scharen',
+  'Kappersmes':             'https://www.haarshop.nl/tools/kappersmessen',
+  'Messen':                 'https://www.haarshop.nl/tools/kappersmessen',
+  'Haarkam':                'https://www.haarshop.nl/tools/kammen',
+  'Haarkammen':             'https://www.haarshop.nl/tools/kammen',
+  'Haarborstel':            'https://www.haarshop.nl/tools/borstels',
+  'Haarborstels':           'https://www.haarshop.nl/tools/borstels',
+  'Pneumatische Borstel':   'https://www.haarshop.nl/tools/borstels/pneumatische-borstels',
+  'Kapperskoffer':          'https://www.haarshop.nl/tools/koffers',
+
+  // ══════════════════════════════════════
+  // PROFESSIONEEL / KAPPERS
+  // ══════════════════════════════════════
+  'Professional':           'https://www.haarshop.nl/professioneel',
+  'Kappersstoelen':         'https://www.haarshop.nl/professioneel/kappers-interieur/kappersstoelen',
+  'Kappersstoelen Kind':    'https://www.haarshop.nl/professioneel/kappers-interieur/kappersstoel-kind',
+  'Kapperskrukken':         'https://www.haarshop.nl/professioneel/kappers-interieur/kapperskruk',
+  'Mobiele Wasbakken':      'https://www.haarshop.nl/professioneel/mobiele-kappers/mobiele-wasbak',
+  'Werkwagens Kapper':      'https://www.haarshop.nl/professioneel/kappers-interieur/werkwagen-kapper',
+  'Kappershanddoeken':      'https://www.haarshop.nl/professioneel/kappers-benodigdheden/kappershanddoeken',
+  'Kappersspiegel':         'https://www.haarshop.nl/professioneel/kappers-benodigdheden/kappersspiegel',
+  'Kapperskoffers':         'https://www.haarshop.nl/professioneel/mobiele-kappers/kapperskoffer',
+  'Kapperstrolleys':        'https://www.haarshop.nl/professioneel/mobiele-kappers/kapperstrolley',
+  'Wegwerp Handschoenen':   'https://www.haarshop.nl/professioneel/wegwerp-handschoenen',
+  'Nekmessen & Snijmessen': 'https://www.haarshop.nl/professioneel/knipbenodigdheden/nekmessen-snijmessen',
+  'Waterspuit Kappers':     'https://www.haarshop.nl/professioneel/knipbenodigdheden/waterspuit-kapper',
+  'Kappersklemmen':         'https://www.haarshop.nl/professioneel/knipbenodigdheden/kappersklemmen',
+  'Kappersetui':            'https://www.haarshop.nl/professioneel/knipbenodigdheden/kappersetui',
+  'Kapmantels':             'https://www.haarshop.nl/professioneel/knipbenodigdheden/kapmantels',
+  'Nekpapier':              'https://www.haarshop.nl/professioneel/knipbenodigdheden/nekpapier',
+  'Oefenhoofden':           'https://www.haarshop.nl/professioneel/oefenmateriaal',
+
+  // ══════════════════════════════════════
+  // MERKEN (pattern: /merken/merknaam)
+  // ══════════════════════════════════════
+  'Merken':                 'https://www.haarshop.nl/merken',
+};
+
+// Brand URL pattern helper
+function getBrandUrl(brandName) {
+  const slug = brandName.toLowerCase()
+    .replace(/[éè]/g, 'e').replace(/[ü]/g, 'u').replace(/[ï]/g, 'i')
+    .replace(/[']/g, '').replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+  return 'https://www.haarshop.nl/merken/' + slug;
+}
+
+// Get category URL by product type name
+function getCategoryUrl(name) {
+  return HAARSHOP_URLS[name] || null;
+}
+
+
 // Fallback flat arrays (used when no product set selected)
 const IK_HEB = [
   // Haartype
@@ -1280,6 +1528,81 @@ function copyField(id) {
 }
 
 // ─── Word count ───
+// ─── Description Rich Text Editing ───
+function wrapDescSelection(tag) {
+  const ta = document.getElementById('description');
+  const start = ta.selectionStart;
+  const end = ta.selectionEnd;
+  if (start === end) { showToast('Selecteer eerst tekst om op te maken.', 'info'); return; }
+  const before = ta.value.substring(0, start);
+  const selected = ta.value.substring(start, end);
+  const after = ta.value.substring(end);
+  // Check if already wrapped with this tag - then unwrap
+  const openTag = `<${tag}>`;
+  const closeTag = `</${tag}>`;
+  if (selected.startsWith(openTag) && selected.endsWith(closeTag)) {
+    ta.value = before + selected.slice(openTag.length, -closeTag.length) + after;
+  } else {
+    ta.value = before + openTag + selected + closeTag + after;
+  }
+  ta.focus();
+  ta.selectionStart = start;
+  ta.selectionEnd = start + ta.value.substring(start).indexOf(after.substring(0,10) || ta.value.substring(start).length);
+  updateDescPreview();
+  updateWordCounts();
+}
+
+function insertDescTag(tag) {
+  const ta = document.getElementById('description');
+  const pos = ta.selectionStart;
+  ta.value = ta.value.substring(0, pos) + tag + ta.value.substring(pos);
+  ta.focus();
+  ta.selectionStart = ta.selectionEnd = pos + tag.length;
+  updateDescPreview();
+}
+
+function clearDescFormatting() {
+  const ta = document.getElementById('description');
+  ta.value = ta.value.replace(/<\/?(strong|em|b|i|u|br\s*\/?)>/gi, '');
+  updateDescPreview();
+  updateWordCounts();
+  showToast('HTML-opmaak verwijderd.', 'info');
+}
+
+function toggleDescPreview() {
+  const panel = document.getElementById('descPreviewPanel');
+  const btn = document.getElementById('descPreviewToggle');
+  if (panel.style.display === 'none') {
+    panel.style.display = '';
+    btn.style.background = 'rgba(224,197,182,0.2)';
+    btn.style.color = '#e0c5b6';
+    updateDescPreview();
+  } else {
+    panel.style.display = 'none';
+    btn.style.background = 'rgba(255,255,255,0.06)';
+    btn.style.color = 'rgba(255,255,255,0.4)';
+  }
+}
+
+function updateDescPreview() {
+  const panel = document.getElementById('descPreviewContent');
+  if (!panel || document.getElementById('descPreviewPanel').style.display === 'none') return;
+  const rawName = document.getElementById('productName').value || '[PRODUCTNAAM]';
+  const name = rawName.replace(/\s*[-–—]\s*/g, ' ').replace(/\s+/g, ' ').trim();
+  const desc = document.getElementById('description').value;
+  // Only allow safe HTML tags
+  const safeDesc = desc.replace(/<(?!\/?(?:strong|em|b|i|u|br)\b)[^>]*>/gi, '');
+  panel.innerHTML = `<p><strong>${escHTML(name)}</strong> ${safeDesc}</p>`;
+}
+
+// Keyboard shortcuts for description
+document.addEventListener('keydown', function(e) {
+  const ta = document.getElementById('description');
+  if (document.activeElement !== ta) return;
+  if ((e.ctrlKey || e.metaKey) && e.key === 'b') { e.preventDefault(); wrapDescSelection('strong'); }
+  if ((e.ctrlKey || e.metaKey) && e.key === 'i') { e.preventDefault(); wrapDescSelection('em'); }
+});
+
 function updateWordCounts() {
   const short = document.getElementById('shortDescription').value;
   const desc = document.getElementById('description').value;
@@ -1656,6 +1979,18 @@ async function generateWithAI() {
 
   userPrompt += `\n\nBELANGRIJK: Gebruik de web search tool om de ECHTE productinformatie op te zoeken. Verzin NOOIT specificaties, ingrediënten of kenmerken. Als je iets niet kunt vinden, laat het veld dan leeg. Zoek op de productnaam en/of referentie-URL om de correcte informatie te vinden.
 
+INTERNE LINKS: Gebruik voor cross-sell tekst ALTIJD echte haarshop.nl URLs. De sitestructuur is:
+- Haarverzorging: /haarverzorging (shampoo, conditioners, haarmasker, treatment, haarolie, leave-in-conditioners, hoofdhuid-oplossingen)
+- Haarstyling: /haarverzorging/haarstyling (krullen-creme, styling-creme-wax, haar-paste, wax, volume-poeder, gel, pommade, haarspray/haarlak, schuimverstevigers)
+- Haarkleuringen: /haarverzorging/haarkleuringen (haarverf, haarspoelingen, blondeer-poeders, waterstof-peroxide, kleurmousse)
+- Tools: /tools (stijltangen, krultangen-warme-fohnborstels, fohns, fohnborstel-krulborstel, stijlborstel, multistyler, tondeuses-trimmers, borstels, kammen)
+- Huidverzorging: /huidverzorging (gezicht, lichaam, tanning, oogverzorging)
+- Make-up: /make-up (wenkbrauw, ogen, lippen, gezicht, accessoires)
+- Man: /man (haarproducten, scheerproducten, baardproducten)
+- Professioneel: /professioneel (kappers-interieur, knipbenodigdheden, oefenmateriaal)
+- Merken: /merken/[merknaam-lowercase] (bijv. /merken/kerastase, /merken/redken, /merken/moroccanoil)
+- Cross-sell voorbeeld: <a href="https://www.haarshop.nl/haarverzorging/conditioners">Kérastase Resistance Conditioner</a>
+
 Geef je antwoord UITSLUITEND als JSON object (geen markdown, geen backticks) met exact deze velden:
 {
   "productName": "exacte productnaam zoals op verpakking",
@@ -1666,10 +2001,10 @@ Geef je antwoord UITSLUITEND als JSON object (geen markdown, geen backticks) met
   "subProductType": "sub-producttype of leeg",
   "content": "inhoudsmaat bijv. 250 ml (of leeg bij tools)",
   "shortDescription": "korte beschrijving 15-20 woorden, zonder productnaam",
-  "description": "productomschrijving ~100 woorden, begin NIET met productnaam (die wordt er automatisch voor gezet)",
+  "description": "productomschrijving ~100 woorden, begin NIET met productnaam (die wordt er automatisch voor gezet). Je mag <strong> en <em> tags gebruiken voor nadruk waar relevant (bijv. ingrediënten, kernwoorden). Geen andere HTML-tags of markdown.",
   "keyFeatures": ["eigenschap 1.", "eigenschap 2.", "etc. (6-7 stuks, elke zin eindigt met punt)"],
   "usageSteps": ["stap 1.", "stap 2.", "etc."],
-  "crossSellText": "cross-sell tekst met HTML link naar gerelateerd product",
+  "crossSellText": "cross-sell tekst met HTML <a href> link naar gerelateerd product op haarshop.nl - gebruik ECHTE URLs zoals https://www.haarshop.nl/haarverzorging/conditioners",
   "ingredients": "volledige INCI ingrediëntenlijst of leeg bij tools/accessoires",
   "categories": ["categorie1", "categorie2", "etc. - altijd inclusief Nieuw en merk-categorie"],
   "ikHeb": ["optie1", "optie2"],
@@ -1782,7 +2117,10 @@ function buildFullHTML() {
   const rawName = document.getElementById('productName').value || '[PRODUCTNAAM]';
   // Productnaam zonder liggende streepjes in de omschrijving
   const name = rawName.replace(/\s*[-–—]\s*/g, ' ').replace(/\s+/g, ' ').trim();
-  const desc = document.getElementById('description').value;
+  let desc = document.getElementById('description').value;
+  // Allow <strong>, <em>, <br> but strip all other HTML tags and markdown
+  desc = desc.replace(/<(?!\/?(?:strong|em|b|i|br)\b)[^>]*>/gi, '');
+  desc = desc.replace(/(\*{1,2}|_{1,2})(.*?)\1/g, '$2'); // strip markdown bold/italic
   const features = data.features.filter(Boolean);
   const steps = data.steps.filter(Boolean);
   const crossSell = document.getElementById('crossSellText').value;
