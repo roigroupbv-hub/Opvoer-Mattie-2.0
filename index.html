@@ -2056,7 +2056,8 @@ CROSS-SELL (crossSellText):
 
 ANTWOORDFORMAAT:
 - Antwoord UITSLUITEND met een JSON object
-- Geen uitleg, geen markdown backticks, geen tekst voor of na het JSON object`,
+- Geen uitleg, geen markdown backticks, geen tekst voor of na het JSON object
+- Gebruik NOOIT <cite>, , [1], of bronvermeldingen in de JSON-waarden — alleen schone tekst`,
         tools: [{ type: 'web_search_20250305', name: 'web_search' }],
         messages: [{ role: 'user', content: userPrompt }]
       })
@@ -2117,22 +2118,43 @@ ANTWOORDFORMAAT:
       throw new Error('Kon geen geldig JSON-antwoord vinden in de AI response. Probeer opnieuw.');
     }
 
-    // Fill all fields
-    document.getElementById('productName').value = parsed.productName || '';
-    document.getElementById('brand').value = parsed.brand || '';
-    document.getElementById('line').value = parsed.line || '';
-    document.getElementById('subLine').value = parsed.subLine || '';
-    document.getElementById('contentSize').value = parsed.content || '';
-    document.getElementById('productType').value = parsed.productType || '';
-    document.getElementById('subProductType').value = parsed.subProductType || '';
-    document.getElementById('shortDescription').value = parsed.shortDescription || '';
-    document.getElementById('description').value = parsed.description || '';
-    document.getElementById('crossSellText').value = parsed.crossSellText || '';
-    document.getElementById('ingredients').value = parsed.ingredients || '';
+    // Sanitize AI output: strip cite tags, antml tags, source references and other unwanted HTML
+    function cleanAiText(text) {
+      if (!text) return '';
+      return text
+        .replace(/<\/?cite[^>]*>/gi, '')
+        .replace(/<\/?antml:[^>]*>/gi, '')
+        .replace(/<\/?source[^>]*>/gi, '')
+        .replace(/<\/?ref[^>]*>/gi, '')
+        .replace(/\[\d+\]/g, '')           // [1] [2] source numbers
+        .replace(/【[^】]*】/g, '')          // 【source】 markers
+        .replace(/\s{2,}/g, ' ')           // collapse multiple spaces
+        .trim();
+    }
+    // For fields that should only have strong/em/br
+    function cleanAiHtml(text) {
+      if (!text) return '';
+      let clean = cleanAiText(text);
+      clean = clean.replace(/<(?!\/?(?:strong|em|b|i|br|a)\b)[^>]*>/gi, '');
+      return clean;
+    }
 
-    if (parsed.keyFeatures) { data.features = [...parsed.keyFeatures, ...Array(7).fill('')].slice(0, 7); }
-    if (parsed.usageSteps) { data.steps = parsed.usageSteps; }
-    if (parsed.categories) { data.categories = parsed.categories; }
+    // Fill all fields
+    document.getElementById('productName').value = cleanAiText(parsed.productName || '');
+    document.getElementById('brand').value = cleanAiText(parsed.brand || '');
+    document.getElementById('line').value = cleanAiText(parsed.line || '');
+    document.getElementById('subLine').value = cleanAiText(parsed.subLine || '');
+    document.getElementById('contentSize').value = cleanAiText(parsed.content || '');
+    document.getElementById('productType').value = cleanAiText(parsed.productType || '');
+    document.getElementById('subProductType').value = cleanAiText(parsed.subProductType || '');
+    document.getElementById('shortDescription').value = cleanAiText(parsed.shortDescription || '');
+    document.getElementById('description').value = cleanAiHtml(parsed.description || '');
+    document.getElementById('crossSellText').value = cleanAiHtml(parsed.crossSellText || '');
+    document.getElementById('ingredients').value = cleanAiText(parsed.ingredients || '');
+
+    if (parsed.keyFeatures) { data.features = [...parsed.keyFeatures.map(cleanAiText), ...Array(7).fill('')].slice(0, 7); }
+    if (parsed.usageSteps) { data.steps = parsed.usageSteps.map(cleanAiHtml); }
+    if (parsed.categories) { data.categories = parsed.categories.map(cleanAiText); }
     if (parsed.ikHeb) { data.ikHeb = parsed.ikHeb; }
     if (parsed.werking) { data.werking = parsed.werking; }
     if (parsed.vrijVan) { data.vrijVan = parsed.vrijVan; }
