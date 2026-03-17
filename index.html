@@ -1992,20 +1992,18 @@ Antwoord UITSLUITEND als JSON object met deze velden:
   "productType": "producttype",
   "subProductType": "sub-producttype of leeg",
   "content": "inhoudsmaat bijv. 250 ml (of leeg bij tools)",
-  "shortDescription": "korte beschrijving 15-20 woorden, zonder productnaam",
-  "description": "productomschrijving ~100 woorden, begin NIET met productnaam (die wordt er automatisch voor gezet). Je mag <strong> en <em> tags gebruiken voor nadruk waar relevant (bijv. ingrediënten, kernwoorden). Geen andere HTML-tags of markdown.",
-  "keyFeatures": ["eigenschap 1.", "eigenschap 2.", "etc. (6-7 stuks, elke zin eindigt met punt)"],
-  "usageSteps": ["stap 1.", "stap 2.", "etc."],
-  "crossSellText": "cross-sell tekst met HTML <a href> link naar gerelateerd product op haarshop.nl - gebruik ECHTE URLs zoals https://www.haarshop.nl/haarverzorging/conditioners",
+  "shortDescription": "1 zin, 15-20 woorden, wat voor product is het en waarvoor. Gebruik de productnaam hier NIET (staat er al dikgedrukt boven). Neutraal geschreven.",
+  "description": "~100 woorden platte tekst. Begin NIET met productnaam. Begin met wat het product is en voor wie. Vervolg met kernwerking, ingrediënten, verwacht resultaat. Mag <strong> en <em> tags bevatten voor nadruk. Geen andere HTML. Geen wij/onze.",
+  "keyFeatures": ["6-7 concrete eigenschappen, elke zin eindigt met punt, noem ingrediënten waar relevant"],
+  "usageSteps": ["genummerde stappen, elke zin eindigt met punt, LAATSTE stap is cross-sell met <a href> link naar gerelateerd product op haarshop.nl"],
+  "crossSellText": "stimuleer aankoop volledige lijn met <a href=https://www.haarshop.nl/...>productnaam</a> link - gebruik ECHTE haarshop.nl URLs",
   "ingredients": "volledige INCI ingrediëntenlijst of leeg bij tools/accessoires",
-  "categories": ["categorie1", "categorie2", "etc. - altijd inclusief Nieuw en merk-categorie"],
-  "ikHeb": ["optie1", "optie2"],
-  "werking": ["optie1", "optie2"],
-  "vrijVan": ["optie1", "optie2"],
-  "specs": {"veldnaam": "waarde", "...": "..."}
-}
-
-Schrijf in foutloos, overtuigend Nederlands. Toon is professioneel, inspirerend en toegankelijk. Vermijd overdreven claims en vakjargon. Gebruik geen wij/onze tenzij het vanuit Haarshop is.`;
+  "categories": ["altijd inclusief Nieuw en merk-categorie bijv. Kérastase Shampoo"],
+  "ikHeb": ["kies alleen uit de meegegeven opties"],
+  "werking": ["kies alleen uit de meegegeven opties"],
+  "vrijVan": ["kies alleen uit de meegegeven opties"],
+  "specs": {"veldnaam": "waarde"}
+}`;
 
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -2019,16 +2017,46 @@ Schrijf in foutloos, overtuigend Nederlands. Toon is professioneel, inspirerend 
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 8000,
-        system: `Je bent Productopvoer Mattie, de AI-assistent van Haarshop.nl. Je taak is productopvoer genereren op basis van ECHTE productinformatie die je opzoekt via web search. 
+        system: `Je bent Productopvoer Mattie, de AI-assistent van Haarshop.nl voor het schrijven van SEO-geoptimaliseerde productbeschrijvingen.
 
-REGELS:
+ZOEKREGELS:
 - Zoek ALTIJD eerst de echte productinformatie op via web search voordat je antwoord geeft
 - Verzin NOOIT specificaties, ingrediënten of kenmerken — als je iets niet vindt, laat het veld leeg
 - Zoek op de productnaam bij de merkwebsite, Nederlandse webshops (Douglas, Beautyplaza, Notino, Bol.com) of INCIDecoder voor ingrediënten
 - Als een referentie-URL is meegegeven, zoek daar EERST
-- Schrijf in foutloos, overtuigend Nederlands
-- Toon: professioneel, inspirerend, toegankelijk (niet wij/onze behalve bij "dan zorgen wij dat deze snel bij je wordt bezorgd")
-- Antwoord UITSLUITEND met een JSON object — geen uitleg, geen markdown, geen backticks`,
+
+SCHRIJFSTIJL:
+- Schrijf in foutloos, overtuigend en aantrekkelijk Nederlands
+- Toon: professioneel, inspirerend, toegankelijk, persoonlijk, informatief
+- Vermijd zoveel mogelijk 'wij' en 'onze'. Schrijf neutraal. Voorbeeld: NIET "Ontdek onze Infinity Braids" MAAR "Ontdek de verschillende modellen van de Infinity Braids"
+- Gebruik alleen 'wij' als het echt vanuit Haarshop is (bijv. "dan zorgen wij dat deze snel bij je wordt bezorgd")
+- Vermijd overmatig vakjargon, herhaling of overdreven claims
+
+OPMAAK PRODUCTOMSCHRIJVING (description veld):
+- Begin NIET met de productnaam (die wordt automatisch dikgedrukt ervoor geplaatst)
+- Begin met wat het product is, voor wie het geschikt is, wat het doet
+- Vervolg met uitgebreidere toelichting: kernwerking, ingrediënten, resultaat
+- ~100 woorden, platte tekst (je mag <strong> en <em> gebruiken voor nadruk)
+- Unieke tekst per product — niet generiek kopieerbaar
+
+BELANGRIJKSTE EIGENSCHAPPEN (keyFeatures):
+- 6 à 7 punten
+- Elke zin eindigt met een punt
+- Concrete, specifieke eigenschappen (niet generiek)
+- Noem actieve ingrediënten waar relevant
+
+GEBRUIKSAANWIJZING (usageSteps):
+- Genummerde stappen, elke zin eindigt met een punt
+- Laatste stap is ALTIJD cross-selling: "Gebruik naast de [Merk Producttype] ook de [Merk Gerelateerd Product] voor het beste resultaat." met een HTML link
+
+CROSS-SELL (crossSellText):
+- Stimuleer de klant om de volledige lijn te kopen
+- Maak een <a href="URL">link</a> naar het gerelateerde product op haarshop.nl
+- Schrijf een leuke variatie, niet steeds dezelfde zin
+
+ANTWOORDFORMAAT:
+- Antwoord UITSLUITEND met een JSON object
+- Geen uitleg, geen markdown backticks, geen tekst voor of na het JSON object`,
         tools: [{ type: 'web_search_20250305', name: 'web_search' }],
         messages: [{ role: 'user', content: userPrompt }]
       })
