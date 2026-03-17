@@ -388,13 +388,23 @@
         <p>
           <strong>💡 Zo gebruik je de AI generator</strong><br>
           1. Voer de productnaam in zoals op de verpakking (bijv. "Moroccanoil – Treatment – 100 ml")<br>
-          2. Voeg optioneel een referentie-URL toe van een concurrent of merkwebsite<br>
-          3. Upload eventueel productdocumenten (PDF, afbeeldingen)<br>
+          2. Kies de juiste Product Set (bijv. Haarverzorging, Föhns, Make-Up)<br>
+          3. Voeg optioneel een referentie-URL toe van een concurrent of merkwebsite<br>
           4. Klik op "Genereer met AI" — alle velden worden automatisch ingevuld<br>
-          5. Controleer en pas aan waar nodig in de verschillende tabbladen<br><br>
-          <strong>⚙ Magento-koppeling</strong><br>
-          Configureer je Magento 2 API-gegevens in de Magento-tab om producten direct te kunnen opvoeren.
+          5. Controleer en pas aan waar nodig in de verschillende tabbladen
         </p>
+      </div>
+
+      <!-- Sitemap Loader -->
+      <div style="margin-top:12px;padding:16px;background:#1e1e1e;border-radius:8px;border:1px solid rgba(224,197,182,0.12);">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:4px;">🗺 Haarshop.nl Sitemap</div>
+            <div id="sitemapStatus" style="font-size:11px;"><span style="color:rgba(255,255,255,0.3);">Niet geladen</span></div>
+          </div>
+          <button onclick="fetchAndParseSitemap()" style="padding:6px 14px;background:#e0c5b6;color:#1a1a1a;border:none;border-radius:6px;cursor:pointer;font-size:11px;font-weight:600;white-space:nowrap;transition:background .15s;" onmouseover="this.style.background='#d9afa0'" onmouseout="this.style.background='#e0c5b6'">🔄 Sitemap laden</button>
+        </div>
+        <p style="font-size:10px;color:rgba(255,255,255,0.2);margin-top:8px;line-height:1.4;">Laadt alle categorieën en merken van haarshop.nl voor accurate interne links in productbeschrijvingen. Wordt 7 dagen gecached.</p>
       </div>
     </div>
   </div>
@@ -1404,10 +1414,201 @@ function getBrandUrl(brandName) {
   return 'https://www.haarshop.nl/merken/' + slug;
 }
 
-// Get category URL by product type name
 function getCategoryUrl(name) {
   return HAARSHOP_URLS[name] || null;
 }
+
+// ─── Sitemap Integration ───
+const SITEMAP_CACHE_KEY = 'haarshop_sitemap_cache';
+const SITEMAP_CACHE_TTL = 7 * 24 * 60 * 60 * 1000; // 7 days
+let sitemapCategories = []; // [{url, path, label}]
+let sitemapBrands = [];     // [{url, slug, name}]
+let sitemapProducts = [];   // [{url, slug, name}] - individual product pages
+let sitemapLoaded = false;
+
+function loadSitemapFromCache() {
+  try {
+    const raw = localStorage.getItem(SITEMAP_CACHE_KEY);
+    if (!raw) return false;
+    const cache = JSON.parse(raw);
+    if (Date.now() - cache.timestamp > SITEMAP_CACHE_TTL) return false;
+    sitemapCategories = cache.categories || [];
+    sitemapBrands = cache.brands || [];
+    sitemapProducts = cache.products || [];
+    sitemapLoaded = true;
+    updateSitemapStatus();
+    return true;
+  } catch(e) { return false; }
+}
+
+async function fetchAndParseSitemap() {
+  const statusEl = document.getElementById('sitemapStatus');
+  if (statusEl) { statusEl.textContent = '⟳ Sitemap ophalen (deel 1)...'; statusEl.style.color = '#e0c5b6'; }
+
+  try {
+    // ── Part 1: Categories & Brands ──
+    const catRes = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('https://www.haarshop.nl/sitemap/sitemap_nl_NL-1-1.xml'));
+    if (!catRes.ok) throw new Error('Kon categorie-sitemap niet ophalen');
+    const catXml = await catRes.text();
+
+    const catUrlMatches = catXml.match(/<loc>(https:\/\/www\.haarshop\.nl\/[^<]+)<\/loc>/g) || [];
+    const allCatUrls = catUrlMatches.map(m => m.replace(/<\/?loc>/g, ''));
+
+    const categories = [];
+    const brands = [];
+    const seenPaths = new Set();
+
+    for (const url of allCatUrls) {
+      const path = url.replace('https://www.haarshop.nl', '');
+      if (seenPaths.has(path)) continue;
+      seenPaths.add(path);
+      if (path === '/' || path.includes('catalog/category/view')) continue;
+
+      if (path.startsWith('/merken/')) {
+        const parts = path.split('/').filter(Boolean);
+        if (parts.length === 2) {
+          brands.push({ url, slug: parts[1], name: parts[1].replace(/-/g, ' ') });
+        }
+        categories.push({ url, path, label: parts[parts.length - 1].replace(/-/g, ' ') });
+      } else if (!/^\/(customer|contact|blog|vacatures|annuleren|bezorgen|nieuwsbrief|overzicht|assortiment)/.test(path)) {
+        categories.push({ url, path, label: path.split('/').filter(Boolean).pop()?.replace(/-/g, ' ') || '' });
+      }
+    }
+
+    if (statusEl) { statusEl.textContent = '⟳ Sitemap ophalen (deel 2 - producten)...'; }
+
+    // ── Part 2: Product Pages ──
+    const prodRes = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('https://www.haarshop.nl/sitemap/sitemap_nl_NL-1-2.xml'));
+    let products = [];
+    if (prodRes.ok) {
+      const prodXml = await prodRes.text();
+      // Extract product URLs with their image titles (= product names)
+      const prodBlocks = prodXml.split('<url>').slice(1);
+      for (const block of prodBlocks) {
+        const locMatch = block.match(/<loc>(https:\/\/www\.haarshop\.nl\/[^<]+)<\/loc>/);
+        const titleMatch = block.match(/<image:title>([^<]+)<\/image:title>/);
+        if (locMatch) {
+          const url = locMatch[1];
+          const path = url.replace('https://www.haarshop.nl/', '');
+          const name = titleMatch ? titleMatch[1].replace(/&amp;/g,'&').replace(/&#x20;/g,' ').replace(/&#xF6;/g,'ö').replace(/&#xE9;/g,'é') : path.replace(/-/g, ' ');
+          products.push({ url, slug: path, name });
+        }
+      }
+    }
+
+    sitemapCategories = categories;
+    sitemapBrands = brands;
+    sitemapProducts = products;
+    sitemapLoaded = true;
+
+    // Cache
+    localStorage.setItem(SITEMAP_CACHE_KEY, JSON.stringify({
+      timestamp: Date.now(),
+      categories,
+      brands,
+      products
+    }));
+
+    updateSitemapStatus();
+    showToast(`Sitemap geladen: ${categories.length} categorieën, ${brands.length} merken, ${products.length} producten`, 'success');
+  } catch(err) {
+    console.error('Sitemap fetch error:', err);
+    if (statusEl) { statusEl.textContent = '✗ ' + err.message; statusEl.style.color = '#e57373'; }
+    showToast('Sitemap laden mislukt: ' + err.message, 'error');
+  }
+}
+
+function updateSitemapStatus() {
+  const el = document.getElementById('sitemapStatus');
+  if (!el) return;
+  if (sitemapLoaded) {
+    const prodCount = sitemapProducts.length ? ` · ${sitemapProducts.length} producten` : '';
+    el.innerHTML = `<span style="color:#428e8c;">✓ ${sitemapCategories.length} categorieën · ${sitemapBrands.length} merken${prodCount}</span>`;
+  } else {
+    el.innerHTML = '<span style="color:rgba(255,255,255,0.3);">Niet geladen</span>';
+  }
+}
+
+// Get relevant URLs for AI context (categories + matching products)
+function getRelevantSitemapUrls(brandName, productType) {
+  if (!sitemapLoaded) return '';
+
+  const brandSlug = brandName?.toLowerCase()
+    .replace(/[éè]/g, 'e').replace(/[ü]/g, 'u').replace(/[ï]/g, 'i')
+    .replace(/[']/g, '').replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') || '';
+  const typeSlug = productType?.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') || '';
+  const brandLower = brandName?.toLowerCase() || '';
+
+  let catUrls = [];
+  let prodUrls = [];
+
+  // ── Category URLs ──
+  if (brandSlug) {
+    catUrls = catUrls.concat(
+      sitemapCategories.filter(c => c.path.includes('/merken/' + brandSlug)).slice(0, 15)
+    );
+  }
+  if (typeSlug) {
+    catUrls = catUrls.concat(
+      sitemapCategories.filter(c => c.label.includes(typeSlug) || c.path.includes(typeSlug)).slice(0, 8)
+    );
+  }
+  // General top-level categories
+  const generalPaths = ['/haarverzorging/','/huidverzorging/','/make-up/','/tools/','/man/','/professioneel/','/nagels/','/geuren/'];
+  for (const gp of generalPaths) {
+    catUrls = catUrls.concat(sitemapCategories.filter(c => c.path.startsWith(gp) && c.path.split('/').length <= 4).slice(0, 4));
+  }
+
+  // ── Product URLs: find related products from same brand ──
+  if (brandLower && sitemapProducts.length > 0) {
+    // Find products from same brand
+    const brandProducts = sitemapProducts.filter(p =>
+      p.name.toLowerCase().includes(brandLower) || p.slug.includes(brandSlug)
+    );
+
+    // Prioritize complementary products (conditioner bij shampoo, etc.)
+    const complementary = ['shampoo','conditioner','haarmasker','treatment','haarolie','leave-in',
+      'serum','spray','mousse','haarlak','gel','wax','crème','masker','balsem'];
+    const typeWords = productType?.toLowerCase().split(/\s+/) || [];
+
+    // Sort: complementary products first, then same-line products
+    const scored = brandProducts.map(p => {
+      const nameLow = p.name.toLowerCase();
+      let score = 0;
+      // Boost complementary product types
+      for (const comp of complementary) {
+        if (nameLow.includes(comp) && !typeWords.includes(comp)) score += 3;
+      }
+      // Boost same product line
+      if (typeSlug && (nameLow.includes(typeSlug) || p.slug.includes(typeSlug))) score += 2;
+      return { ...p, score };
+    }).sort((a, b) => b.score - a.score);
+
+    prodUrls = scored.slice(0, 15);
+  }
+
+  // ── Build output ──
+  const seen = new Set();
+  let lines = [];
+
+  // Categories
+  const dedupCats = catUrls.filter(r => { if (seen.has(r.url)) return false; seen.add(r.url); return true; });
+  if (dedupCats.length > 0) {
+    lines.push('CATEGORIE-URLS:');
+    dedupCats.slice(0, 25).forEach(r => lines.push(r.url));
+  }
+
+  // Products
+  if (prodUrls.length > 0) {
+    lines.push('\nGERELATEERDE PRODUCTEN (zelfde merk, gebruik voor cross-sell links):');
+    prodUrls.forEach(p => lines.push(`${p.url} — ${p.name}`));
+  }
+
+  return lines.join('\n');
+}
+
+// Init: load from cache on startup
+loadSitemapFromCache();
 
 
 // Fallback flat arrays (used when no product set selected)
@@ -1977,11 +2178,28 @@ async function generateWithAI() {
     }
   }
 
+  // Build sitemap context for AI
+  const brand = document.getElementById('aiInput').value.split(/\s*[-–—]\s*/)[0]?.trim() || '';
+  const pType = cfg?.productTypes?.[0] || '';
+  const sitemapContext = getRelevantSitemapUrls(brand, pType);
+
   userPrompt += `\n\nZoek de ECHTE productinformatie op via web search. Gebruik de referentie-URL als die is opgegeven.
 
-CROSS-SELL LINKS: Gebruik echte haarshop.nl URLs:
-/haarverzorging/shampoo, /haarverzorging/conditioners, /haarverzorging/haarmasker, /haarverzorging/treatment, /haarverzorging/haarolie, /haarverzorging/haarstyling, /tools/stijltangen, /tools/fohns, /tools/krultangen-warme-fohnborstels, /huidverzorging, /make-up, /merken/[merknaam-lowercase]
-Voorbeeld: <a href="https://www.haarshop.nl/haarverzorging/conditioners">Kérastase Conditioner</a>
+CROSS-SELL & INTERNE LINKS — BELANGRIJK:
+- Gebruik ALLEEN echte haarshop.nl URLs die hieronder staan
+- Link bij een shampoo naar de bijpassende conditioner/masker van dezelfde lijn
+- Link bij een tool naar een bijpassend verzorgingsproduct van hetzelfde merk
+- Gebruik de EXACTE product-URLs als die beschikbaar zijn (niet raden)
+- Cross-sell in de gebruiksaanwijzing: link naar een specifiek product
+- Cross-sell tekst: link naar een categorie of specifiek product`;
+
+  if (sitemapContext) {
+    userPrompt += `\n\n${sitemapContext}`;
+  } else {
+    userPrompt += `\n\nBasis URL-structuur: /haarverzorging/shampoo, /haarverzorging/conditioners, /haarverzorging/haarmasker, /haarverzorging/treatment, /haarverzorging/haarolie, /haarverzorging/haarstyling, /tools/stijltangen, /tools/fohns, /huidverzorging, /make-up, /merken/[merknaam-lowercase]`;
+  }
+
+  userPrompt += `
 
 Antwoord UITSLUITEND als JSON object met deze velden:
 {
@@ -2047,12 +2265,19 @@ BELANGRIJKSTE EIGENSCHAPPEN (keyFeatures):
 
 GEBRUIKSAANWIJZING (usageSteps):
 - Genummerde stappen, elke zin eindigt met een punt
-- Laatste stap is ALTIJD cross-selling: "Gebruik naast de [Merk Producttype] ook de [Merk Gerelateerd Product] voor het beste resultaat." met een HTML link
+- Laatste stap is ALTIJD cross-selling met een link naar een specifiek gerelateerd product
+- Bij shampoo → link naar de bijpassende conditioner of masker van dezelfde lijn
+- Bij conditioner → link naar het bijpassende haarmasker of treatment
+- Bij styling → link naar een verzorgingsproduct van hetzelfde merk
+- Bij tools → link naar een hittebeschermend of verzorgend product
+- Gebruik de EXACTE product-URLs uit de meegeleverde lijst als die beschikbaar zijn
 
 CROSS-SELL (crossSellText):
-- Stimuleer de klant om de volledige lijn te kopen
-- Maak een <a href="URL">link</a> naar het gerelateerde product op haarshop.nl
+- Stimuleer de klant om de volledige productlijn te kopen
+- Link naar een specifiek product (niet alleen een categorie) als de URL beschikbaar is
+- Gebruik <a href="ECHTE_URL">productnaam</a> — NOOIT href="#"
 - Schrijf een leuke variatie, niet steeds dezelfde zin
+- Voorbeeld: "Maak de verzorgingsroutine compleet met de <a href="https://www.haarshop.nl/kerastase-resistance-ciment-anti-usure-200-ml">Kérastase Resistance Ciment Anti-Usure</a> voor optimaal herstel."
 
 ANTWOORDFORMAAT:
 - Antwoord UITSLUITEND met een JSON object
