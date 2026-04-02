@@ -366,9 +366,15 @@
             </select>
           </div>
         </div>
-        <div style="margin-bottom:20px;">
-          <label class="ai-label ai-label-sub">Referentie URL (optioneel)</label>
-          <input class="ai-input ai-input-sub" id="aiUrl" type="text" placeholder="https://www.example.com/product-page">
+        <div style="display:grid;grid-template-columns:1fr 200px;gap:12px;margin-bottom:12px;">
+          <div>
+            <label class="ai-label ai-label-sub">Referentie URL (optioneel)</label>
+            <input class="ai-input ai-input-sub" id="aiUrl" type="text" placeholder="https://www.example.com/product-page">
+          </div>
+          <div>
+            <label class="ai-label ai-label-sub">EAN / Barcode (optioneel)</label>
+            <input class="ai-input ai-input-sub" id="aiEan" type="text" placeholder="8005610642413" style="font-family:monospace;letter-spacing:1px;">
+          </div>
         </div>
         <div style="margin-bottom:20px;">
           <label class="ai-label ai-label-sub">Productbestanden uploaden (optioneel)</label>
@@ -399,12 +405,15 @@
       <div style="margin-top:12px;padding:16px;background:#1e1e1e;border-radius:8px;border:1px solid rgba(224,197,182,0.12);">
         <div style="display:flex;justify-content:space-between;align-items:center;">
           <div>
-            <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:4px;">🗺 Haarshop.nl Sitemap</div>
+            <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:4px;">📦 Productcatalogus</div>
             <div id="sitemapStatus" style="font-size:11px;"><span style="color:rgba(255,255,255,0.3);">Niet geladen</span></div>
           </div>
-          <button onclick="fetchAndParseSitemap()" style="padding:6px 14px;background:#e0c5b6;color:#1a1a1a;border:none;border-radius:6px;cursor:pointer;font-size:11px;font-weight:600;white-space:nowrap;transition:background .15s;" onmouseover="this.style.background='#d9afa0'" onmouseout="this.style.background='#e0c5b6'">🔄 Sitemap laden</button>
+          <div style="display:flex;gap:8px;">
+            <button onclick="localStorage.removeItem('haarshop_catalog_cache');catalogLoaded=false;updateCatalogStatus();showToast('Cache gewist','success');" style="padding:6px 10px;background:transparent;color:rgba(255,255,255,0.3);border:1px solid rgba(255,255,255,0.1);border-radius:6px;cursor:pointer;font-size:10px;transition:all .15s;" onmouseover="this.style.color='#e57373';this.style.borderColor='#e57373'" onmouseout="this.style.color='rgba(255,255,255,0.3)';this.style.borderColor='rgba(255,255,255,0.1)'">🗑 Cache wissen</button>
+            <button onclick="fetchCatalogFromMagento()" style="padding:6px 14px;background:#e0c5b6;color:#1a1a1a;border:none;border-radius:6px;cursor:pointer;font-size:11px;font-weight:600;white-space:nowrap;transition:background .15s;" onmouseover="this.style.background='#d9afa0'" onmouseout="this.style.background='#e0c5b6'">🔄 Catalogus laden</button>
+          </div>
         </div>
-        <p style="font-size:10px;color:rgba(255,255,255,0.2);margin-top:8px;line-height:1.4;">Laadt alle categorieën en merken van haarshop.nl voor accurate interne links in productbeschrijvingen. Wordt 7 dagen gecached.</p>
+        <p style="font-size:10px;color:rgba(255,255,255,0.2);margin-top:8px;line-height:1.4;">Haalt categorieën en alle producten op via de Magento 2 API voor accurate interne links en cross-sell. Configureer eerst Magento in de Magento-tab. Wordt 3 dagen gecached.</p>
       </div>
     </div>
   </div>
@@ -431,6 +440,10 @@
       <div class="grid-2">
         <div class="field"><label class="field-label">Producttype <span class="required">*</span></label><input class="field-input" id="productType" placeholder="Bijv. Treatment"></div>
         <div class="field"><label class="field-label">Sub producttype</label><input class="field-input" id="subProductType" placeholder="Optioneel"></div>
+      </div>
+      <div class="grid-2">
+        <div class="field"><label class="field-label">EAN / Barcode</label><input class="field-input" id="ean" placeholder="Bijv. 8005610642413" style="font-family:monospace;letter-spacing:0.5px;"></div>
+        <div class="field"><label class="field-label">SKU</label><input class="field-input" id="sku" placeholder="Bijv. WEL-UC-SHA-250"></div>
       </div>
       <div style="margin-top:8px;">
         <label class="field-label">Snelkeuze producttype</label>
@@ -1418,197 +1431,201 @@ function getCategoryUrl(name) {
   return HAARSHOP_URLS[name] || null;
 }
 
-// ─── Sitemap Integration ───
-const SITEMAP_CACHE_KEY = 'haarshop_sitemap_cache';
-const SITEMAP_CACHE_TTL = 7 * 24 * 60 * 60 * 1000; // 7 days
-let sitemapCategories = []; // [{url, path, label}]
-let sitemapBrands = [];     // [{url, slug, name}]
-let sitemapProducts = [];   // [{url, slug, name}] - individual product pages
-let sitemapLoaded = false;
+// ─── Catalog Integration (via Magento API) ───
+const CATALOG_CACHE_KEY = 'haarshop_catalog_cache';
+const CATALOG_CACHE_TTL = 3 * 24 * 60 * 60 * 1000; // 3 days
+let catalogCategories = []; // [{id, name, path, url_key, url_path, children:[]}]
+let catalogCatFlat = [];    // [{id, name, fullPath}]
+let catalogProducts = [];   // [{sku, name, url_key, brand}]
+let catalogLoaded = false;
 
-function loadSitemapFromCache() {
+function loadCatalogFromCache() {
   try {
-    const raw = localStorage.getItem(SITEMAP_CACHE_KEY);
+    const raw = localStorage.getItem(CATALOG_CACHE_KEY);
     if (!raw) return false;
     const cache = JSON.parse(raw);
-    if (Date.now() - cache.timestamp > SITEMAP_CACHE_TTL) return false;
-    sitemapCategories = cache.categories || [];
-    sitemapBrands = cache.brands || [];
-    sitemapProducts = cache.products || [];
-    sitemapLoaded = true;
-    updateSitemapStatus();
+    if (Date.now() - cache.timestamp > CATALOG_CACHE_TTL) return false;
+    catalogCategories = cache.categories || [];
+    catalogCatFlat = cache.catFlat || [];
+    catalogProducts = cache.products || [];
+    catalogLoaded = true;
+    updateCatalogStatus();
     return true;
   } catch(e) { return false; }
 }
 
-async function fetchAndParseSitemap() {
+async function fetchCatalogFromMagento() {
   const statusEl = document.getElementById('sitemapStatus');
-  if (statusEl) { statusEl.textContent = '⟳ Sitemap ophalen (deel 1)...'; statusEl.style.color = '#e0c5b6'; }
+  const baseUrl = (localStorage.getItem('haarshop_magento_url') || '').replace(/\/+$/, '');
+  const apiKey = localStorage.getItem('haarshop_magento_key') || '';
+
+  if (!baseUrl || !apiKey) {
+    showToast('Configureer eerst je Magento API in de Magento-tab.', 'error');
+    if (statusEl) { statusEl.innerHTML = '<span style="color:#e57373;">✗ Magento niet geconfigureerd</span>'; }
+    return;
+  }
+
+  const headers = { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' };
+
+  if (statusEl) { statusEl.textContent = '⟳ Categorieën laden...'; statusEl.style.color = '#e0c5b6'; }
 
   try {
-    // ── Part 1: Categories & Brands ──
-    const catRes = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('https://www.haarshop.nl/sitemap/sitemap_nl_NL-1-1.xml'));
-    if (!catRes.ok) throw new Error('Kon categorie-sitemap niet ophalen');
-    const catXml = await catRes.text();
+    // ── Step 1: Fetch category tree ──
+    const catRes = await fetch(`${baseUrl}/rest/V1/categories`, { method: 'GET', headers });
+    if (!catRes.ok) throw new Error(`Categorieën laden mislukt (${catRes.status})`);
+    const catTree = await catRes.json();
 
-    const catUrlMatches = catXml.match(/<loc>(https:\/\/www\.haarshop\.nl\/[^<]+)<\/loc>/g) || [];
-    const allCatUrls = catUrlMatches.map(m => m.replace(/<\/?loc>/g, ''));
-
-    const categories = [];
-    const brands = [];
-    const seenPaths = new Set();
-
-    for (const url of allCatUrls) {
-      const path = url.replace('https://www.haarshop.nl', '');
-      if (seenPaths.has(path)) continue;
-      seenPaths.add(path);
-      if (path === '/' || path.includes('catalog/category/view')) continue;
-
-      if (path.startsWith('/merken/')) {
-        const parts = path.split('/').filter(Boolean);
-        if (parts.length === 2) {
-          brands.push({ url, slug: parts[1], name: parts[1].replace(/-/g, ' ') });
-        }
-        categories.push({ url, path, label: parts[parts.length - 1].replace(/-/g, ' ') });
-      } else if (!/^\/(customer|contact|blog|vacatures|annuleren|bezorgen|nieuwsbrief|overzicht|assortiment)/.test(path)) {
-        categories.push({ url, path, label: path.split('/').filter(Boolean).pop()?.replace(/-/g, ' ') || '' });
+    // Flatten category tree with full path
+    const catFlat = [];
+    function flattenCatTree(node, pathParts = []) {
+      if (node.id && node.id > 1) {
+        const fullPath = [...pathParts, node.name].join(' > ');
+        catFlat.push({ id: node.id, name: node.name, fullPath, isActive: node.is_active });
       }
-    }
-
-    if (statusEl) { statusEl.textContent = '⟳ Sitemap ophalen (deel 2 - producten)...'; }
-
-    // ── Part 2: Product Pages ──
-    const prodRes = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('https://www.haarshop.nl/sitemap/sitemap_nl_NL-1-2.xml'));
-    let products = [];
-    if (prodRes.ok) {
-      const prodXml = await prodRes.text();
-      // Extract product URLs with their image titles (= product names)
-      const prodBlocks = prodXml.split('<url>').slice(1);
-      for (const block of prodBlocks) {
-        const locMatch = block.match(/<loc>(https:\/\/www\.haarshop\.nl\/[^<]+)<\/loc>/);
-        const titleMatch = block.match(/<image:title>([^<]+)<\/image:title>/);
-        if (locMatch) {
-          const url = locMatch[1];
-          const path = url.replace('https://www.haarshop.nl/', '');
-          const name = titleMatch ? titleMatch[1].replace(/&amp;/g,'&').replace(/&#x20;/g,' ').replace(/&#xF6;/g,'ö').replace(/&#xE9;/g,'é') : path.replace(/-/g, ' ');
-          products.push({ url, slug: path, name });
+      if (node.children_data) {
+        for (const child of node.children_data) {
+          flattenCatTree(child, node.id > 1 ? [...pathParts, node.name] : pathParts);
         }
       }
     }
+    flattenCatTree(catTree);
 
-    sitemapCategories = categories;
-    sitemapBrands = brands;
-    sitemapProducts = products;
-    sitemapLoaded = true;
+    if (statusEl) { statusEl.textContent = `⟳ Producten laden (pagina 1)...`; }
+
+    // ── Step 2: Fetch products in pages ──
+    const allProducts = [];
+    let page = 1;
+    const pageSize = 100;
+    let totalPages = 1;
+
+    while (page <= totalPages) {
+      if (statusEl && page > 1) { statusEl.textContent = `⟳ Producten laden (pagina ${page}/${totalPages})...`; }
+
+      const prodUrl = `${baseUrl}/rest/V1/products?searchCriteria[pageSize]=${pageSize}&searchCriteria[currentPage]=${page}&fields=items[sku,name,custom_attributes],total_count`;
+      const prodRes = await fetch(prodUrl, { method: 'GET', headers });
+
+      if (!prodRes.ok) {
+        if (page === 1) throw new Error(`Producten laden mislukt (${prodRes.status})`);
+        break; // Stop paginating on error
+      }
+
+      const prodData = await prodRes.json();
+      const totalCount = prodData.total_count || 0;
+      totalPages = Math.ceil(totalCount / pageSize);
+
+      for (const item of (prodData.items || [])) {
+        const urlKey = item.custom_attributes?.find(a => a.attribute_code === 'url_key')?.value || '';
+        const brand = item.custom_attributes?.find(a => a.attribute_code === 'manufacturer')?.value ||
+                      item.custom_attributes?.find(a => a.attribute_code === 'brand')?.value || '';
+        allProducts.push({
+          sku: item.sku,
+          name: item.name,
+          url_key: urlKey,
+          url: urlKey ? `https://www.haarshop.nl/${urlKey}` : '',
+          brand
+        });
+      }
+
+      page++;
+
+      // Safety: max 50 pages (5000 products)
+      if (page > 50) break;
+    }
+
+    catalogCategories = catTree;
+    catalogCatFlat = catFlat;
+    catalogProducts = allProducts;
+    catalogLoaded = true;
 
     // Cache
-    localStorage.setItem(SITEMAP_CACHE_KEY, JSON.stringify({
+    localStorage.setItem(CATALOG_CACHE_KEY, JSON.stringify({
       timestamp: Date.now(),
-      categories,
-      brands,
-      products
+      categories: catTree,
+      catFlat,
+      products: allProducts
     }));
 
-    updateSitemapStatus();
-    showToast(`Sitemap geladen: ${categories.length} categorieën, ${brands.length} merken, ${products.length} producten`, 'success');
+    updateCatalogStatus();
+    showToast(`Catalogus geladen: ${catFlat.length} categorieën, ${allProducts.length} producten`, 'success');
   } catch(err) {
-    console.error('Sitemap fetch error:', err);
-    if (statusEl) { statusEl.textContent = '✗ ' + err.message; statusEl.style.color = '#e57373'; }
-    showToast('Sitemap laden mislukt: ' + err.message, 'error');
+    console.error('Catalog fetch error:', err);
+    if (statusEl) { statusEl.innerHTML = `<span style="color:#e57373;">✗ ${err.message}</span>`; }
+    showToast('Catalogus laden mislukt: ' + err.message, 'error');
   }
 }
 
-function updateSitemapStatus() {
+function updateCatalogStatus() {
   const el = document.getElementById('sitemapStatus');
   if (!el) return;
-  if (sitemapLoaded) {
-    const prodCount = sitemapProducts.length ? ` · ${sitemapProducts.length} producten` : '';
-    el.innerHTML = `<span style="color:#428e8c;">✓ ${sitemapCategories.length} categorieën · ${sitemapBrands.length} merken${prodCount}</span>`;
+  if (catalogLoaded) {
+    el.innerHTML = `<span style="color:#428e8c;">✓ ${catalogCatFlat.length} categorieën · ${catalogProducts.length} producten</span>`;
   } else {
     el.innerHTML = '<span style="color:rgba(255,255,255,0.3);">Niet geladen</span>';
   }
 }
 
-// Get relevant URLs for AI context (categories + matching products)
+// Get relevant URLs for AI context (categories + matching products from Magento)
 function getRelevantSitemapUrls(brandName, productType) {
-  if (!sitemapLoaded) return '';
+  if (!catalogLoaded) return '';
 
-  const brandSlug = brandName?.toLowerCase()
-    .replace(/[éè]/g, 'e').replace(/[ü]/g, 'u').replace(/[ï]/g, 'i')
-    .replace(/[']/g, '').replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') || '';
-  const typeSlug = productType?.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') || '';
   const brandLower = brandName?.toLowerCase() || '';
+  const typeLower = productType?.toLowerCase() || '';
 
-  let catUrls = [];
-  let prodUrls = [];
+  let lines = [];
 
-  // ── Category URLs ──
-  if (brandSlug) {
-    catUrls = catUrls.concat(
-      sitemapCategories.filter(c => c.path.includes('/merken/' + brandSlug)).slice(0, 15)
-    );
-  }
-  if (typeSlug) {
-    catUrls = catUrls.concat(
-      sitemapCategories.filter(c => c.label.includes(typeSlug) || c.path.includes(typeSlug)).slice(0, 8)
-    );
-  }
-  // General top-level categories
-  const generalPaths = ['/haarverzorging/','/huidverzorging/','/make-up/','/tools/','/man/','/professioneel/','/nagels/','/geuren/'];
-  for (const gp of generalPaths) {
-    catUrls = catUrls.concat(sitemapCategories.filter(c => c.path.startsWith(gp) && c.path.split('/').length <= 4).slice(0, 4));
+  // ── Category matches ──
+  const matchedCats = catalogCatFlat.filter(c => {
+    const nameLow = c.name.toLowerCase();
+    const pathLow = c.fullPath.toLowerCase();
+    return (brandLower && (nameLow.includes(brandLower) || pathLow.includes(brandLower)))
+        || (typeLower && (nameLow.includes(typeLower) || pathLow.includes(typeLower)));
+  }).slice(0, 15);
+
+  if (matchedCats.length > 0) {
+    lines.push('RELEVANTE CATEGORIEËN OP HAARSHOP.NL:');
+    matchedCats.forEach(c => lines.push(`- ${c.fullPath} (cat ID: ${c.id})`));
   }
 
-  // ── Product URLs: find related products from same brand ──
-  if (brandLower && sitemapProducts.length > 0) {
-    // Find products from same brand
-    const brandProducts = sitemapProducts.filter(p =>
-      p.name.toLowerCase().includes(brandLower) || p.slug.includes(brandSlug)
-    );
+  // ── Product matches: same brand ──
+  if (brandLower && catalogProducts.length > 0) {
+    const brandProducts = catalogProducts.filter(p => {
+      const nameLow = p.name.toLowerCase();
+      const brandAttr = (p.brand || '').toLowerCase();
+      return nameLow.includes(brandLower) || brandAttr.includes(brandLower);
+    });
 
-    // Prioritize complementary products (conditioner bij shampoo, etc.)
-    const complementary = ['shampoo','conditioner','haarmasker','treatment','haarolie','leave-in',
-      'serum','spray','mousse','haarlak','gel','wax','crème','masker','balsem'];
+    // Score: complementary product types first
+    const complementary = ['conditioner','masker','mask','haarmasker','treatment','olie','oil',
+      'leave-in','serum','spray','mousse','haarlak','gel','wax','crème','balsem','shampoo'];
     const typeWords = productType?.toLowerCase().split(/\s+/) || [];
 
-    // Sort: complementary products first, then same-line products
     const scored = brandProducts.map(p => {
       const nameLow = p.name.toLowerCase();
       let score = 0;
-      // Boost complementary product types
       for (const comp of complementary) {
         if (nameLow.includes(comp) && !typeWords.includes(comp)) score += 3;
       }
-      // Boost same product line
-      if (typeSlug && (nameLow.includes(typeSlug) || p.slug.includes(typeSlug))) score += 2;
+      // Boost products from same line
+      const inputParts = brandName?.split(/\s*[-–—]\s*/) || [];
+      if (inputParts[1]) {
+        const lineLower = inputParts[1].toLowerCase().trim();
+        if (nameLow.includes(lineLower)) score += 5;
+      }
       return { ...p, score };
     }).sort((a, b) => b.score - a.score);
 
-    prodUrls = scored.slice(0, 15);
-  }
-
-  // ── Build output ──
-  const seen = new Set();
-  let lines = [];
-
-  // Categories
-  const dedupCats = catUrls.filter(r => { if (seen.has(r.url)) return false; seen.add(r.url); return true; });
-  if (dedupCats.length > 0) {
-    lines.push('CATEGORIE-URLS:');
-    dedupCats.slice(0, 25).forEach(r => lines.push(r.url));
-  }
-
-  // Products
-  if (prodUrls.length > 0) {
-    lines.push('\nGERELATEERDE PRODUCTEN (zelfde merk, gebruik voor cross-sell links):');
-    prodUrls.forEach(p => lines.push(`${p.url} — ${p.name}`));
+    const topProducts = scored.filter(p => p.url).slice(0, 15);
+    if (topProducts.length > 0) {
+      lines.push('\nGERELATEERDE PRODUCTEN (zelfde merk, gebruik voor cross-sell links):');
+      topProducts.forEach(p => lines.push(`${p.url} — ${p.name}`));
+    }
   }
 
   return lines.join('\n');
 }
 
 // Init: load from cache on startup
-loadSitemapFromCache();
+loadCatalogFromCache();
 
 
 // Fallback flat arrays (used when no product set selected)
@@ -2148,13 +2165,16 @@ async function generateWithAI() {
   btn.innerHTML = '<span class="spinning">⟳</span> Genereren...';
 
   const refUrl = document.getElementById('aiUrl').value.trim();
+  const eanCode = document.getElementById('aiEan').value.trim();
   const productSet = document.getElementById('aiProductSet').value;
   const cfg = productSet ? PRODUCT_SET_CONFIG[productSet] : null;
 
   // Build prompt
   let userPrompt = `Genereer een complete Haarshop.nl productopvoer voor: "${input}"`;
+  if (eanCode) userPrompt += `\nEAN / Barcode: ${eanCode}`;
   if (productSet) userPrompt += `\n\nProduct set: ${productSet}`;
   if (refUrl) userPrompt += `\nReferentie URL: ${refUrl}`;
+  if (eanCode) userPrompt += `\n\nZOEK OP EAN: Zoek EERST op de EAN-code "${eanCode}" om het exacte product te identificeren. De EAN is de meest betrouwbare identifier — gebruik de gevonden productinformatie als basis.`;
   if (aiUploadedFiles.length > 0) userPrompt += `\nEr zijn ${aiUploadedFiles.length} bestanden geüpload als extra referentie.`;
 
   // Add product-set-specific context
@@ -2204,6 +2224,8 @@ CROSS-SELL & INTERNE LINKS — BELANGRIJK:
 Antwoord UITSLUITEND als JSON object met deze velden:
 {
   "productName": "exacte productnaam zoals op verpakking",
+  "ean": "EAN/barcode als gevonden, anders leeg",
+  "sku": "voorgestelde SKU-code (MERK-LIJN-TYPE-INHOUD formaat) of leeg",
   "brand": "merknaam",
   "line": "productlijn",
   "subLine": "sublijn of leeg",
@@ -2238,10 +2260,11 @@ Antwoord UITSLUITEND als JSON object met deze velden:
         system: `Je bent Productopvoer Mattie, de AI-assistent van Haarshop.nl voor het schrijven van SEO-geoptimaliseerde productbeschrijvingen.
 
 ZOEKREGELS:
-- Zoek ALTIJD eerst de echte productinformatie op via web search voordat je antwoord geeft
+- Als een EAN/barcode is meegegeven, zoek daar EERST op — dit is de meest betrouwbare product-identifier
+- Zoek ALTIJD de echte productinformatie op via web search voordat je antwoord geeft
 - Verzin NOOIT specificaties, ingrediënten of kenmerken — als je iets niet vindt, laat het veld leeg
 - Zoek op de productnaam bij de merkwebsite, Nederlandse webshops (Douglas, Beautyplaza, Notino, Bol.com) of INCIDecoder voor ingrediënten
-- Als een referentie-URL is meegegeven, zoek daar EERST
+- Als een referentie-URL is meegegeven, zoek daar ook
 
 SCHRIJFSTIJL:
 - Schrijf in foutloos, overtuigend en aantrekkelijk Nederlands
@@ -2369,6 +2392,8 @@ ANTWOORDFORMAAT:
 
     // Fill all fields
     document.getElementById('productName').value = cleanAiText(parsed.productName || '');
+    document.getElementById('ean').value = cleanAiText(parsed.ean || document.getElementById('aiEan').value.trim() || '');
+    document.getElementById('sku').value = cleanAiText(parsed.sku || '');
     document.getElementById('brand').value = cleanAiText(parsed.brand || '');
     document.getElementById('line').value = cleanAiText(parsed.line || '');
     document.getElementById('subLine').value = cleanAiText(parsed.subLine || '');
@@ -2458,6 +2483,8 @@ function buildStructuredText() {
     'Lijn: ' + document.getElementById('line').value,
     'Sub-lijn: ' + document.getElementById('subLine').value,
     'Inhoud: ' + document.getElementById('contentSize').value,
+    'EAN: ' + document.getElementById('ean').value,
+    'SKU: ' + document.getElementById('sku').value,
     'SEO-titel: ' + document.getElementById('seoTitle').value,
     'SEO-beschrijving: ' + document.getElementById('seoDescription').value,
     'URL key: ' + document.getElementById('urlKey').value,
@@ -2759,9 +2786,9 @@ function renderAll() {
 
 // ─── Autosave / Autoload ───
 const SAVE_KEY = 'haarshop_productopvoer_state';
-const SAVE_FIELDS = ['productName','brand','line','subLine','contentSize','productType','subProductType',
+const SAVE_FIELDS = ['productName','ean','sku','brand','line','subLine','contentSize','productType','subProductType',
   'shortDescription','description','crossSellText','ingredients','urlKey','metaTitle','seoTitle','seoDescription',
-  'aiInput','aiUrl'];
+  'aiInput','aiUrl','aiEan'];
 
 function saveState() {
   try {
