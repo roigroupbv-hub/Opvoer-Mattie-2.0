@@ -1,0 +1,3570 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Productopvoer Mattie 2.0 — Haarshop.nl</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0e0e10;
+  --surface: #18181b;
+  --surface2: #1e1e22;
+  --border: rgba(224,197,182,0.08);
+  --border-active: rgba(224,197,182,0.25);
+  --brand: #e0c5b6;
+  --brand-dark: #bf8d7a;
+  --brand-light: #efd6ca;
+  --teal: #78c7c9;
+  --teal-dark: #428e8c;
+  --green: #4ade80;
+  --red: #f87171;
+  --yellow: #fbbf24;
+  --text: #fafafa;
+  --text-dim: rgba(255,255,255,0.45);
+  --text-muted: rgba(255,255,255,0.2);
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'DM Sans', -apple-system, sans-serif;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:var(--sans); background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; }
+::selection { background:var(--brand); color:var(--bg); }
+::-webkit-scrollbar { width:6px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:rgba(224,197,182,0.15); border-radius:3px; }
+
+/* ─── Header ─── */
+.header {
+  position:sticky; top:0; z-index:100;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 28px;
+  background:rgba(14,14,16,0.85); backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.header-left { display:flex; align-items:center; gap:14px; }
+.logo { font-size:18px; font-weight:700; letter-spacing:-0.5px; }
+.logo span { color:var(--brand); }
+.version { font-size:10px; color:var(--text-dim); background:var(--surface); padding:2px 8px; border-radius:20px; font-weight:500; }
+.header-actions { display:flex; gap:8px; align-items:center; }
+.header-btn {
+  padding:7px 14px; border-radius:var(--radius-sm); border:1px solid var(--border);
+  background:transparent; color:var(--text-dim); font-size:11px; font-weight:500;
+  cursor:pointer; transition:all .15s; font-family:var(--sans);
+}
+.header-btn:hover { border-color:var(--border-active); color:var(--text); }
+.header-btn.active { border-color:var(--teal); color:var(--teal); }
+
+/* ─── Steps Nav ─── */
+.steps-nav {
+  display:flex; align-items:center; gap:0; padding:0 28px;
+  background:var(--surface); border-bottom:1px solid var(--border);
+  overflow-x:auto;
+}
+.step-item {
+  display:flex; align-items:center; gap:10px; padding:16px 24px;
+  cursor:pointer; position:relative; white-space:nowrap; transition:all .15s;
+  border-bottom:2px solid transparent;
+}
+.step-item:hover { background:rgba(224,197,182,0.03); }
+.step-item.active { border-bottom-color:var(--brand); }
+.step-item.completed .step-num { background:var(--teal); color:var(--bg); }
+.step-item.has-errors .step-num { background:var(--red); color:white; }
+.step-num {
+  width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-size:11px; font-weight:600; background:var(--surface2); color:var(--text-dim);
+  border:1.5px solid var(--border); transition:all .2s;
+}
+.step-item.active .step-num { background:var(--brand); color:var(--bg); border-color:var(--brand); }
+.step-label { font-size:12px; font-weight:500; color:var(--text-dim); }
+.step-item.active .step-label { color:var(--text); font-weight:600; }
+.step-divider { width:20px; height:1px; background:var(--border); flex-shrink:0; }
+
+/* ─── Main Layout ─── */
+.main { display:flex; min-height:calc(100vh - 110px); }
+.content-area { flex:1; padding:28px; overflow-y:auto; max-height:calc(100vh - 110px); }
+.sidebar {
+  width:320px; flex-shrink:0; border-left:1px solid var(--border);
+  background:var(--surface); padding:20px; overflow-y:auto; max-height:calc(100vh - 110px);
+}
+
+/* ─── Step Panels ─── */
+.step-panel { display:none; animation:fadeIn .25s ease; }
+.step-panel.active { display:block; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+/* ─── Cards ─── */
+.card {
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+  padding:24px; margin-bottom:20px;
+}
+.card-header { font-size:13px; font-weight:600; color:var(--text); margin-bottom:16px; display:flex; align-items:center; gap:8px; }
+.card-header .icon { font-size:15px; }
+
+/* ─── Form Fields ─── */
+.field { margin-bottom:16px; }
+.field-label { font-size:11px; font-weight:600; color:var(--text-dim); margin-bottom:6px; display:flex; align-items:center; gap:6px; text-transform:uppercase; letter-spacing:0.5px; }
+.field-label .req { color:var(--brand); }
+.field-input, .field-select, .field-textarea {
+  width:100%; padding:10px 14px; background:var(--bg); border:1.5px solid var(--border);
+  border-radius:var(--radius-sm); color:var(--text); font-size:13px; font-family:var(--sans);
+  transition:border-color .15s;
+}
+.field-input:focus, .field-select:focus, .field-textarea:focus { outline:none; border-color:var(--brand); }
+.field-textarea { resize:vertical; min-height:80px; line-height:1.6; }
+.field-input::placeholder, .field-textarea::placeholder { color:var(--text-muted); }
+.field-input.mono { font-family:var(--mono); letter-spacing:0.5px; }
+.field-select { cursor:pointer; appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23e0c5b6' d='M2 4l4 4 4-4'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 12px center; padding-right:32px; }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+
+/* ─── Badges / Tags ─── */
+.badge-container { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+.badge {
+  padding:5px 12px; border-radius:20px; font-size:11px; font-weight:500;
+  background:var(--bg); border:1px solid var(--border); color:var(--text-dim);
+  cursor:pointer; transition:all .15s; user-select:none;
+}
+.badge:hover { border-color:var(--border-active); color:var(--text); }
+.badge.selected { background:rgba(120,199,201,0.12); border-color:var(--teal); color:var(--teal); }
+
+/* ─── Buttons ─── */
+.btn-primary {
+  padding:12px 28px; background:var(--brand); color:var(--bg); border:none;
+  border-radius:var(--radius-sm); font-size:13px; font-weight:600; cursor:pointer;
+  font-family:var(--sans); transition:all .15s; display:inline-flex; align-items:center; gap:8px;
+}
+.btn-primary:hover { background:var(--brand-dark); }
+.btn-primary:disabled { opacity:0.4; cursor:not-allowed; }
+.btn-secondary {
+  padding:10px 20px; background:transparent; color:var(--text-dim); border:1.5px solid var(--border);
+  border-radius:var(--radius-sm); font-size:12px; font-weight:500; cursor:pointer;
+  font-family:var(--sans); transition:all .15s; display:inline-flex; align-items:center; gap:6px;
+}
+.btn-secondary:hover { border-color:var(--border-active); color:var(--text); }
+.btn-teal { background:var(--teal); color:var(--bg); border-color:var(--teal); }
+.btn-teal:hover { background:var(--teal-dark); }
+.btn-row { display:flex; gap:10px; margin-top:20px; }
+
+/* ─── Validation Sidebar ─── */
+.check-item { display:flex; align-items:flex-start; gap:10px; padding:10px 0; border-bottom:1px solid var(--border); }
+.check-item:last-child { border:none; }
+.check-icon { font-size:14px; flex-shrink:0; margin-top:1px; }
+.check-label { font-size:12px; color:var(--text-dim); line-height:1.5; }
+.check-label strong { color:var(--text); font-weight:500; }
+.check-pass .check-icon { color:var(--green); }
+.check-fail .check-icon { color:var(--red); }
+.check-warn .check-icon { color:var(--yellow); }
+.check-pass .check-label strong { color:var(--green); }
+.check-fail .check-label strong { color:var(--red); }
+
+/* ─── Preview ─── */
+.preview-box {
+  background:white; color:#333; border-radius:var(--radius); padding:28px;
+  font-size:14px; line-height:1.7; max-height:60vh; overflow-y:auto;
+}
+.preview-box h2 { font-size:17px; margin:20px 0 10px; color:#1a1a1a; }
+.preview-box h3 { font-size:15px; margin:20px 0 8px; color:#1a1a1a; }
+.preview-box ul, .preview-box ol { padding-left:22px; margin:8px 0; }
+.preview-box li { margin:4px 0; }
+.preview-box a { color:var(--teal-dark); }
+
+/* ─── Copy Block ─── */
+.copy-block {
+  position:relative; background:var(--bg); border:1px solid var(--border);
+  border-radius:var(--radius-sm); padding:16px; margin-bottom:12px;
+}
+.copy-block pre { font-family:var(--mono); font-size:11px; color:var(--text-dim); white-space:pre-wrap; word-break:break-all; line-height:1.6; max-height:200px; overflow-y:auto; }
+.copy-btn {
+  position:absolute; top:8px; right:8px;
+  padding:4px 10px; background:var(--surface2); border:1px solid var(--border);
+  border-radius:4px; color:var(--text-dim); font-size:10px; cursor:pointer;
+  font-family:var(--sans); transition:all .15s;
+}
+.copy-btn:hover { background:var(--brand); color:var(--bg); border-color:var(--brand); }
+
+/* ─── Toast ─── */
+.toast {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+  padding:12px 24px; border-radius:var(--radius-sm); font-size:12px; font-weight:500;
+  z-index:9999; animation:toastIn .3s ease; pointer-events:none;
+  backdrop-filter:blur(10px);
+}
+.toast.success { background:rgba(74,222,128,0.15); color:var(--green); border:1px solid rgba(74,222,128,0.2); }
+.toast.error { background:rgba(248,113,113,0.15); color:var(--red); border:1px solid rgba(248,113,113,0.2); }
+@keyframes toastIn { from { opacity:0; transform:translateX(-50%) translateY(10px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }
+
+/* ─── Spinning ─── */
+.spinning { display:inline-block; animation:spin 1s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* ─── Structured Info Table ─── */
+.info-table { width:100%; font-size:12px; }
+.info-table td { padding:6px 0; border-bottom:1px solid var(--border); vertical-align:top; }
+.info-table td:first-child { color:var(--text-dim); width:130px; font-weight:500; }
+.info-table td:last-child { color:var(--text); }
+
+/* ─── Progress ─── */
+.progress-bar { height:3px; background:var(--border); border-radius:2px; overflow:hidden; margin-top:8px; }
+.progress-fill { height:100%; background:var(--teal); transition:width .3s ease; border-radius:2px; }
+
+/* ─── Catalog Status ─── */
+.catalog-badge {
+  display:inline-flex; align-items:center; gap:6px; padding:4px 10px;
+  background:var(--surface2); border-radius:20px; font-size:10px; color:var(--text-dim);
+}
+.catalog-dot { width:6px; height:6px; border-radius:50%; }
+.catalog-dot.on { background:var(--green); }
+.catalog-dot.off { background:var(--red); }
+
+/* ─── Source Indicators ─── */
+.source-tag {
+  display:inline-flex; align-items:center; gap:3px;
+  padding:1px 7px; border-radius:10px; font-size:9px; font-weight:600;
+  letter-spacing:0.3px; vertical-align:middle; margin-left:6px;
+}
+.source-tag.web { background:rgba(74,222,128,0.1); color:#4ade80; }
+.source-tag.ai { background:rgba(251,191,36,0.1); color:#fbbf24; }
+.source-tag.manual { background:rgba(120,199,201,0.1); color:#78c7c9; }
+
+/* Responsive */
+@media (max-width:1024px) {
+  .main { flex-direction:column; }
+  .sidebar { width:100%; max-height:none; border-left:none; border-top:1px solid var(--border); }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<div class="header">
+  <div class="header-left">
+    <div class="logo">Mattie <span>2.0</span></div>
+    <span class="version">Productopvoer</span>
+    <div class="catalog-badge" id="catalogBadge"><div class="catalog-dot off" id="catalogDot"></div><span id="catalogBadgeText">Catalogus niet geladen</span></div>
+  </div>
+  <div class="header-actions">
+    <button class="header-btn" onclick="showSettingsModal()">⚙ Instellingen</button>
+    <button class="header-btn" onclick="loadCatalog()">📦 Catalogus laden</button>
+    <button class="header-btn" onclick="resetAll()" style="color:var(--red);border-color:rgba(248,113,113,0.2);">✕ Reset</button>
+  </div>
+</div>
+
+<!-- ═══ STEPS NAV ═══ -->
+<div class="steps-nav" id="stepsNav">
+  <div class="step-item active" data-step="0" onclick="goToStep(0)">
+    <div class="step-num">1</div><div class="step-label">Start & Genereer</div>
+  </div>
+  <div class="step-divider"></div>
+  <div class="step-item" data-step="1" onclick="goToStep(1)">
+    <div class="step-num">2</div><div class="step-label">Productgegevens</div>
+  </div>
+  <div class="step-divider"></div>
+  <div class="step-item" data-step="2" onclick="goToStep(2)">
+    <div class="step-num">3</div><div class="step-label">Content</div>
+  </div>
+  <div class="step-divider"></div>
+  <div class="step-item" data-step="3" onclick="goToStep(3)">
+    <div class="step-num">4</div><div class="step-label">Kenmerken & SEO</div>
+  </div>
+  <div class="step-divider"></div>
+  <div class="step-item" data-step="4" onclick="goToStep(4)">
+    <div class="step-num">5</div><div class="step-label">Review & Publiceer</div>
+  </div>
+</div>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+<div class="content-area" id="contentArea">
+
+<!-- ══ STEP 0: Identificatie & Genereren ══ -->
+<div class="step-panel active" id="step0">
+  <div class="card">
+    <div class="card-header"><span class="icon">📋</span> Product identificeren</div>
+    <div class="field">
+      <div class="field-label">Productnaam <span class="req">*</span></div>
+      <input class="field-input" id="productName" placeholder="Bijv. Olaplex – Volumizing Blow Dry Mist – 150 ml" style="font-size:15px;padding:14px;">
+    </div>
+    <div class="grid-3">
+      <div class="field">
+        <div class="field-label">EAN / Barcode</div>
+        <input class="field-input mono" id="ean" placeholder="8005610642413">
+      </div>
+      <div class="field">
+        <div class="field-label">Product Set <span class="req">*</span></div>
+        <select class="field-select" id="productSet" onchange="onProductSetChange()">
+          <option value="">— Kies een product set —</option>
+          <option value="Haarverzorging">Haarverzorging</option>
+          <option value="Haarstyling">Haarstyling</option>
+          <option value="Haarkleuringen">Haarkleuringen</option>
+          <option value="Blondeermiddel">Blondeermiddel</option>
+          <option value="Developers">Developers</option>
+          <option value="Huidverzorging">Huidverzorging</option>
+          <option value="Lichaam">Lichaam</option>
+          <option value="Make-Up">Make-Up</option>
+          <option value="Föhns">Föhns</option>
+          <option value="Föhnborstels">Föhnborstels</option>
+          <option value="Krultangen">Krultangen</option>
+          <option value="Krulsets">Krulsets</option>
+          <option value="Stijltangen">Stijltangen</option>
+          <option value="Haarborstels">Haarborstels</option>
+          <option value="Haarkammen">Haarkammen</option>
+          <option value="Haarrollers">Haarrollers</option>
+          <option value="Hair Extensions">Hair Extensions</option>
+          <option value="Elastiekjes & Klemmen">Elastiekjes &amp; Klemmen</option>
+          <option value="Kappersscharen">Kappersscharen</option>
+          <option value="Epileren">Epileren</option>
+          <option value="Messen">Messen</option>
+          <option value="Nagelverzorging">Nagelverzorging</option>
+          <option value="Oefenhoofden">Oefenhoofden</option>
+          <option value="Omvorming">Omvorming</option>
+          <option value="Accessoires">Accessoires</option>
+          <option value="Opzetkammen">Opzetkammen</option>
+          <option value="Parfum & Geuren">Parfum &amp; Geuren</option>
+          <option value="Professional">Professional</option>
+          <option value="Scheren">Scheren</option>
+          <option value="Snijkoppen">Snijkoppen</option>
+          <option value="Styling Brush">Styling Brush</option>
+          <option value="Stylingtool">Stylingtool</option>
+          <option value="Trimmers & Tondeuses">Trimmers &amp; Tondeuses</option>
+          <option value="Wenkbrauw & Wimper">Wenkbrauw &amp; Wimper</option>
+          <option value="Wimperverlenging">Wimperverlenging</option>
+        </select>
+      </div>
+      <div class="field">
+        <div class="field-label">Referentie URL <span style="font-weight:400;color:var(--text-muted);">(optioneel)</span></div>
+        <input class="field-input" id="refUrl" placeholder="https://www.douglas.nl/product-page">
+      </div>
+    </div>
+    <div id="dupeCheck" style="display:none;margin-top:12px;padding:12px 16px;border-radius:var(--radius-sm);font-size:12px;"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="icon">✦</span> AI Content Genereren</div>
+    <p style="font-size:12px;color:var(--text-dim);margin-bottom:20px;line-height:1.6;">
+      Mattie zoekt de productinformatie op via web search (en EAN als ingevuld) en genereert alles automatisch: productgegevens, beschrijving, eigenschappen, gebruiksaanwijzing, SEO-velden en categorieën.
+    </p>
+    <div id="aiStatus" style="display:none;margin-bottom:16px;padding:16px;background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border);">
+      <div style="font-size:12px;color:var(--text-dim);margin-bottom:8px;" id="aiStatusText">Bezig met genereren...</div>
+      <div class="progress-bar"><div class="progress-fill" id="aiProgress" style="width:0%"></div></div>
+    </div>
+    <button class="btn-primary btn-teal" id="generateBtn" onclick="generateWithAI()" style="font-size:14px;padding:14px 36px;">
+      ✦ Genereer met AI
+    </button>
+    <div id="aiError" style="display:none;margin-top:12px;padding:12px;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.15);border-radius:var(--radius-sm);color:var(--red);font-size:12px;"></div>
+  </div>
+</div>
+
+<!-- ══ STEP 1: Productgegevens ══ -->
+<div class="step-panel" id="step1">
+  <div class="card">
+    <div class="card-header"><span class="icon">📦</span> Productgegevens</div>
+    <div class="grid-3">
+      <div class="field"><div class="field-label">Merk <span class="req">*</span></div><input class="field-input" id="brand" placeholder="Wella Professionals" oninput="markManual('brand')"></div>
+      <div class="field"><div class="field-label">Lijn</div><input class="field-input" id="line" placeholder="Ultimate Color" oninput="markManual('line')"></div>
+      <div class="field"><div class="field-label">Sub-lijn</div><input class="field-input" id="subLine" placeholder="Optioneel" oninput="markManual('subLine')"></div>
+    </div>
+    <div class="grid-3">
+      <div class="field"><div class="field-label">Producttype <span class="req">*</span></div><input class="field-input" id="productType" placeholder="Shampoo" oninput="markManual('productType')"></div>
+      <div class="field"><div class="field-label">Sub producttype</div><input class="field-input" id="subProductType" placeholder="Optioneel" oninput="markManual('subProductType')"></div>
+      <div class="field"><div class="field-label">Inhoud <span class="req">*</span></div><input class="field-input" id="contentSize" placeholder="250 ml" oninput="markManual('content')"></div>
+    </div>
+    <div class="grid-2">
+      <div class="field"><div class="field-label">SKU</div><input class="field-input mono" id="sku" placeholder="WEL-UC-SHA-250" oninput="markManual('sku')"></div>
+      <div class="field"><div class="field-label">Ingrediënten</div><textarea class="field-textarea" id="ingredients" rows="3" placeholder="Volledige INCI-lijst..." oninput="markManual('ingredients')"></textarea></div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-secondary" onclick="goToStep(0)">← Terug</button>
+    <button class="btn-primary" onclick="goToStep(2)">Volgende stap →</button>
+  </div>
+</div>
+
+<!-- ══ STEP 2: Content ══ -->
+<div class="step-panel" id="step2">
+  <div class="card">
+    <div class="card-header"><span class="icon">📝</span> Short Description</div>
+    <textarea class="field-textarea" id="shortDescription" rows="2" placeholder="Korte beschrijving, 15-20 woorden, zonder productnaam..." oninput="markManual('shortDescription');runValidation()"></textarea>
+    <div style="font-size:10px;color:var(--text-muted);margin-top:4px;" id="shortDescCount">0 woorden</div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="icon">📄</span> Productomschrijving</div>
+    <div style="display:flex;gap:6px;margin-bottom:8px;">
+      <button class="btn-secondary" style="padding:4px 10px;font-size:10px;" onclick="wrapDesc('strong')"><b>B</b></button>
+      <button class="btn-secondary" style="padding:4px 10px;font-size:10px;" onclick="wrapDesc('em')"><em>I</em></button>
+      <button class="btn-secondary" style="padding:4px 10px;font-size:10px;" onclick="insertDesc('<br>')">↵ br</button>
+      <button class="btn-secondary" style="padding:4px 10px;font-size:10px;" onclick="stripDescFormatting()">✕ Strip</button>
+      <button class="btn-secondary" style="padding:4px 10px;font-size:10px;" onclick="toggleDescPreview()">👁 Preview</button>
+    </div>
+    <textarea class="field-textarea" id="description" rows="6" placeholder="Productomschrijving (~100 woorden)..." oninput="markManual('description');runValidation()"></textarea>
+    <div id="descPreview" style="display:none;margin-top:8px;" class="preview-box"></div>
+    <div style="font-size:10px;color:var(--text-muted);margin-top:4px;" id="descCount">0 woorden</div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="icon">⭐</span> Belangrijkste Eigenschappen <span style="font-size:10px;color:var(--text-muted);margin-left:auto;">6-7 stuks</span></div>
+    <div id="featuresContainer"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="icon">📋</span> Gebruiksaanwijzing</div>
+    <div id="stepsContainer"></div>
+    <button class="btn-secondary" style="margin-top:8px;" onclick="addStep()">+ Stap toevoegen</button>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="icon">🔗</span> Cross-sell</div>
+    <input class="field-input" id="crossSellText" placeholder="Cross-sell tekst met <a href> links naar gerelateerde producten..." oninput="markManual('crossSellText');runValidation()">
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-secondary" onclick="goToStep(1)">← Terug</button>
+    <button class="btn-primary" onclick="goToStep(3)">Volgende stap →</button>
+  </div>
+</div>
+
+<!-- ══ STEP 3: Kenmerken & SEO ══ -->
+<div class="step-panel" id="step3">
+  <div class="card">
+    <div class="card-header"><span class="icon">🏷</span> Categorieën</div>
+    <div id="categoriesContainer" class="badge-container"></div>
+    <div style="display:flex;gap:8px;margin-top:10px;">
+      <input class="field-input" id="newCategory" placeholder="Nieuwe categorie..." style="flex:1;">
+      <button class="btn-secondary" onclick="addCategory()">+ Toevoegen</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="icon">💇</span> Ik heb</div>
+    <div id="ikHebContainer" class="badge-container"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="icon">⚡</span> Werking</div>
+    <div id="werkingContainer" class="badge-container"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="icon">🌿</span> Vrij van</div>
+    <div id="vrijVanContainer" class="badge-container"></div>
+  </div>
+
+  <div id="dynamicSpecsCard" class="card" style="display:none;">
+    <div class="card-header"><span class="icon">⚙</span> Specificaties</div>
+    <div id="dynamicFieldsContainer"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="icon">🔍</span> SEO</div>
+    <div class="field"><div class="field-label">SEO Titel</div><input class="field-input" id="seoTitle" placeholder="Productnaam - morgen in huis✓" oninput="markManual('seoTitle');runValidation()"></div>
+    <div class="field"><div class="field-label">SEO Beschrijving</div><textarea class="field-textarea" id="seoDescription" rows="2" placeholder="Productnaam bestel je voordelig op Haarshop.nl ✓ Morgen in Huis ✓..." oninput="markManual('seoDescription');runValidation()"></textarea></div>
+    <div class="field"><div class="field-label">URL Key</div><input class="field-input mono" id="urlKey" placeholder="wella-ultimate-color-shampoo-250-ml" oninput="markManual('urlKey');runValidation()"></div>
+    <div class="field"><div class="field-label">Meta Title</div><input class="field-input" id="metaTitle" placeholder="Productnaam zonder streepjes" oninput="markManual('metaTitle')"></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-secondary" onclick="goToStep(2)">← Terug</button>
+    <button class="btn-primary" onclick="goToStep(4)">Review & Publiceer →</button>
+  </div>
+</div>
+
+<!-- ══ STEP 4: Review & Publiceer ══ -->
+<div class="step-panel" id="step4">
+  <div class="card">
+    <div class="card-header"><span class="icon">👁</span> Live Preview</div>
+    <div class="preview-box" id="livePreview"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="icon">📊</span> Gestructureerde Informatie</div>
+    <table class="info-table" id="structuredInfo"></table>
+  </div>
+
+  <!-- Copy-paste fallback blocks -->
+  <div class="card">
+    <div class="card-header"><span class="icon">📋</span> Kopieerbare Blokken</div>
+    <p style="font-size:11px;color:var(--text-dim);margin-bottom:16px;">Gebruik deze blokken om alles handmatig in Magento te plakken.</p>
+
+    <div style="font-size:11px;color:var(--text-dim);font-weight:600;margin-bottom:6px;">Short Description (HTML)</div>
+    <div class="copy-block">
+      <button class="copy-btn" onclick="copyBlock('copyShort')">Kopieer</button>
+      <pre id="copyShort"></pre>
+    </div>
+
+    <div style="font-size:11px;color:var(--text-dim);font-weight:600;margin-bottom:6px;">Description (HTML)</div>
+    <div class="copy-block">
+      <button class="copy-btn" onclick="copyBlock('copyFull')">Kopieer</button>
+      <pre id="copyFull"></pre>
+    </div>
+
+    <div style="font-size:11px;color:var(--text-dim);font-weight:600;margin-bottom:6px;">Ingrediënten</div>
+    <div class="copy-block">
+      <button class="copy-btn" onclick="copyBlock('copyIngredients')">Kopieer</button>
+      <pre id="copyIngredients"></pre>
+    </div>
+
+    <div style="font-size:11px;color:var(--text-dim);font-weight:600;margin-bottom:6px;">SEO Titel</div>
+    <div class="copy-block">
+      <button class="copy-btn" onclick="copyBlock('copySeoTitle')">Kopieer</button>
+      <pre id="copySeoTitle"></pre>
+    </div>
+
+    <div style="font-size:11px;color:var(--text-dim);font-weight:600;margin-bottom:6px;">SEO Beschrijving</div>
+    <div class="copy-block">
+      <button class="copy-btn" onclick="copyBlock('copySeoDesc')">Kopieer</button>
+      <pre id="copySeoDesc"></pre>
+    </div>
+
+    <div style="font-size:11px;color:var(--text-dim);font-weight:600;margin-bottom:6px;">URL Key</div>
+    <div class="copy-block">
+      <button class="copy-btn" onclick="copyBlock('copyUrlKey')">Kopieer</button>
+      <pre id="copyUrlKey"></pre>
+    </div>
+
+    <div style="font-size:11px;color:var(--text-dim);font-weight:600;margin-bottom:6px;">Alle productinfo (platte tekst)</div>
+    <div class="copy-block">
+      <button class="copy-btn" onclick="copyBlock('copyStructured')">Kopieer</button>
+      <pre id="copyStructured"></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="icon">🚀</span> Publiceren naar Magento</div>
+    <p style="font-size:11px;color:var(--text-dim);margin-bottom:16px;">Push alle content direct naar Magento 2 via de API. Vereist een geconfigureerde Magento-koppeling.</p>
+    <div class="btn-row" style="margin-top:0;">
+      <button class="btn-primary btn-teal" onclick="pushToMagento()" id="pushBtn">🚀 Publiceer naar Magento</button>
+      <button class="btn-secondary" onclick="exportAllAsText()">📥 Exporteer als tekst</button>
+    </div>
+    <div id="pushStatus" style="display:none;margin-top:12px;padding:12px;border-radius:var(--radius-sm);font-size:12px;"></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-secondary" onclick="goToStep(3)">← Terug</button>
+  </div>
+</div>
+
+</div><!-- /content-area -->
+
+<!-- ═══ SIDEBAR: Validation ═══ -->
+<div class="sidebar" id="sidebar">
+  <div style="font-size:13px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+    <span>✓ Kwaliteitscheck</span>
+    <span id="validationScore" style="margin-left:auto;font-size:11px;color:var(--text-dim);"></span>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);">
+    <span class="source-tag web">🌐 Web</span>
+    <span class="source-tag ai">🤖 AI</span>
+    <span class="source-tag manual">✋ Handmatig</span>
+  </div>
+  <div id="validationList"></div>
+</div>
+
+</div><!-- /main -->
+
+<!-- ═══ Settings Modal ═══ -->
+<div id="settingsModal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;width:480px;max-width:90vw;">
+    <div style="font-size:15px;font-weight:600;margin-bottom:20px;">⚙ Instellingen</div>
+    <div class="field"><div class="field-label">Anthropic API Key</div><input class="field-input mono" id="settingsApiKey" type="password" placeholder="sk-ant-..."></div>
+    <div class="field"><div class="field-label">Magento URL</div><input class="field-input mono" id="settingsMagentoUrl" placeholder="https://www.haarshop.nl"></div>
+    <div class="field"><div class="field-label">Magento API Token</div><input class="field-input mono" id="settingsMagentoKey" type="password" placeholder="Bearer token"></div>
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="closeSettingsModal()">Annuleren</button>
+      <button class="btn-primary" onclick="saveSettings()">Opslaan</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════
+// PRODUCTOPVOER MATTIE 2.0 — JAVASCRIPT
+// ════════════════════════════════════════════
+
+// ─── Data Store ───
+const data = {
+  features: ['','','','','','',''],
+  steps: ['','','',''],
+  categories: [],
+  ikHeb: [],
+  werking: [],
+  vrijVan: [],
+};
+let dynamicFieldValues = {};
+let currentStep = 0;
+
+// Source tracking: 'web' | 'ai' | 'manual' per field
+let fieldSources = {};
+const SOURCE_LABELS = { web: '🌐 Web', ai: '🤖 AI', manual: '✋ Handmatig' };
+const SOURCE_COLORS = { web: '#4ade80', ai: '#fbbf24', manual: '#78c7c9' };
+
+// ─── Product Set Configuration ───
+const PRODUCT_SET_CONFIG = {
+  'Haarverzorging': {
+    productTypes: ['Shampoo','Conditioner','Haarmasker','Leave-in Conditioner','Haarolie','Treatment','Peeling','Droogshampoo','Shampoo Bar','Scrub','Tonic','Ampullen','Elixer','Mist','Lotion','Booster','Serum'],
+    ikHeb: ['Krullend haar','Steil haar','Golvend haar','Fijn haar','Dik haar','Droog haar','Vet haar','Normaal haar','Gekleurd haar','Beschadigd haar','Pluizig haar','Dun haar','Grijs haar','Blond haar','Lang haar','Kort haar','Breekbaar haar','Futloos haar','Poreus haar','Weerbarstig haar','Extensions','Hoofdhuidproblemen','Roos','Gevoelige hoofdhuid','Droge hoofdhuid','Vettige hoofdhuid','Jeukende hoofdhuid','Schilferende hoofdhuid','Haaruitval','Dunner wordend haar','Gespleten punten','Verwaarloosd haar','Chemisch behandeld haar','Geblondeerd haar','Highlighted haar','Afro haar','Kroeshaar','Coily haar','Baby & Kinderen','Mannen'],
+    werking: ['Hydraterend','Voedend','Herstellend','Versterkend','Volume gevend','Glad makend','Anti-pluis','Anti-frizz','Kruldefinitie','Kleur beschermend','Glans gevend','Reinigend','Ontwarrend','Hitte beschermend','UV-bescherming','Anti-roos','Verdikkend','Verfrissend','Kalmerend','Beschermt tegen haarbreuk','Verzacht het haar','Elasticiteit herstellend','Definiërend','Diep reinigend','Neutraliserend','Anti-geel','Zilvershampoo','Kleur opfrissend','Kleur verdiepend','Detox','Zuiverend','Pluiscontrole','Beschermt de hoofdhuid','Kalmeert de hoofdhuid','Verwijdert dode huidcellen','Verzorgt de hoofdhuid','Stimuleert haargroei','Verbetert de doorbloeding','Reguleert talgproductie','Exfolierend'],
+    vrijVan: ['Sulfaten','SLS/SLES','Parabenen','Siliconen','Ftalaten','Gluten','Minerale oliën','Alcohol','Kunstmatige kleurstoffen','Kunstmatige geurstoffen','Microplastics','PEG','Fosfaten','Formaldehyde','MIT/CMIT','Propyleenglycol','Natriumchloride','Petroleumderivaten','Dierlijke ingrediënten','Palmolie','Vegan','Dierproefvrij','Biologisch','Natuurlijk','CG Proof (Curly Girl)','CO2-neutraal','Gerecyclede verpakking','Certified B Corp'],
+    showIngredients: true, showTechSpecs: false, showBeautySpecs: false
+  },
+  'Haarstyling': {
+    productTypes: ['Haarlak','Mousse','Gel','Wax','Crème','Spray','Styling Paste','Pommade','Volume Poeder','Hitte Beschermend Spray','Schuimversteviger','Primer','Styling Klei','Texture Spray','Sea Salt Spray','Finishing Spray'],
+    ikHeb: ['Krullend haar','Steil haar','Golvend haar','Fijn haar','Dik haar','Droog haar','Normaal haar','Pluizig haar','Dun haar','Lang haar','Kort haar','Weerbarstig haar','Mannen'],
+    werking: ['Lichte fixatie','Middelhoge fixatie','Sterke fixatie','Extreme fixatie','Flexibele hold','Matt effect','Wet look','Natuurlijk effect','Strandlook','Textuur','Body & bounce','Fixerend','Texturiserend','Volume gevend','Glans gevend','Anti-pluis','Hitte beschermend'],
+    vrijVan: ['Sulfaten','Parabenen','Siliconen','Alcohol','Kunstmatige geurstoffen','Microplastics','Vegan','Dierproefvrij'],
+    showIngredients: true, showTechSpecs: false, showBeautySpecs: true, beautyFields: ['finish']
+  },
+  'Haarkleuringen': {
+    productTypes: ['Permanente kleuring','Semi-permanente kleuring','Toner','Kleurshampoo','Kleurconditioner','Kleurmousse','Uitgroei spray','Uitgroei stift','Color Gloss','Direct Dye'],
+    ikHeb: ['Krullend haar','Steil haar','Golvend haar','Fijn haar','Dik haar','Droog haar','Normaal haar','Gekleurd haar','Beschadigd haar','Grijs haar','Blond haar','Geblondeerd haar','Highlighted haar'],
+    werking: ['Grijsdekking','Kleurintensivering','Kleur opfrissend','Neutraliserend','Anti-geel','Toning','Glans gevend'],
+    vrijVan: ['Sulfaten','Parabenen','Siliconen','Alcohol','Vegan','Dierproefvrij'],
+    showIngredients: true, showTechSpecs: false, showBeautySpecs: true, beautyFields: ['kleurTint','dekking','oxidatietijd','mengverhouding']
+  },
+  'Blondeermiddel': {
+    productTypes: ['Blondeerpoeder','Blondeercrème','Blondeerlotion','Highlift kleuring'],
+    ikHeb: ['Gekleurd haar','Beschadigd haar','Blond haar','Geblondeerd haar','Highlighted haar'],
+    werking: ['Kleurintensivering','Neutraliserend','Anti-geel','Glans gevend'],
+    vrijVan: ['Vegan','Dierproefvrij'],
+    showIngredients: true, showTechSpecs: false, showBeautySpecs: true, beautyFields: ['oxidatietijd','mengverhouding','volumeSterkte']
+  },
+  'Developers': {
+    productTypes: ['Oxidatie crème','Oxidatie lotion','Waterstofperoxide'],
+    ikHeb: [],
+    werking: [],
+    vrijVan: [],
+    showIngredients: false, showTechSpecs: false, showBeautySpecs: true, beautyFields: ['mengverhouding','volumeSterkte']
+  },
+  'Huidverzorging': {
+    productTypes: ['Gezichtscrème','Gezichtsreiniger','Gezichtsserum','Gezichtsmasker','Gezichtsscrub','Toner','Oogcrème','Oogserum','Dagcrème','Nachtcrème','LED apparaat'],
+    ikHeb: ['Droge huid','Vette huid','Gevoelige huid','Normale huid','Gemengde huid','Rijpe huid','Acne-gevoelige huid','Geïrriteerde huid','Gedehydrateerde huid'],
+    werking: ['Anti-aging','Versteviging','Egalisering','Hydraterend','Voedend','Kalmerend','Verfrissend','Verstevigend','Liftend','Poriën verfijnend','Reinigend','Exfolierend'],
+    vrijVan: ['Parabenen','Siliconen','Ftalaten','Minerale oliën','Alcohol','Kunstmatige kleurstoffen','Kunstmatige geurstoffen','Microplastics','PEG','SLS/SLES','Parfum','Vegan','Dierproefvrij','Biologisch','Natuurlijk','Dermatologisch getest','Hypoallergeen'],
+    showIngredients: true, showTechSpecs: false, showBeautySpecs: true, beautyFields: ['huidskleur','spf']
+  },
+  'Lichaam': {
+    productTypes: ['Body Lotion','Body Wash','Douchegel','Handcrème','Bodyscrub','Huidolie','Huidserum','Huidcrème','Deodorant','Tanning Mousse','Tanning Spray','Tanning Lotion'],
+    ikHeb: ['Droge huid','Vette huid','Gevoelige huid','Normale huid','Gemengde huid','Rijpe huid','Geïrriteerde huid','Gedehydrateerde huid'],
+    werking: ['Hydraterend','Voedend','Versteviging','Egalisering','Cellulite verminderend','Bruinend','Zelfbruinend','Verkoelend','Ontspannend','Verstevigend','Reinigend','Exfolierend'],
+    vrijVan: ['Parabenen','Siliconen','Ftalaten','Minerale oliën','Alcohol','Kunstmatige geurstoffen','Microplastics','PEG','SLS/SLES','Vegan','Dierproefvrij','Biologisch','Natuurlijk','Dermatologisch getest'],
+    showIngredients: true, showTechSpecs: false, showBeautySpecs: true, beautyFields: ['spf']
+  },
+  'Make-Up': {
+    productTypes: ['Foundation','Concealer','Mascara','Lipliner','Lipstick','Lipgloss','Oogschaduw','Eyeliner','Blush','Bronzer','Highlighter','Setting Spray','Primer','Wenkbrauwgel','Wenkbrauwpotlood','Wenkbrauwpoeder','Wenkbrauwverf','Wenkbrauwserum','Wimperserum','Wimperverf'],
+    ikHeb: ['Droge huid','Vette huid','Gevoelige huid','Normale huid','Gemengde huid'],
+    werking: ['Langhoudend','Waterproof','Smudge-proof','Dekkend','Licht dekkend','Matterend','Glanzend','Voedend','Hydraterend'],
+    vrijVan: ['Parabenen','Ftalaten','Minerale oliën','Kunstmatige kleurstoffen','Microplastics','Talk','Vegan','Dierproefvrij','Dermatologisch getest','Hypoallergeen'],
+    showIngredients: true, showTechSpecs: false, showBeautySpecs: true, beautyFields: ['kleurTint','dekking','huidskleur','spf','finish']
+  },
+  'Föhns': {
+    productTypes: ['Professionele föhn','Reisföhn','Stille föhn','Föhn met diffuser','Draadloze föhn'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: true, showBeautySpecs: false,
+    techFields: ['wattage','temperatuurstanden','snelheidsstanden','ionentechnologie','coolShot','opzetstukken','snoerlengte','gewicht','autoShutoff','geschiktHaartype','kleurUitvoering']
+  },
+  'Föhnborstels': {
+    productTypes: ['Ronde föhnborstel','Warme lucht borstel','2-in-1 föhnborstel','Roterende föhnborstel'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: true, showBeautySpecs: false,
+    techFields: ['wattage','maxTemperatuur','temperatuurstanden','plaatmateriaal','diameter','opzetstukken','snoerlengte','gewicht','opwarmtijd','autoShutoff','coolShot','kleurUitvoering']
+  },
+  'Krultangen': {
+    productTypes: ['Krultang met klem','Conische krultang','Marcel krultang','Automatische krultang','Triple barrel krultang','Wafeltang'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: true, showBeautySpecs: false,
+    techFields: ['maxTemperatuur','temperatuurstanden','plaatmateriaal','diameter','snoerlengte','gewicht','opwarmtijd','autoShutoff','ionentechnologie','geschiktHaartype','kleurUitvoering']
+  },
+  'Stijltangen': {
+    productTypes: ['Keramische stijltang','Titanium stijltang','Stoom stijltang','Draadloze stijltang','2-in-1 hetelucht stijltang','Mini stijltang'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: true, showBeautySpecs: false,
+    techFields: ['maxTemperatuur','temperatuurstanden','plaatmateriaal','plaatbreedte','snoerlengte','gewicht','opwarmtijd','autoShutoff','ionentechnologie','geschiktHaartype','kleurUitvoering']
+  },
+  'Krulsets': {
+    productTypes: ['Krulset','Verwarmde krulset'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: true, showBeautySpecs: false,
+    techFields: ['maxTemperatuur','temperatuurstanden','plaatmateriaal','diameter','opzetstukken','snoerlengte','gewicht','autoShutoff','kleurUitvoering']
+  },
+  'Haarborstels': {
+    productTypes: ['Paddle brush','Ronde borstel','Vent brush','Detangling brush','Zwijnenhaar borstel','Skeleton brush','Toupeerborstel'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: false, showBeautySpecs: true, beautyFields: ['materiaal','maatLengte','diameter','kleurUitvoering','geschiktHaartype']
+  },
+  'Haarkammen': {
+    productTypes: ['Staart kam','Brede tand kam','Knipkam','Kleurkam','Styling kam'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: false, showBeautySpecs: true, beautyFields: ['materiaal','maatLengte','kleurUitvoering','geschiktHaartype']
+  },
+  'Haarrollers': {
+    productTypes: ['Klittenband rollers','Verwarmde rollers','Foam rollers','Flexi rods'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: false, showBeautySpecs: true, beautyFields: ['materiaal','diameter','maatLengte']
+  },
+  'Hair Extensions': {
+    productTypes: ['Clip-in extensions','Tape extensions','Micro ring extensions','Ponytail extensions','Halo extensions'],
+    ikHeb: ['Krullend haar','Steil haar','Golvend haar','Fijn haar','Dik haar'],
+    werking: [],
+    vrijVan: [],
+    showIngredients: false, showTechSpecs: false, showBeautySpecs: true, beautyFields: ['kleurTint','materiaal','maatLengte']
+  },
+  'Elastiekjes & Klemmen': {
+    productTypes: ['Haarelastiek','Scrunchie','Haarklem','Bobby pin','Haarclip','Haarband','Krokodillenklem'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: false, showBeautySpecs: true, beautyFields: ['materiaal','maatLengte','kleurUitvoering']
+  },
+  'Kappersscharen': {
+    productTypes: ['Knipschaar','Effileerschaar','Linkshandige schaar','Modelleerschaar'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: false, showBeautySpecs: true, beautyFields: ['materiaal','maatLengte','gewicht','kleurUitvoering']
+  },
+  'Epileren': {
+    productTypes: ['Epilator','Epileerstrips','Harspatroon','Wax apparaat','Wax verwarmer'],
+    ikHeb: ['Gevoelige huid','Normale huid'],
+    werking: [],
+    vrijVan: [],
+    showIngredients: false, showTechSpecs: true, showBeautySpecs: false,
+    techFields: ['wattage','snoerlengte','gewicht','oplaadtijd','gebruikstijdDraadloos','kleurUitvoering']
+  },
+  'Messen': {
+    productTypes: ['Scheermes','Uitdunmes','Sculpteringmes','Mesbladen (navulling)'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: false, showBeautySpecs: true,
+    beautyFields: ['materiaal','maatLengte','meslengte','aantalTanden','gewicht','kleurUitvoering']
+  },
+  'Nagelverzorging': {
+    productTypes: ['Nagelvijl','Nagelknipper','Nagelriemverzorging','Nagelset','Nagellak'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: false, showBeautySpecs: true,
+    beautyFields: ['materiaal','maatLengte','kleurTint','kleurUitvoering']
+  },
+  'Oefenhoofden': {
+    productTypes: ['Oefenhoofd met echt haar','Oefenhoofd met synthetisch haar','Oefenhoofd kaal','Statiefklem'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: false, showBeautySpecs: true,
+    beautyFields: ['materiaal','maatLengte','haartypeExtensions','kleurTint']
+  },
+  'Omvorming': {
+    productTypes: ['Permanentvloeistof','Fixeervloeistof','Krulvloeistof','Ontkrullingscrème'],
+    ikHeb: ['Krullend haar','Steil haar','Golvend haar','Fijn haar','Dik haar','Beschadigd haar','Normaal haar','Gekleurd haar'],
+    werking: ['Kruldefinitie','Glad makend','Verzacht het haar','Herstellend'],
+    vrijVan: ['Vegan','Dierproefvrij'],
+    showIngredients: true, showTechSpecs: false, showBeautySpecs: true,
+    beautyFields: ['oxidatietijd','mengverhouding','volumeSterkte']
+  },
+  'Accessoires': {
+    productTypes: ['Verfkom','Verfkwast','Kappersmantel','Aluminium folie','Knipkappe','Tipkam','Waterspuit','Kapperstas'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: false, showBeautySpecs: true,
+    beautyFields: ['materiaal','maatLengte','kleurUitvoering']
+  },
+  'Opzetkammen': {
+    productTypes: ['Opzetkam 3mm','Opzetkam 6mm','Opzetkam 9mm','Opzetkam 12mm','Opzetkamset'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: false, showBeautySpecs: true,
+    beautyFields: ['materiaal','maatLengte','kleurUitvoering']
+  },
+  'Parfum & Geuren': {
+    productTypes: ['Eau de Parfum','Eau de Toilette','Body Mist','Haarparfum','Geursticks'],
+    ikHeb: [],
+    werking: [],
+    vrijVan: ['Alcohol','Ftalaten','Kunstmatige geurstoffen','Vegan','Dierproefvrij'],
+    showIngredients: true, showTechSpecs: false, showBeautySpecs: true,
+    beautyFields: ['geurtype']
+  },
+  'Professional': {
+    productTypes: ['Kappersstoel','Wasbak','Spiegel','Kapperskar','Sterilisator','Kappersbenodigdheden'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: false, showBeautySpecs: true,
+    beautyFields: ['materiaal','maatLengte','kleurUitvoering']
+  },
+  'Scheren': {
+    productTypes: ['Scheermachine','Scheergel','Scheerschuim','Aftershave','Scheerkwast','Scheermes'],
+    ikHeb: ['Gevoelige huid','Normale huid','Geïrriteerde huid'],
+    werking: ['Hydraterend','Kalmerend','Verfrissend','Verzachtend','Anti-irritatie'],
+    vrijVan: [],
+    showIngredients: true, showTechSpecs: true, showBeautySpecs: false,
+    techFields: ['oplaadtijd','gebruikstijdDraadloos','snoerlengte','gewicht','kleurUitvoering']
+  },
+  'Snijkoppen': {
+    productTypes: ['Snijkop tondeuse','Snijkop trimmer','Universele snijkop'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: false, showBeautySpecs: true,
+    beautyFields: ['materiaal','maatLengte','meslengte','aantalTanden','kleurUitvoering']
+  },
+  'Styling Brush': {
+    productTypes: ['Ronde styling brush','Paddle styling brush','Verwarmde styling brush'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: true, showBeautySpecs: false,
+    techFields: ['maxTemperatuur','temperatuurstanden','plaatmateriaal','diameter','snoerlengte','gewicht','opwarmtijd','autoShutoff','ionentechnologie','geschiktHaartype','kleurUitvoering']
+  },
+  'Stylingtool': {
+    productTypes: ['Multistyler','Airwrap','Heteluchtborstel','2-in-1 styler'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: true, showBeautySpecs: false,
+    techFields: ['wattage','maxTemperatuur','temperatuurstanden','plaatmateriaal','opzetstukken','snoerlengte','gewicht','opwarmtijd','autoShutoff','ionentechnologie','coolShot','geschiktHaartype','kleurUitvoering']
+  },
+  'Trimmers & Tondeuses': {
+    productTypes: ['Tondeuse','Baardtrimmer','Haartrimmer','Neustrimmer','Detailtrimmer','Draadloze trimmer'],
+    ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: false, showTechSpecs: true, showBeautySpecs: false,
+    techFields: ['wattage','snelheidsstanden','opzetstukken','snoerlengte','gewicht','oplaadtijd','gebruikstijdDraadloos','meslengte','aantalTanden','kleurUitvoering']
+  },
+  'Wenkbrauw & Wimper': {
+    productTypes: ['Wenkbrauwverf','Wimperverf','Wenkbrauwgel','Wenkbrauwserum','Wimperserum','Wimperkruller','Wenkbrauwpotlood'],
+    ikHeb: ['Gevoelige huid','Normale huid'],
+    werking: [],
+    vrijVan: ['Parabenen','Ftalaten','Kunstmatige kleurstoffen','Vegan','Dierproefvrij','Dermatologisch getest'],
+    showIngredients: true, showTechSpecs: false, showBeautySpecs: true,
+    beautyFields: ['kleurTint','dekking']
+  },
+  'Wimperverlenging': {
+    productTypes: ['Individuele wimpers','Cluster wimpers','Strip wimpers','Wimperlijm','Wimperverwijderaar','Wimperkruller (verlenging)'],
+    ikHeb: [],
+    werking: [],
+    vrijVan: ['Parabenen','Ftalaten','Kunstmatige kleurstoffen','Vegan','Dierproefvrij','Dermatologisch getest'],
+    showIngredients: true, showTechSpecs: false, showBeautySpecs: true,
+    beautyFields: ['kleurTint','maatLengte','materiaal','haartypeExtensions']
+  }
+};
+  if (activeProductSet && PRODUCT_SET_CONFIG[activeProductSet]) return PRODUCT_SET_CONFIG[activeProductSet].productTypes;
+  return PRODUCT_TYPES;
+}
+function getActiveIkHeb() {
+  if (activeProductSet && PRODUCT_SET_CONFIG[activeProductSet]) return PRODUCT_SET_CONFIG[activeProductSet].ikHeb;
+  return IK_HEB;
+}
+function getActiveWerking() {
+  if (activeProductSet && PRODUCT_SET_CONFIG[activeProductSet]) return PRODUCT_SET_CONFIG[activeProductSet].werking;
+  return WERKING;
+}
+function getActiveVrijVan() {
+  if (activeProductSet && PRODUCT_SET_CONFIG[activeProductSet]) return PRODUCT_SET_CONFIG[activeProductSet].vrijVan;
+  return VRIJ_VAN;
+}
+
+// ─── Dynamic Field Definitions ───
+const FIELD_DEFS = {
+  // Tech specs
+  wattage:            { label: 'Wattage',              placeholder: 'Bijv. 2200W',               type: 'text' },
+  maxTemperatuur:     { label: 'Max. temperatuur',     placeholder: 'Bijv. 230°C',               type: 'text' },
+  temperatuurstanden: { label: 'Temperatuurstanden',   placeholder: 'Bijv. 3 standen / variabel', type: 'text' },
+  plaatmateriaal:     { label: 'Plaatmateriaal',       placeholder: 'Bijv. Keramisch / Titanium / Toermalijn', type: 'text' },
+  plaatbreedte:       { label: 'Plaatbreedte',         placeholder: 'Bijv. 25 mm',               type: 'text' },
+  snoerlengte:        { label: 'Snoerlengte',          placeholder: 'Bijv. 2,7 m',               type: 'text' },
+  gewicht:            { label: 'Gewicht',              placeholder: 'Bijv. 490 gram',            type: 'text' },
+  opwarmtijd:         { label: 'Opwarmtijd',           placeholder: 'Bijv. 30 seconden',         type: 'text' },
+  autoShutoff:        { label: 'Auto shut-off',        placeholder: 'Bijv. Ja, na 30 min',       type: 'text' },
+  ionentechnologie:   { label: 'Ionentechnologie',     placeholder: 'Bijv. Ja / Nee',            type: 'text' },
+  snelheidsstanden:   { label: 'Snelheidsstanden',     placeholder: 'Bijv. 2 snelheden',         type: 'text' },
+  coolShot:           { label: 'Cool shot',            placeholder: 'Bijv. Ja',                  type: 'text' },
+  opzetstukken:       { label: 'Opzetstukken',         placeholder: 'Bijv. Diffuser, concentrator', type: 'text' },
+  diameter:           { label: 'Diameter (mm)',        placeholder: 'Bijv. 32 mm',               type: 'text' },
+  geschiktHaartype:   { label: 'Geschikt haartype',    placeholder: 'Bijv. Alle haartypes / Dik haar', type: 'text' },
+  kleurUitvoering:    { label: 'Kleur/Uitvoering',     placeholder: 'Bijv. Zwart / Roségoud',    type: 'text' },
+  // Beauty specs
+  kleurTint:          { label: 'Kleur/Tint',           placeholder: 'Bijv. 6.0 Donkerblond',     type: 'text' },
+  dekking:            { label: 'Dekking',              placeholder: 'Bijv. 100% grijsdekking / Transparant', type: 'text' },
+  oxidatietijd:       { label: 'Oxidatietijd',         placeholder: 'Bijv. 30-45 minuten',       type: 'text' },
+  mengverhouding:     { label: 'Mengverhouding',       placeholder: 'Bijv. 1:1 / 1:1,5',         type: 'text' },
+  volumeSterkte:      { label: 'Volume/Sterkte (%)',   placeholder: 'Bijv. 6% / 9% / 12%',       type: 'text' },
+  materiaal:          { label: 'Materiaal',            placeholder: 'Bijv. Keramiek / Hout / Nylon', type: 'text' },
+  maatLengte:         { label: 'Maat/Lengte',          placeholder: 'Bijv. 40 cm / 5,5 inch',    type: 'text' },
+  huidskleur:         { label: 'Huidskleur geschiktheid', placeholder: 'Bijv. Alle huidskleuren / Lichte huid', type: 'text' },
+  spf:                { label: 'SPF',                  placeholder: 'Bijv. SPF 30',              type: 'text' },
+  finish:             { label: 'Finish',               placeholder: 'Bijv. Mat / Glans / Satijn', type: 'text' },
+  // New fields for added product sets
+  meslengte:          { label: 'Meslengte',            placeholder: 'Bijv. 45 mm / 2 inch',     type: 'text' },
+  aantalTanden:       { label: 'Aantal tanden/snijvlak', placeholder: 'Bijv. 40 tanden / Enkel snijvlak', type: 'text' },
+  oplaadtijd:         { label: 'Oplaadtijd',           placeholder: 'Bijv. 90 minuten',         type: 'text' },
+  gebruikstijdDraadloos: { label: 'Gebruikstijd (draadloos)', placeholder: 'Bijv. 60 minuten', type: 'text' },
+  geurtype:           { label: 'Geurtype',             placeholder: 'Bijv. Bloemig / Houtachtig / Citrus / Orientaals', type: 'text' },
+  haartypeExtensions: { label: 'Haartype (extensions)', placeholder: 'Bijv. Echt haar / Synthetisch / Remy', type: 'text' },
+  verzachtend:        { label: 'Verzachtend',          placeholder: 'Bijv. Ja',                 type: 'text' },
+};
+  const cfg = activeProductSet ? PRODUCT_SET_CONFIG[activeProductSet] : null;
+
+  if (!cfg) { section.style.display = 'none'; return; }
+
+  const techFields = cfg.techFields || [];
+  const beautyFields = cfg.beautyFields || [];
+  const allFields = [...techFields, ...beautyFields];
+
+  if (allFields.length === 0) { section.style.display = 'none'; return; }
+
+  section.style.display = '';
+
+  // Set title based on type
+  if (techFields.length > 0 && beautyFields.length > 0) {
+    titleEl.textContent = 'Technische & Productspecificaties';
+    subEl.textContent = 'Vul de specificaties in voor dit product';
+  } else if (techFields.length > 0) {
+    titleEl.textContent = 'Technische Specificaties';
+    subEl.textContent = 'Vul de technische gegevens in van de tool';
+  } else {
+    titleEl.textContent = 'Productspecificaties';
+    subEl.textContent = 'Vul de productspecifieke gegevens in';
+  }
+
+  // Render fields
+  let html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">';
+  for (const fieldKey of allFields) {
+    const def = FIELD_DEFS[fieldKey];
+    if (!def) continue;
+    const val = dynamicFieldValues[fieldKey] || '';
+    html += `<div class="field">
+      <label class="field-label">${def.label}</label>
+      <input class="field-input" id="dynField_${fieldKey}" value="${escHTML(val)}" placeholder="${def.placeholder}" oninput="dynamicFieldValues['${fieldKey}']=this.value" style="font-size:13px;">
+    </div>`;
+  }
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+// ─── Product Type Badges ───
+function renderProductTypeBadges() {
+  const c = document.getElementById('productTypeBadges');
+  c.innerHTML = '';
+  getActiveProductTypes().forEach(t => {
+    const btn = document.createElement('button');
+    btn.className = 'badge' + (document.getElementById('productType').value === t ? ' active' : '');
+    btn.textContent = t;
+    btn.onclick = () => { document.getElementById('productType').value = t; renderProductTypeBadges(); };
+    c.appendChild(btn);
+  });
+}
+
+// ─── Toggle Badges ───
+function renderToggleBadges(containerId, options, dataKey, infoId) {
+  const c = document.getElementById(containerId);
+  const searchId = containerId + 'Search';
+  const toggleId = containerId + 'Toggle';
+  const searchTerm = document.getElementById(searchId)?.value?.toLowerCase() || '';
+  const VISIBLE_COUNT = 20;
+
+  // Filter options by search
+  let filtered = options;
+  if (searchTerm) {
+    filtered = options.filter(opt => opt.toLowerCase().includes(searchTerm));
+  }
+
+  // Determine which are expanded
+  const isExpanded = c.dataset.expanded === 'true';
+
+  // Split into visible and hidden
+  const visibleOpts = searchTerm ? filtered : (isExpanded ? filtered : filtered.slice(0, VISIBLE_COUNT));
+  const hiddenCount = searchTerm ? 0 : Math.max(0, filtered.length - VISIBLE_COUNT);
+
+  // Build search input (only once)
+  let html = '';
+  if (!document.getElementById(searchId)) {
+    // Will be rendered by the caller
+  }
+
+  // Build badges
+  c.innerHTML = '';
+  const badgeWrap = document.createElement('div');
+  badgeWrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;';
+  visibleOpts.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'badge' + (data[dataKey].includes(opt) ? ' active' : '');
+    btn.textContent = opt;
+    btn.onclick = () => {
+      const idx = data[dataKey].indexOf(opt);
+      if (idx >= 0) data[dataKey].splice(idx, 1); else data[dataKey].push(opt);
+      renderToggleBadges(containerId, options, dataKey, infoId);
+    };
+    badgeWrap.appendChild(btn);
+  });
+  c.appendChild(badgeWrap);
+
+  // Show more/less toggle
+  if (hiddenCount > 0 && !searchTerm) {
+    const toggleBtn = document.createElement('button');
+    toggleBtn.id = toggleId;
+    toggleBtn.style.cssText = 'margin-top:10px;padding:6px 16px;border:1.5px dashed #e0c5b6;border-radius:8px;background:transparent;color:#bf8d7a;font-size:12px;font-weight:600;cursor:pointer;font-family:Poppins,sans-serif;';
+    toggleBtn.textContent = isExpanded ? '▲ Minder tonen' : '▼ Toon alle ' + filtered.length + ' opties (+' + hiddenCount + ')';
+    toggleBtn.onclick = () => {
+      c.dataset.expanded = isExpanded ? 'false' : 'true';
+      renderToggleBadges(containerId, options, dataKey, infoId);
+    };
+    c.appendChild(toggleBtn);
+  }
+
+  // Selected info
+  const info = document.getElementById(infoId);
+  info.innerHTML = data[dataKey].length > 0 ? 'Geselecteerd: <strong>' + data[dataKey].join(', ') + '</strong>' : '';
+}
+
+// ─── Features ───
+function renderFeatures() {
+  const c = document.getElementById('featuresContainer');
+  c.innerHTML = '';
+  data.features.forEach((f, i) => {
+    const row = document.createElement('div');
+    row.className = 'list-row';
+    row.innerHTML = `<span class="list-num">${i+1}</span><input class="field-input" value="${escHTML(f)}" placeholder="Eigenschap ${i+1}..." oninput="data.features[${i}]=this.value">`;
+    c.appendChild(row);
+  });
+}
+
+// ─── Steps ───
+function renderSteps() {
+  const c = document.getElementById('stepsContainer');
+  c.innerHTML = '';
+  data.steps.forEach((s, i) => {
+    const row = document.createElement('div');
+    row.className = 'list-row';
+    row.innerHTML = `<span class="list-num">${i+1}.</span><input class="field-input" value="${escHTML(s)}" placeholder="Stap ${i+1}..." oninput="data.steps[${i}]=this.value">` +
+      (data.steps.length > 2 ? `<button class="remove-btn" onclick="removeStep(${i})">×</button>` : '');
+    c.appendChild(row);
+  });
+}
+function addStep() { data.steps.push(''); renderSteps(); }
+function removeStep(i) { data.steps.splice(i, 1); renderSteps(); }
+
+// ─── Categories ───
+function renderCategories() {
+  const c = document.getElementById('categoriesContainer');
+  c.innerHTML = '';
+  data.categories.forEach((cat, i) => {
+    const tag = document.createElement('span');
+    tag.className = 'cat-tag';
+    tag.innerHTML = escHTML(cat) + `<button onclick="removeCategory(${i})">×</button>`;
+    c.appendChild(tag);
+  });
+}
+function addCategory() {
+  const input = document.getElementById('newCatInput');
+  if (input.value.trim()) { data.categories.push(input.value.trim()); input.value = ''; renderCategories(); }
+}
+function removeCategory(i) { data.categories.splice(i, 1); renderCategories(); }
+
+// ─── SEO ───
+function autoGenerateSEO() {
+  const name = document.getElementById('productName').value;
+  if (!name) { alert('Vul eerst de productnaam in bij het tabblad Productinfo.'); return; }
+  // Productnaam zonder liggende streepjes voor SEO velden
+  const cleanName = name.replace(/\s*[-–—]\s*/g, ' ').replace(/\s+/g, ' ').trim();
+  const urlKey = name.toLowerCase().replace(/[^a-z0-9\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'');
+  document.getElementById('urlKey').value = urlKey;
+  document.getElementById('metaTitle').value = cleanName;
+  document.getElementById('seoTitle').value = cleanName + ' - morgen in huis✓';
+  document.getElementById('seoDescription').value = cleanName + ' bestel je voordelig op Haarshop.nl ✓ Morgen in Huis ✓ Achteraf betalen ✓ GRATIS verzending vanaf €35,-';
+  updateGooglePreview();
+}
+function updateGooglePreview() {
+  const title = document.getElementById('seoTitle').value;
+  const url = document.getElementById('urlKey').value;
+  const desc = document.getElementById('seoDescription').value;
+  const preview = document.getElementById('googlePreview');
+  if (title) {
+    preview.style.display = 'block';
+    document.getElementById('previewTitle').textContent = title;
+    document.getElementById('previewUrl').textContent = 'haarshop.nl › ' + (url || '...');
+    document.getElementById('previewDesc').textContent = desc || '...';
+  } else { preview.style.display = 'none'; }
+}
+
+// ─── API Key Modal ───
+// ─── API Key Management ───
+function showApiModal() {
+  const modal = document.getElementById('apiModal');
+  const input = document.getElementById('apiKeyInput');
+  const key = localStorage.getItem('haarshop_ai_key') || '';
+  input.value = key;
+  modal.style.display = 'flex';
+  updateApiKeyStatusInModal();
+  setTimeout(() => input.focus(), 100);
+}
+function closeApiModal() {
+  document.getElementById('apiModal').style.display = 'none';
+}
+function saveApiKey() {
+  const key = document.getElementById('apiKeyInput').value.trim();
+  if (key && !key.startsWith('sk-ant-')) {
+    showToast('API key moet beginnen met sk-ant-', 'error');
+    return;
+  }
+  localStorage.setItem('haarshop_ai_key', key);
+  updateApiKeyStatusInModal();
+  updateApiKeyHeaderBadge();
+  closeApiModal();
+  showToast(key ? 'API key opgeslagen.' : 'API key verwijderd.', 'success');
+}
+function removeApiKey() {
+  if (!confirm('Weet je zeker dat je de API key wilt verwijderen?')) return;
+  localStorage.removeItem('haarshop_ai_key');
+  document.getElementById('apiKeyInput').value = '';
+  updateApiKeyStatusInModal();
+  updateApiKeyHeaderBadge();
+  closeApiModal();
+  showToast('API key verwijderd.', 'info');
+}
+function updateApiKeyStatusInModal() {
+  const key = localStorage.getItem('haarshop_ai_key') || '';
+  const dot = document.getElementById('apiKeyStatusDot');
+  const text = document.getElementById('apiKeyStatusText');
+  if (key) {
+    dot.style.background = '#428e8c';
+    text.textContent = 'API key is ingesteld (' + key.substring(0, 12) + '...)';
+    text.style.color = '#428e8c';
+  } else {
+    dot.style.background = '#e57373';
+    text.textContent = 'Geen API key ingesteld — AI-generatie is niet beschikbaar';
+    text.style.color = '#e57373';
+  }
+}
+function updateApiKeyHeaderBadge() {
+  const key = localStorage.getItem('haarshop_ai_key') || '';
+  const badge = document.getElementById('apiKeyStatus');
+  if (badge) badge.textContent = key ? '✓ API Key' : 'API Key';
+}
+// Init header badge on load
+document.addEventListener('DOMContentLoaded', () => { updateApiKeyHeaderBadge(); });
+
+// ─── AI Generation (PRODUCTIE) ───
+async function generateWithAI() {
+  const input = document.getElementById('aiInput').value.trim();
+  if (!input) { showToast('Voer een productnaam in.', 'error'); return; }
+
+  const apiKey = localStorage.getItem('haarshop_ai_key') || '';
+  if (!apiKey) {
+    showToast('Stel eerst je API key in via het 🔑 icoon.', 'error');
+    showApiModal();
+    return;
+  }
+
+  const btn = document.getElementById('generateBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinning">⟳</span> Genereren...';
+
+  const refUrl = document.getElementById('aiUrl').value.trim();
+  const eanCode = document.getElementById('aiEan').value.trim();
+  const productSet = document.getElementById('aiProductSet').value;
+  const cfg = productSet ? PRODUCT_SET_CONFIG[productSet] : null;
+
+  // Build prompt
+  let userPrompt = `Genereer een complete Haarshop.nl productopvoer voor: "${input}"`;
+  if (eanCode) userPrompt += `\nEAN / Barcode: ${eanCode}`;
+  if (productSet) userPrompt += `\n\nProduct set: ${productSet}`;
+  if (refUrl) userPrompt += `\nReferentie URL: ${refUrl}`;
+  if (eanCode) userPrompt += `\n\nZOEK OP EAN: Zoek EERST op de EAN-code "${eanCode}" om het exacte product te identificeren. De EAN is de meest betrouwbare identifier — gebruik de gevonden productinformatie als basis.`;
+  if (aiUploadedFiles.length > 0) userPrompt += `\nEr zijn ${aiUploadedFiles.length} bestanden geüpload als extra referentie.`;
+
+  // Add product-set-specific context
+  if (cfg) {
+    userPrompt += `\n\nDit is een "${productSet}" product. Houd rekening met het volgende:`;
+    userPrompt += `\n- Kies productType uit: ${cfg.productTypes.join(', ')}`;
+    if (cfg.ikHeb.length > 0) userPrompt += `\n- Kies ikHeb uit: ${cfg.ikHeb.join(', ')}`;
+    else userPrompt += `\n- ikHeb: leeg laten (niet van toepassing voor dit producttype)`;
+    if (cfg.werking.length > 0) userPrompt += `\n- Kies werking uit: ${cfg.werking.join(', ')}`;
+    else userPrompt += `\n- werking: leeg laten (niet van toepassing voor dit producttype)`;
+    if (cfg.vrijVan.length > 0) userPrompt += `\n- Kies vrijVan uit: ${cfg.vrijVan.join(', ')}`;
+    else userPrompt += `\n- vrijVan: leeg laten (niet van toepassing voor dit producttype)`;
+    if (!cfg.showIngredients) userPrompt += `\n- ingredients: leeg laten (geen INCI bij dit producttype)`;
+    // Request specific tech/beauty fields
+    const allDynFields = [...(cfg.techFields || []), ...(cfg.beautyFields || [])];
+    if (allDynFields.length > 0) {
+      userPrompt += `\n- Vul ook het veld "specs" in het JSON object in met deze specifieke velden:`;
+      for (const fk of allDynFields) {
+        if (FIELD_DEFS[fk]) userPrompt += `\n  - "${fk}": "${FIELD_DEFS[fk].label}" (${FIELD_DEFS[fk].placeholder})`;
+      }
+    }
+  }
+
+  // Build sitemap context for AI
+  const brand = document.getElementById('aiInput').value.split(/\s*[-–—]\s*/)[0]?.trim() || '';
+  const pType = cfg?.productTypes?.[0] || '';
+  const sitemapContext = getRelevantSitemapUrls(brand, pType);
+
+  userPrompt += `\n\nZoek de ECHTE productinformatie op via web search. Gebruik de referentie-URL als die is opgegeven.
+
+CROSS-SELL & INTERNE LINKS — BELANGRIJK:
+- Gebruik ALLEEN echte haarshop.nl URLs die hieronder staan
+- Link bij een shampoo naar de bijpassende conditioner/masker van dezelfde lijn
+- Link bij een tool naar een bijpassend verzorgingsproduct van hetzelfde merk
+- Gebruik de EXACTE product-URLs als die beschikbaar zijn (niet raden)
+- Cross-sell in de gebruiksaanwijzing: link naar een specifiek product
+- Cross-sell tekst: link naar een categorie of specifiek product`;
+
+  if (sitemapContext) {
+    userPrompt += `\n\n${sitemapContext}`;
+  } else {
+    userPrompt += `\n\nBasis URL-structuur: /haarverzorging/shampoo, /haarverzorging/conditioners, /haarverzorging/haarmasker, /haarverzorging/treatment, /haarverzorging/haarolie, /haarverzorging/haarstyling, /tools/stijltangen, /tools/fohns, /huidverzorging, /make-up, /merken/[merknaam-lowercase]`;
+  }
+
+  userPrompt += `
+
+Antwoord UITSLUITEND als JSON object met deze velden:
+{
+  "productName": "exacte productnaam zoals op verpakking",
+  "ean": "EAN/barcode als gevonden, anders leeg",
+  "sku": "voorgestelde SKU-code (MERK-LIJN-TYPE-INHOUD formaat) of leeg",
+  "brand": "merknaam",
+  "line": "productlijn",
+  "subLine": "sublijn of leeg",
+  "productType": "producttype",
+  "subProductType": "sub-producttype of leeg",
+  "content": "inhoudsmaat bijv. 250 ml (of leeg bij tools)",
+  "shortDescription": "1 zin, 15-20 woorden, wat voor product is het en waarvoor. Gebruik de productnaam hier NIET (staat er al dikgedrukt boven). Neutraal geschreven.",
+  "description": "~100 woorden platte tekst. Begin NIET met productnaam. Begin met wat het product is en voor wie. Vervolg met kernwerking, ingrediënten, verwacht resultaat. Mag <strong> en <em> tags bevatten voor nadruk. Geen andere HTML. Geen wij/onze.",
+  "keyFeatures": ["6-7 concrete eigenschappen, elke zin eindigt met punt, noem ingrediënten waar relevant"],
+  "usageSteps": ["genummerde stappen, elke zin eindigt met punt. LAATSTE stap = cross-sell met 1-2 producten als <a href=PRODUCT-URL>productnaam</a>. Elk genoemd product MOET een link hebben. Gebruik product-URLs uit de meegeleverde lijst, of categorie-URL als fallback."],
+  "crossSellText": "1 zin die aankoop van 1-2 gerelateerde producten stimuleert. Elk product MOET een <a href> link hebben. Gebruik bij voorkeur product-URLs, categorie-URL alleen als fallback.",
+  "ingredients": "volledige INCI ingrediëntenlijst of leeg bij tools/accessoires",
+  "categories": ["altijd inclusief Nieuw en merk-categorie bijv. Kérastase Shampoo"],
+  "ikHeb": ["kies alleen uit de meegegeven opties"],
+  "werking": ["kies alleen uit de meegegeven opties"],
+  "vrijVan": ["kies alleen uit de meegegeven opties"],
+  "specs": {"veldnaam": "waarde"}
+}`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 8000,
+        system: `Je bent Productopvoer Mattie, de AI-assistent van Haarshop.nl voor het schrijven van SEO-geoptimaliseerde productbeschrijvingen.
+
+ZOEKREGELS:
+- Als een EAN/barcode is meegegeven, zoek daar EERST op — dit is de meest betrouwbare product-identifier
+- Zoek ALTIJD de echte productinformatie op via web search voordat je antwoord geeft
+- Verzin NOOIT specificaties, ingrediënten of kenmerken — als je iets niet vindt, laat het veld leeg
+- Zoek op de productnaam bij de merkwebsite, Nederlandse webshops (Douglas, Beautyplaza, Notino, Bol.com) of INCIDecoder voor ingrediënten
+- Als een referentie-URL is meegegeven, zoek daar ook
+
+SCHRIJFSTIJL:
+- Schrijf in foutloos, overtuigend en aantrekkelijk Nederlands
+- Toon: professioneel, inspirerend, toegankelijk, persoonlijk, informatief
+- Vermijd zoveel mogelijk 'wij' en 'onze'. Schrijf neutraal. Voorbeeld: NIET "Ontdek onze Infinity Braids" MAAR "Ontdek de verschillende modellen van de Infinity Braids"
+- Gebruik alleen 'wij' als het echt vanuit Haarshop is (bijv. "dan zorgen wij dat deze snel bij je wordt bezorgd")
+- Vermijd overmatig vakjargon, herhaling of overdreven claims
+
+OPMAAK PRODUCTOMSCHRIJVING (description veld):
+- Begin NIET met de productnaam (die wordt automatisch dikgedrukt ervoor geplaatst)
+- Begin met wat het product is, voor wie het geschikt is, wat het doet
+- Vervolg met uitgebreidere toelichting: kernwerking, ingrediënten, resultaat
+- ~100 woorden, platte tekst (je mag <strong> en <em> gebruiken voor nadruk)
+- Unieke tekst per product — niet generiek kopieerbaar
+
+BELANGRIJKSTE EIGENSCHAPPEN (keyFeatures):
+- 6 à 7 punten
+- Elke zin eindigt met een punt
+- Concrete, specifieke eigenschappen (niet generiek)
+- Noem actieve ingrediënten waar relevant
+
+GEBRUIKSAANWIJZING (usageSteps):
+- Genummerde stappen, elke zin eindigt met een punt
+- Laatste stap is ALTIJD cross-selling met een link naar een specifiek gerelateerd product
+- Bij shampoo → link naar de bijpassende conditioner of masker van dezelfde lijn
+- Bij conditioner → link naar het bijpassende haarmasker of treatment
+- Bij styling → link naar een verzorgingsproduct van hetzelfde merk
+- Bij tools → link naar een hittebeschermend of verzorgend product
+- Gebruik de EXACTE product-URLs uit de meegeleverde lijst als die beschikbaar zijn
+
+CROSS-SELL REGELS:
+- Link bij voorkeur naar specifieke productpagina-URLs (niet naar categoriepagina's)
+- Als product-URLs beschikbaar zijn in de meegeleverde lijst → gebruik die exacte URLs
+- Je mag maximaal 2 gerelateerde producten noemen (bijv. bij shampoo: conditioner + masker)
+- Elke productnaam die je noemt MOET een <a href> link hebben — noem NOOIT een product zonder link
+- ALLEEN als er geen relevante product-URLs beschikbaar zijn mag je uitwijken naar een categorie-URL als fallback
+- Voorbeeld GOED (2 producten): "Maak de routine compleet met de <a href="https://www.haarshop.nl/wella-ultimate-color-conditioner-200-ml">Wella Ultimate Color Conditioner</a> en het <a href="https://www.haarshop.nl/wella-ultimate-color-mask-150-ml">Wella Ultimate Color Mask</a> voor het beste resultaat."
+- Voorbeeld GOED (fallback categorie): "Bekijk het volledige aanbod <a href="https://www.haarshop.nl/merken/wella-sp">Wella Professionals producten</a> voor een complete verzorgingsroutine."
+- Voorbeeld FOUT: "Gebruik hierna de Wella Ultimate Color Conditioner of de Ultimate Color Mask" (geen links)
+
+ANTWOORDFORMAAT:
+- Antwoord UITSLUITEND met een JSON object
+- Geen uitleg, geen markdown backticks, geen tekst voor of na het JSON object
+- Gebruik NOOIT <cite>, , [1], of bronvermeldingen in de JSON-waarden — alleen schone tekst`,
+        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+        messages: [{ role: 'user', content: userPrompt }]
+      })
+    });
+
+    if (!response.ok) {
+      const errData = await response.json().catch(() => ({}));
+      throw new Error(errData?.error?.message || `API fout (${response.status})`);
+    }
+
+    const result = await response.json();
+    // Extract text from all content blocks (web search returns multiple blocks)
+    const allText = result.content
+      ?.filter(b => b.type === 'text')
+      .map(b => b.text || '')
+      .join('\n') || '';
+
+    // Robust JSON extraction: find the outermost { } that contains "productName"
+    let jsonStr = '';
+    let parsed = null;
+
+    // Strategy 1: Find JSON block between ```json ``` markers
+    const codeBlockMatch = allText.match(/```json\s*([\s\S]*?)```/);
+    if (codeBlockMatch) {
+      try { parsed = JSON.parse(codeBlockMatch[1].trim()); } catch(e) {}
+    }
+
+    // Strategy 2: Find balanced JSON object containing "productName"
+    if (!parsed) {
+      const startIdx = allText.indexOf('{"');
+      if (startIdx === -1) {
+        // Try with whitespace after {
+        const altStart = allText.indexOf('{\n');
+        if (altStart !== -1) {
+          jsonStr = extractBalancedJSON(allText, altStart);
+        }
+      } else {
+        jsonStr = extractBalancedJSON(allText, startIdx);
+      }
+      if (jsonStr) {
+        try { parsed = JSON.parse(jsonStr); } catch(e) {}
+      }
+    }
+
+    // Strategy 3: Brute force - try every { position
+    if (!parsed) {
+      for (let i = 0; i < allText.length; i++) {
+        if (allText[i] === '{') {
+          const candidate = extractBalancedJSON(allText, i);
+          if (candidate && candidate.includes('"productName"')) {
+            try { parsed = JSON.parse(candidate); break; } catch(e) {}
+          }
+        }
+      }
+    }
+
+    if (!parsed) {
+      throw new Error('Kon geen geldig JSON-antwoord vinden in de AI response. Probeer opnieuw.');
+    }
+
+    // Sanitize AI output: strip cite tags, antml tags, source references and other unwanted HTML
+    function cleanAiText(text) {
+      if (!text) return '';
+      return text
+        .replace(/<\/?cite[^>]*>/gi, '')
+        .replace(/<\/?antml:[^>]*>/gi, '')
+        .replace(/<\/?source[^>]*>/gi, '')
+        .replace(/<\/?ref[^>]*>/gi, '')
+        .replace(/\[\d+\]/g, '')           // [1] [2] source numbers
+        .replace(/【[^】]*】/g, '')          // 【source】 markers
+        .replace(/\s{2,}/g, ' ')           // collapse multiple spaces
+        .trim();
+    }
+    // For fields that should only have strong/em/br
+    function cleanAiHtml(text) {
+      if (!text) return '';
+      let clean = cleanAiText(text);
+      clean = clean.replace(/<(?!\/?(?:strong|em|b|i|br|a)\b)[^>]*>/gi, '');
+      return clean;
+    }
+
+    // Fill all fields
+    document.getElementById('productName').value = cleanAiText(parsed.productName || '');
+    document.getElementById('ean').value = cleanAiText(parsed.ean || document.getElementById('aiEan').value.trim() || '');
+    document.getElementById('sku').value = cleanAiText(parsed.sku || '');
+    document.getElementById('brand').value = cleanAiText(parsed.brand || '');
+    document.getElementById('line').value = cleanAiText(parsed.line || '');
+    document.getElementById('subLine').value = cleanAiText(parsed.subLine || '');
+    document.getElementById('contentSize').value = cleanAiText(parsed.content || '');
+    document.getElementById('productType').value = cleanAiText(parsed.productType || '');
+    document.getElementById('subProductType').value = cleanAiText(parsed.subProductType || '');
+    document.getElementById('shortDescription').value = cleanAiText(parsed.shortDescription || '');
+    document.getElementById('description').value = cleanAiHtml(parsed.description || '');
+    document.getElementById('crossSellText').value = cleanAiHtml(parsed.crossSellText || '');
+    document.getElementById('ingredients').value = cleanAiText(parsed.ingredients || '');
+
+    if (parsed.keyFeatures) { data.features = [...parsed.keyFeatures.map(cleanAiText), ...Array(7).fill('')].slice(0, 7); }
+    if (parsed.usageSteps) { data.steps = parsed.usageSteps.map(cleanAiHtml); }
+    if (parsed.categories) { data.categories = parsed.categories.map(cleanAiText); }
+    if (parsed.ikHeb) { data.ikHeb = parsed.ikHeb; }
+    if (parsed.werking) { data.werking = parsed.werking; }
+    if (parsed.vrijVan) { data.vrijVan = parsed.vrijVan; }
+
+    // Fill dynamic spec fields from AI response
+    if (parsed.specs && typeof parsed.specs === 'object') {
+      dynamicFieldValues = {};
+      for (const [key, val] of Object.entries(parsed.specs)) {
+        if (FIELD_DEFS[key] && val) dynamicFieldValues[key] = String(val);
+      }
+    }
+
+    // Set product set from dropdown if selected
+    activeProductSet = productSet;
+
+    // Auto SEO (zonder streepjes)
+    const name = parsed.productName || '';
+    if (name) {
+      const cleanName = name.replace(/\s*[-–—]\s*/g, ' ').replace(/\s+/g, ' ').trim();
+      const urlKey = name.toLowerCase().replace(/[^a-z0-9\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'');
+      document.getElementById('urlKey').value = urlKey;
+      document.getElementById('metaTitle').value = cleanName;
+      document.getElementById('seoTitle').value = cleanName + ' - morgen in huis✓';
+      document.getElementById('seoDescription').value = cleanName + ' bestel je voordelig op Haarshop.nl ✓ Morgen in Huis ✓ Achteraf betalen ✓ GRATIS verzending vanaf €35,-';
+    }
+
+    renderAll();
+    updateWordCounts();
+    updateProgress();
+    switchTab(1);
+    showToast('Product gegenereerd — controleer alle tabbladen', 'success');
+  } catch (err) {
+    console.error('AI generation error:', err);
+    showToast('AI fout: ' + err.message, 'error');
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '✦ Genereer met AI';
+}
+
+// ─── Build HTML ───
+function buildShortHTML() {
+  return '<p>' + document.getElementById('shortDescription').value + '</p>';
+}
+function buildFullHTML() {
+  const rawName = document.getElementById('productName').value || '[PRODUCTNAAM]';
+  // Productnaam zonder liggende streepjes in de omschrijving
+  const name = rawName.replace(/\s*[-–—]\s*/g, ' ').replace(/\s+/g, ' ').trim();
+  let desc = document.getElementById('description').value;
+  // Allow <strong>, <em>, <br> but strip all other HTML tags and markdown
+  desc = desc.replace(/<(?!\/?(?:strong|em|b|i|br)\b)[^>]*>/gi, '');
+  desc = desc.replace(/(\*{1,2}|_{1,2})(.*?)\1/g, '$2'); // strip markdown bold/italic
+  const features = data.features.filter(Boolean);
+  const steps = data.steps.filter(Boolean);
+  const crossSell = document.getElementById('crossSellText').value;
+
+  let html = `<p><strong>${name}</strong> ${desc}</p>\n\n`;
+  html += `<h2><strong>Belangrijkste eigenschappen</strong></h2>\n<ul>\n`;
+  features.forEach(f => html += `<li>${f}</li>\n`);
+  html += `</ul>\n\n`;
+  html += `<h2><strong>Gebruiksaanwijzing</strong></h2>\n<ol>\n`;
+  steps.forEach(s => html += `<li>${s}</li>\n`);
+  if (crossSell) html += `<li>${crossSell}</li>\n`;
+  html += `</ol>\n\n`;
+  html += `<h3><strong>${name} online kopen bij Haarshop.nl</strong></h3>\n`;
+  html += `<p>Shop dus nu de <strong>${name}</strong>, dan zorgen wij dat deze snel bij je thuis wordt bezorgd!</p>`;
+  return html;
+}
+function buildStructuredText() {
+  const lines = [
+    'Producttype: ' + document.getElementById('productType').value,
+    'Merk: ' + document.getElementById('brand').value,
+    'Lijn: ' + document.getElementById('line').value,
+    'Sub-lijn: ' + document.getElementById('subLine').value,
+    'Inhoud: ' + document.getElementById('contentSize').value,
+    'EAN: ' + document.getElementById('ean').value,
+    'SKU: ' + document.getElementById('sku').value,
+    'SEO-titel: ' + document.getElementById('seoTitle').value,
+    'SEO-beschrijving: ' + document.getElementById('seoDescription').value,
+    'URL key: ' + document.getElementById('urlKey').value,
+    'Categorieën: ' + data.categories.join(', '),
+    'Ik heb: ' + data.ikHeb.join(', '),
+    'Werking: ' + data.werking.join(', '),
+    'Vrij van: ' + data.vrijVan.join(', '),
+    'Ingrediënten: ' + document.getElementById('ingredients').value,
+  ];
+  // Add dynamic fields
+  for (const [key, val] of Object.entries(dynamicFieldValues)) {
+    if (val && FIELD_DEFS[key]) lines.push(FIELD_DEFS[key].label + ': ' + val);
+  }
+  return lines.join('\n');
+}
+
+// ─── Export rendering ───
+function updateExport() {
+  document.getElementById('exportShortHTML').textContent = buildShortHTML();
+  document.getElementById('exportFullHTML').textContent = buildFullHTML();
+  document.getElementById('exportPreview').innerHTML = buildFullHTML();
+  document.getElementById('exportIngredients').textContent = document.getElementById('ingredients').value || 'Nog geen ingrediënten ingevuld.';
+
+  const rows = [
+    ['Producttype', document.getElementById('productType').value],
+    ['Merk', document.getElementById('brand').value],
+    ['Lijn', document.getElementById('line').value],
+    ['Sub-lijn', document.getElementById('subLine').value],
+    ['Inhoud', document.getElementById('contentSize').value],
+    ['SEO-titel', document.getElementById('seoTitle').value],
+    ['URL key', document.getElementById('urlKey').value],
+    ['Categorieën', data.categories.join(', ')],
+    ['Ik heb', data.ikHeb.join(', ')],
+    ['Werking', data.werking.join(', ')],
+    ['Vrij van', data.vrijVan.join(', ')],
+  ];
+  // Add dynamic field rows
+  for (const [key, val] of Object.entries(dynamicFieldValues)) {
+    if (val && FIELD_DEFS[key]) rows.push([FIELD_DEFS[key].label, val]);
+  }
+  document.getElementById('exportDataTable').innerHTML = rows.map(([l,v]) =>
+    `<div class="data-row"><span class="data-label">${l}</span><span class="data-value">${v || '—'}</span></div>`
+  ).join('');
+}
+
+// ─── File Upload for AI Generator ───
+let aiUploadedFiles = [];
+function handleAiFileUpload(files) {
+  const maxFiles = 5;
+  const allowed = ['.pdf','.jpg','.jpeg','.png','.webp','.txt','.csv','.doc','.docx'];
+  for (const file of files) {
+    if (aiUploadedFiles.length >= maxFiles) { showToast('Maximum 5 bestanden bereikt.', 'error'); break; }
+    const ext = '.' + file.name.split('.').pop().toLowerCase();
+    if (!allowed.includes(ext)) { showToast(`${file.name}: bestandstype niet ondersteund.`, 'error'); continue; }
+    aiUploadedFiles.push(file);
+  }
+  renderAiFileList();
+}
+function removeAiFile(index) {
+  aiUploadedFiles.splice(index, 1);
+  renderAiFileList();
+}
+function renderAiFileList() {
+  const container = document.getElementById('aiFileList');
+  if (aiUploadedFiles.length === 0) { container.innerHTML = ''; return; }
+  container.innerHTML = aiUploadedFiles.map((f, i) => {
+    const ext = f.name.split('.').pop().toLowerCase();
+    const icon = ['pdf'].includes(ext) ? '📄' : ['jpg','jpeg','png','webp'].includes(ext) ? '🖼️' : '📝';
+    const sizeMB = (f.size / (1024*1024)).toFixed(1);
+    return `<div style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;background:rgba(224,197,182,0.08);border:1px solid rgba(224,197,182,0.15);border-radius:6px;font-size:11px;color:rgba(255,255,255,0.4);margin:3px 4px 3px 0;">
+      ${icon} <span style="color:rgba(255,255,255,0.6);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${f.name}</span>
+      <span style="color:rgba(255,255,255,0.2);">${sizeMB}MB</span>
+      <span onclick="removeAiFile(${i})" style="cursor:pointer;color:#bf8d7a;font-weight:700;margin-left:2px;" title="Verwijder">×</span>
+    </div>`;
+  }).join('');
+}
+
+// ─── Cross-sell Link Builder ───
+function insertCrossSellLink() {
+  const linkText = document.getElementById('crossSellLinkText').value.trim();
+  const linkUrl = document.getElementById('crossSellLinkUrl').value.trim();
+  const crossSellInput = document.getElementById('crossSellText');
+  const currentText = crossSellInput.value;
+
+  if (!linkText) { showToast('Vul een linktekst in.', 'error'); return; }
+  if (!linkUrl) { showToast('Vul een URL in.', 'error'); return; }
+
+  const htmlLink = `<a href="${linkUrl}">${linkText}</a>`;
+
+  if (currentText.includes(linkText)) {
+    // Replace plain text with link
+    crossSellInput.value = currentText.replace(linkText, htmlLink);
+    showToast('Link ingevoegd in bestaande tekst.', 'success');
+  } else {
+    // Append to end if word not found
+    crossSellInput.value = currentText ? currentText + ' ' + htmlLink : htmlLink;
+    showToast('Link toegevoegd aan cross-sell tekst.', 'info');
+  }
+
+  // Show preview
+  const preview = document.getElementById('crossSellPreview');
+  const previewContent = document.getElementById('crossSellPreviewContent');
+  preview.style.display = 'block';
+  previewContent.innerHTML = crossSellInput.value;
+
+  // Clear link fields
+  document.getElementById('crossSellLinkText').value = '';
+  document.getElementById('crossSellLinkUrl').value = '';
+}
+
+// Update cross-sell preview on input
+document.addEventListener('DOMContentLoaded', () => {
+  const csInput = document.getElementById('crossSellText');
+  if (csInput) {
+    csInput.addEventListener('input', () => {
+      const preview = document.getElementById('crossSellPreview');
+      const previewContent = document.getElementById('crossSellPreviewContent');
+      if (csInput.value.includes('<a ')) {
+        preview.style.display = 'block';
+        previewContent.innerHTML = csInput.value;
+      } else {
+        preview.style.display = 'none';
+      }
+    });
+  }
+});
+
+// ─── Ingredients Fetch from URL ───
+async function fetchIngredientsFromUrl() {
+  const url = document.getElementById('ingredientsFetchUrl').value.trim();
+  if (!url) { showToast('Vul een URL in om ingrediënten op te halen.', 'error'); return; }
+  if (!url.startsWith('http')) { showToast('Voer een geldige URL in (begin met http).', 'error'); return; }
+
+  const apiKey = localStorage.getItem('haarshop_ai_key') || '';
+  if (!apiKey) {
+    showToast('Stel eerst je API key in via het 🔑 icoon.', 'error');
+    showApiModal();
+    return;
+  }
+
+  const btn = document.getElementById('ingredientsFetchBtn');
+  const status = document.getElementById('ingredientsFetchStatus');
+  btn.disabled = true;
+  btn.textContent = '⟳ Ophalen...';
+  status.style.display = 'block';
+  status.style.color = 'rgba(255,255,255,0.3)';
+  status.textContent = 'Ingrediënten ophalen via AI...';
+
+  try {
+    // Use Anthropic API with web search to fetch ingredients from URL
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 2000,
+        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+        messages: [{ role: 'user', content: `Ga naar deze URL en zoek de volledige INCI ingrediëntenlijst: ${url}\n\nGeef ALLEEN de ingrediëntenlijst terug, zonder uitleg. Geef de ingrediënten als komma-gescheiden tekst, precies zoals ze op de verpakking staan.` }]
+      })
+    });
+
+    if (!response.ok) {
+      const errData = await response.json().catch(() => ({}));
+      throw new Error(errData?.error?.message || `API fout (${response.status})`);
+    }
+
+    const result = await response.json();
+    const fetchedIngredients = result.content
+      ?.filter(b => b.type === 'text')
+      .map(b => b.text)
+      .join('')
+      .trim() || '';
+
+    if (!fetchedIngredients || fetchedIngredients.length < 10) {
+      throw new Error('Geen ingrediëntenlijst gevonden op deze pagina.');
+    }
+
+    const currentIngredients = document.getElementById('ingredients').value.trim();
+
+    if (currentIngredients) {
+      status.innerHTML = `<div style="margin-bottom:6px;color:#e0c5b6;">✓ Ingrediënten opgehaald</div>
+        <div style="padding:8px;background:rgba(255,255,255,0.03);border-radius:6px;margin-bottom:6px;">
+          <div style="font-size:10px;color:rgba(255,255,255,0.25);margin-bottom:4px;">OPGEHAALDE LIJST:</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.45);line-height:1.5;font-family:'Space Mono',monospace;word-break:break-word;">${escHTML(fetchedIngredients)}</div>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:8px;">
+          <button onclick="applyFetchedIngredients(this)" data-ingredients="${encodeURIComponent(fetchedIngredients)}" style="padding:5px 12px;background:#428e8c;color:#fff;border:none;border-radius:5px;cursor:pointer;font-size:11px;font-weight:500;">✓ Vervangen</button>
+          <button onclick="document.getElementById('ingredientsFetchStatus').style.display='none'" style="padding:5px 12px;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.4);border:none;border-radius:5px;cursor:pointer;font-size:11px;">Annuleren</button>
+        </div>`;
+    } else {
+      document.getElementById('ingredients').value = fetchedIngredients;
+      status.innerHTML = '<span style="color:#428e8c;">✓ Ingrediënten ingevuld</span>';
+      setTimeout(() => status.style.display = 'none', 3000);
+    }
+  } catch (err) {
+    console.error('Ingredients fetch error:', err);
+    status.style.color = '#e57373';
+    status.textContent = 'Fout: ' + err.message;
+  }
+
+  btn.disabled = false;
+  btn.textContent = '🔍 Ophalen';
+}
+
+function applyFetchedIngredients(btnEl) {
+  const ingredients = decodeURIComponent(btnEl.dataset.ingredients);
+  document.getElementById('ingredients').value = ingredients;
+  document.getElementById('ingredientsFetchStatus').style.display = 'none';
+  showToast('Ingrediëntenlijst vervangen.', 'success');
+}
+
+// ─── Reset ───
+function resetAll() {
+  if (!confirm('Weet je zeker dat je alle velden wilt wissen?')) return;
+  document.querySelectorAll('input.field-input, textarea.field-textarea').forEach(el => el.value = '');
+  document.getElementById('aiInput').value = '';
+  document.getElementById('aiUrl').value = '';
+  document.getElementById('aiProductSet').value = '';
+  activeProductSet = '';
+  aiUploadedFiles = [];
+  renderAiFileList();
+  document.getElementById('crossSellLinkText').value = '';
+  document.getElementById('crossSellLinkUrl').value = '';
+  document.getElementById('crossSellPreview').style.display = 'none';
+  document.getElementById('ingredientsFetchUrl').value = '';
+  document.getElementById('ingredientsFetchStatus').style.display = 'none';
+  data.features = ['','','','','','',''];
+  data.steps = ['','','',''];
+  data.categories = [];
+  data.ikHeb = [];
+  data.werking = [];
+  data.vrijVan = [];
+  dynamicFieldValues = {};
+  // Clear saved state
+  localStorage.removeItem(SAVE_KEY);
+  renderAll();
+  updateWordCounts();
+  switchTab(0);
+  showToast('Alle velden gewist.', 'info');
+}
+
+// ─── Helpers ───
+// Extract balanced JSON object starting from position idx
+function extractBalancedJSON(text, idx) {
+  if (text[idx] !== '{') return null;
+  let depth = 0;
+  let inString = false;
+  let escape = false;
+  for (let i = idx; i < text.length; i++) {
+    const ch = text[i];
+    if (escape) { escape = false; continue; }
+    if (ch === '\\' && inString) { escape = true; continue; }
+    if (ch === '"' && !escape) { inString = !inString; continue; }
+    if (inString) continue;
+    if (ch === '{') depth++;
+    if (ch === '}') { depth--; if (depth === 0) return text.substring(idx, i + 1); }
+  }
+  return null;
+}
+
+function escHTML(s) { return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function renderAll() {
+  renderProductTypeBadges();
+  renderFeatures();
+  renderSteps();
+  renderCategories();
+  renderToggleBadges('ikHebBadges', getActiveIkHeb(), 'ikHeb', 'ikHebSelected');
+  renderToggleBadges('werkingBadges', getActiveWerking(), 'werking', 'werkingSelected');
+  renderToggleBadges('vrijVanBadges', getActiveVrijVan(), 'vrijVan', 'vrijVanSelected');
+  renderDynamicFields();
+  updateProgress();
+  // Toggle section visibility based on product set
+  const cfg = activeProductSet ? PRODUCT_SET_CONFIG[activeProductSet] : null;
+  const showIkHeb = !cfg || cfg.ikHeb.length > 0;
+  const showWerking = !cfg || cfg.werking.length > 0;
+  const showVrijVan = !cfg || cfg.vrijVan.length > 0;
+  const showIngr = !cfg || cfg.showIngredients !== false;
+  const ikHebSection = document.getElementById('ikHebSection');
+  const werkingSection = document.getElementById('werkingSection');
+  const vrijVanSection = document.getElementById('vrijVanSection');
+  const ingredientenSection = document.getElementById('ingredientenSection');
+  if (ikHebSection) ikHebSection.style.display = showIkHeb ? '' : 'none';
+  if (werkingSection) werkingSection.style.display = showWerking ? '' : 'none';
+  if (vrijVanSection) vrijVanSection.style.display = showVrijVan ? '' : 'none';
+  if (ingredientenSection) ingredientenSection.style.display = showIngr ? '' : 'none';
+  // Show product set badge in tab 1
+  const psBadge = document.getElementById('activeProductSetBadge');
+  if (psBadge) {
+    psBadge.style.display = activeProductSet ? 'inline-block' : 'none';
+    psBadge.textContent = activeProductSet || '';
+  }
+}
+
+// ─── Autosave / Autoload ───
+const SAVE_KEY = 'haarshop_productopvoer_state';
+const SAVE_FIELDS = ['productName','ean','sku','brand','line','subLine','contentSize','productType','subProductType',
+  'shortDescription','description','crossSellText','ingredients','urlKey','metaTitle','seoTitle','seoDescription',
+  'aiInput','aiUrl','aiEan'];
+
+function saveState() {
+  try {
+    const state = {};
+    // Text fields
+    SAVE_FIELDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) state[id] = el.value;
+    });
+    // Data arrays
+    state._features = data.features;
+    state._steps = data.steps;
+    state._categories = data.categories;
+    state._ikHeb = data.ikHeb;
+    state._werking = data.werking;
+    state._vrijVan = data.vrijVan;
+    // Product set
+    state._activeProductSet = activeProductSet;
+    const psEl = document.getElementById('aiProductSet');
+    if (psEl) state._aiProductSetValue = psEl.value;
+    // Dynamic field values
+    state._dynamicFieldValues = dynamicFieldValues;
+    localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+  } catch (e) { /* silently fail */ }
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return false;
+    const state = JSON.parse(raw);
+    // Text fields
+    SAVE_FIELDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && state[id] !== undefined) el.value = state[id];
+    });
+    // Data arrays
+    if (state._features) data.features = state._features;
+    if (state._steps) data.steps = state._steps;
+    if (state._categories) data.categories = state._categories;
+    if (state._ikHeb) data.ikHeb = state._ikHeb;
+    if (state._werking) data.werking = state._werking;
+    if (state._vrijVan) data.vrijVan = state._vrijVan;
+    // Product set
+    if (state._activeProductSet) {
+      activeProductSet = state._activeProductSet;
+      const psEl = document.getElementById('aiProductSet');
+      if (psEl && state._aiProductSetValue) psEl.value = state._aiProductSetValue;
+    }
+    // Dynamic field values
+    if (state._dynamicFieldValues) dynamicFieldValues = state._dynamicFieldValues;
+    return true;
+  } catch (e) { return false; }
+}
+
+// Autosave on any input change (debounced)
+let saveTimer = null;
+function triggerAutosave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveState, 500);
+}
+document.addEventListener('input', triggerAutosave);
+document.addEventListener('click', function(e) {
+  // Save when badges are clicked (ikHeb, werking, vrijVan toggles)
+  if (e.target.classList?.contains('badge')) setTimeout(saveState, 100);
+});
+
+// ─── Init ───
+const hadSavedState = loadState();
+renderAll();
+updateWordCounts();
+updateProgress();
+if (hadSavedState) {
+  showToast('Vorige sessie hersteld.', 'info');
+}
+
+// Live progress tracking
+['productName','brand','shortDescription','description','seoTitle'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', updateProgress);
+});
+
+// ──────────────────────────────────────────────
+// MAGENTO INTEGRATION
+// ──────────────────────────────────────────────
+
+let magentoCategories = [];
+let selectedMagentoCatIds = [];
+
+// ─── Save/Load config ───
+function saveMagentoConfig() {
+  const url = document.getElementById('magentoUrl')?.value.trim();
+  const key = document.getElementById('magentoApiKey')?.value.trim();
+  if (!url || !key) { addLog('error', 'Vul zowel de Magento URL als API key in.'); return; }
+  localStorage.setItem('haarshop_magento_url', url);
+  localStorage.setItem('haarshop_magento_key', key);
+  addLog('success', '✓ Magento instellingen opgeslagen.');
+  showToast('Magento instellingen opgeslagen.', 'success');
+}
+
+function loadMagentoConfig() {
+  const url = localStorage.getItem('haarshop_magento_url') || '';
+  const key = localStorage.getItem('haarshop_magento_key') || '';
+  if (document.getElementById('magentoUrl')) document.getElementById('magentoUrl').value = url;
+  if (document.getElementById('magentoApiKey')) document.getElementById('magentoApiKey').value = key;
+}
+
+// ─── Magento 2 REST API ───
+async function proxyRequest(action, method = 'GET', body = null) {
+  const baseUrl = (localStorage.getItem('haarshop_magento_url') || '').replace(/\/+$/, '');
+  const apiKey = localStorage.getItem('haarshop_magento_key') || '';
+
+  if (!baseUrl || !apiKey) {
+    throw new Error('Magento URL en API key zijn niet geconfigureerd. Ga naar de Magento-tab om deze in te stellen.');
+  }
+
+  const headers = {
+    'Authorization': `Bearer ${apiKey}`,
+    'Content-Type': 'application/json'
+  };
+
+  if (action === 'test-magento') {
+    const res = await fetch(`${baseUrl}/rest/V1/store/storeConfigs`, { method: 'GET', headers });
+    if (!res.ok) throw new Error(`Magento verbinding mislukt (${res.status})`);
+    const stores = await res.json();
+    const storeName = stores?.[0]?.base_url || baseUrl;
+    return { status: 'connected', store: storeName };
+  }
+
+  if (action === 'categories') {
+    const res = await fetch(`${baseUrl}/rest/V1/categories`, { method: 'GET', headers });
+    if (!res.ok) throw new Error(`Categorieën laden mislukt (${res.status})`);
+    const tree = await res.json();
+    // Flatten category tree
+    function flattenCats(node) {
+      let result = [];
+      if (node.id && node.id > 1) result.push({ id: node.id, name: node.name });
+      if (node.children_data) {
+        for (const child of node.children_data) {
+          result = result.concat(flattenCats(child));
+        }
+      }
+      return result;
+    }
+    // Build structured tree for display
+    function buildTree(node) {
+      let cats = [];
+      if (node.children_data) {
+        for (const child of node.children_data) {
+          const entry = { id: child.id, name: child.name };
+          if (child.children_data?.length) entry.children = buildTree(child);
+          cats.push(entry);
+        }
+      }
+      return cats;
+    }
+    return { categories: buildTree(tree), flat: flattenCats(tree) };
+  }
+
+  if (action.startsWith('search-products')) {
+    const q = new URLSearchParams(action.split('?')[1] || '').get('q') || '';
+    const searchUrl = `${baseUrl}/rest/V1/products?searchCriteria[filter_groups][0][filters][0][field]=name&searchCriteria[filter_groups][0][filters][0][value]=%25${encodeURIComponent(q)}%25&searchCriteria[filter_groups][0][filters][0][condition_type]=like&searchCriteria[pageSize]=10`;
+    const res = await fetch(searchUrl, { method: 'GET', headers });
+    if (!res.ok) throw new Error(`Product zoeken mislukt (${res.status})`);
+    const data = await res.json();
+    return { items: (data.items || []).map(p => ({ sku: p.sku, name: p.name, status: p.status, price: p.price })) };
+  }
+
+  if (action.startsWith('product-detail')) {
+    const sku = action.split('?sku=')[1] || '';
+    const res = await fetch(`${baseUrl}/rest/V1/products/${encodeURIComponent(sku)}`, { method: 'GET', headers });
+    if (!res.ok) throw new Error(`Product laden mislukt (${res.status})`);
+    const p = await res.json();
+    // Map custom attributes to flat object
+    const attrs = {};
+    if (p.custom_attributes) {
+      for (const attr of p.custom_attributes) {
+        attrs[attr.attribute_code] = attr.value;
+      }
+    }
+    return {
+      product: {
+        id: p.id, sku: p.sku, name: p.name, status: p.status, price: p.price,
+        weight: p.weight, visibility: p.visibility,
+        custom_attributes: attrs,
+        media_gallery_entries: p.media_gallery_entries || [],
+        category_ids: p.extension_attributes?.category_links?.map(c => parseInt(c.category_id)) || []
+      }
+    };
+  }
+
+  if (action === 'update-fields') {
+    const sku = body?.sku;
+    if (!sku) throw new Error('Geen SKU opgegeven voor update.');
+
+    // Build Magento product update payload
+    const productPayload = { product: {} };
+    const customAttrs = [];
+    const fields = body?.fields || {};
+
+    // Standard fields
+    if (fields.name) productPayload.product.name = fields.name;
+    if (fields.price) productPayload.product.price = parseFloat(fields.price);
+    if (fields.weight) productPayload.product.weight = parseFloat(fields.weight);
+    if (fields.status) productPayload.product.status = parseInt(fields.status);
+
+    // Custom attributes
+    const customFieldKeys = ['description','short_description','meta_title','meta_description','url_key',
+      'brand','product_line','sub_line','content_size','ingredients','ik_heb','werking','vrij_van',
+      'product_type','sub_product_type','cross_sell_text'];
+    for (const key of customFieldKeys) {
+      if (fields[key] !== undefined) customAttrs.push({ attribute_code: key, value: fields[key] });
+    }
+    if (customAttrs.length) productPayload.product.custom_attributes = customAttrs;
+
+    // Category assignment
+    if (fields.category_ids) {
+      productPayload.product.extension_attributes = {
+        category_links: fields.category_ids.map((id, idx) => ({ category_id: String(id), position: idx }))
+      };
+    }
+
+    const res = await fetch(`${baseUrl}/rest/V1/products/${encodeURIComponent(sku)}`, {
+      method: 'PUT', headers, body: JSON.stringify(productPayload)
+    });
+    if (!res.ok) {
+      const errBody = await res.json().catch(() => ({}));
+      throw new Error(errBody?.message || `Update mislukt (${res.status})`);
+    }
+    return { success: true, updated_fields: Object.keys(fields).length, product: body };
+  }
+
+  if (action === 'upload-image') {
+    const sku = body?.sku;
+    const imageData = body?.image;
+    if (!sku || !imageData) throw new Error('SKU en afbeelding zijn vereist.');
+
+    const res = await fetch(`${baseUrl}/rest/V1/products/${encodeURIComponent(sku)}/media`, {
+      method: 'POST', headers,
+      body: JSON.stringify({
+        entry: {
+          media_type: 'image',
+          label: imageData.label || '',
+          position: imageData.position || 0,
+          disabled: false,
+          types: imageData.types || [],
+          content: {
+            base64_encoded_data: imageData.base64,
+            type: imageData.mimeType || 'image/jpeg',
+            name: imageData.filename || 'product-image.jpg'
+          }
+        }
+      })
+    });
+    if (!res.ok) {
+      const errBody = await res.json().catch(() => ({}));
+      throw new Error(errBody?.message || `Afbeelding upload mislukt (${res.status})`);
+    }
+    return { success: true, id: await res.json() };
+  }
+
+  return {};
+}
+
+// ─── Log helper ───
+function addLog(type, message) {
+  const log = document.getElementById('magentoLog');
+  log.style.display = 'block';
+  const time = new Date().toLocaleTimeString('nl-NL');
+  const entry = document.createElement('div');
+  entry.className = 'magento-log-entry ' + type;
+  const prefix = type === 'success' ? '✓' : type === 'error' ? '✗' : type === 'warn' ? '⚠' : '→';
+  entry.textContent = `[${time}] ${prefix} ${message}`;
+  log.appendChild(entry);
+  log.scrollTop = log.scrollHeight;
+}
+
+// ─── Test connection ───
+async function testMagentoConnection() {
+  addLog('info', 'Verbinding testen...');
+  const statusEl = document.getElementById('magentoStatus');
+  try {
+    // First test proxy itself
+    const proxyTest = await proxyRequest('test-magento');
+    if (proxyTest.status === 'connected') {
+      statusEl.className = 'magento-status connected';
+      statusEl.innerHTML = '<span class="status-dot green"></span><span>Verbonden met Magento 2 — ' + (proxyTest.store || '') + '</span>';
+      addLog('success', 'Succesvol verbonden met Magento! Store: ' + (proxyTest.store || 'onbekend'));
+    } else {
+      throw new Error(proxyTest.message || 'Onbekende fout');
+    }
+  } catch (err) {
+    statusEl.className = 'magento-status error';
+    statusEl.innerHTML = '<span class="status-dot red"></span><span>Verbindingsfout: ' + err.message + '</span>';
+    addLog('error', 'Verbinding mislukt: ' + err.message);
+  }
+}
+
+// ─── Load categories from Magento ───
+async function loadMagentoCategories() {
+  addLog('info', 'Categorieën ophalen uit Magento...');
+  try {
+    const result = await proxyRequest('categories');
+    if (result.categories) {
+      // Flatten for dropdown: build flat list with paths
+      function flattenForDropdown(cats, path = '') {
+        let flat = [];
+        for (const c of cats) {
+          const fullPath = path ? `${path} > ${c.name}` : c.name;
+          flat.push({ id: c.id, name: c.name, path: fullPath });
+          if (c.children) flat = flat.concat(flattenForDropdown(c.children, fullPath));
+        }
+        return flat;
+      }
+      magentoCategories = result.flat || flattenForDropdown(result.categories);
+      addLog('success', magentoCategories.length + ' categorieën geladen.');
+      renderMagentoCatDropdown();
+    } else {
+      throw new Error('Onverwacht antwoord');
+    }
+  } catch (err) {
+    addLog('error', 'Categorieën laden mislukt: ' + err.message);
+  }
+}
+
+function renderMagentoCatDropdown(filter = '') {
+  const dd = document.getElementById('magentoCatDropdown');
+  const filtered = filter
+    ? magentoCategories.filter(c => c.name.toLowerCase().includes(filter.toLowerCase()) || c.path.toLowerCase().includes(filter.toLowerCase()))
+    : magentoCategories;
+  dd.innerHTML = filtered.slice(0, 30).map(c =>
+    `<div class="category-option" onmousedown="selectMagentoCat(${c.id}, '${escHTML(c.name)}')">
+      <strong>${escHTML(c.name)}</strong>
+      <div class="path">${escHTML(c.path)}</div>
+    </div>`
+  ).join('');
+}
+
+function filterMagentoCategories() {
+  const val = document.getElementById('magentoCatSearch').value;
+  renderMagentoCatDropdown(val);
+  document.getElementById('magentoCatDropdown').classList.add('open');
+}
+
+function selectMagentoCat(id, name) {
+  if (!selectedMagentoCatIds.find(c => c.id === id)) {
+    selectedMagentoCatIds.push({ id, name });
+    renderMagentoCatTags();
+  }
+  document.getElementById('magentoCatSearch').value = '';
+  document.getElementById('magentoCatDropdown').classList.remove('open');
+}
+
+function removeMagentoCat(id) {
+  selectedMagentoCatIds = selectedMagentoCatIds.filter(c => c.id !== id);
+  renderMagentoCatTags();
+}
+
+function renderMagentoCatTags() {
+  const container = document.getElementById('magentoCatTags');
+  container.innerHTML = selectedMagentoCatIds.map(c =>
+    `<span class="cat-tag">${escHTML(c.name)} <small style="opacity:0.6">(${c.id})</small><button onclick="removeMagentoCat(${c.id})">×</button></span>`
+  ).join('');
+}
+
+// ─── Update summary before push ───
+// ─── Opvoer: Product zoeken & koppelen ───
+let opvoerProduct = null; // { sku, name, id, status, price, custom_attributes, category_ids }
+
+async function searchOpvoerProduct() {
+  const query = document.getElementById('opvoerProductSearch').value.trim();
+  if (!query) return;
+  const container = document.getElementById('opvoerSearchResults');
+  container.style.display = 'block';
+  container.innerHTML = '<p style="color:#888;font-size:13px;padding:8px;">🔍 Zoeken...</p>';
+  try {
+    const result = await proxyRequest('search-products?q=' + encodeURIComponent(query));
+    if (result.items && result.items.length > 0) {
+      container.innerHTML = result.items.map(p =>
+        `<div class="img-search-result" ondblclick="linkOpvoerProduct('${escHTML(p.sku)}')">
+          <div>
+            <div class="name">${escHTML(p.name)}</div>
+            <div class="meta">SKU: ${escHTML(p.sku)} · €${parseFloat(p.price).toFixed(2)} · ${p.status == 1 ? '🟢 Actief' : '🔴 Uit'}</div>
+          </div>
+          <button class="select-btn" onclick="event.stopPropagation();linkOpvoerProduct('${escHTML(p.sku)}')">Koppelen →</button>
+        </div>`
+      ).join('') + `<p style="font-size:11px;color:#bbb;margin-top:8px;">${result.items.length} resultaten</p>`;
+    } else {
+      container.innerHTML = '<p style="color:#999;font-size:13px;padding:8px;">Geen producten gevonden.</p>';
+    }
+  } catch (err) {
+    container.innerHTML = '<p style="color:#e74c3c;font-size:13px;padding:8px;">Fout: ' + err.message + '</p>';
+  }
+}
+
+async function linkOpvoerProduct(sku) {
+  try {
+    const result = await proxyRequest('product-detail?sku=' + encodeURIComponent(sku));
+    if (result.product) {
+      opvoerProduct = result.product;
+      document.getElementById('opvoerSearchResults').style.display = 'none';
+      document.getElementById('opvoerProductSearch').value = '';
+      renderOpvoerLinked();
+    }
+  } catch (err) {
+    alert('Kon product niet ophalen: ' + err.message);
+  }
+}
+
+function unlinkOpvoerProduct() {
+  opvoerProduct = null;
+  document.getElementById('opvoerLinkedBanner').style.display = 'none';
+  document.getElementById('opvoerFieldMapCard').style.display = 'none';
+  document.getElementById('opvoerPushCard').style.display = 'none';
+}
+
+function renderOpvoerLinked() {
+  if (!opvoerProduct) return;
+  const banner = document.getElementById('opvoerLinkedBanner');
+  banner.style.display = 'block';
+  document.getElementById('opvoerLinkedName').textContent = opvoerProduct.name;
+  document.getElementById('opvoerLinkedSku').textContent = '(' + opvoerProduct.sku + ')';
+  document.getElementById('opvoerLinkedStatus').innerHTML = opvoerProduct.status == 1 ? '🟢 Actief' : '🔴 Uitgeschakeld';
+  
+  const ca = opvoerProduct.custom_attributes || {};
+  const filledAttrs = Object.keys(ca).filter(k => ca[k] && ca[k] !== '');
+  document.getElementById('opvoerLinkedMeta').textContent = 
+    `€${parseFloat(opvoerProduct.price || 0).toFixed(2)} · ${opvoerProduct.image_count || 0} afbeelding(en) · ${filledAttrs.length} attributen ingevuld · ${(opvoerProduct.category_ids || []).length} categorieën`;
+
+  // Pre-fill price if set
+  if (opvoerProduct.price) document.getElementById('magentoPrice').value = opvoerProduct.price;
+
+  document.getElementById('opvoerFieldMapCard').style.display = 'block';
+  document.getElementById('opvoerPushCard').style.display = 'block';
+  buildFieldMap();
+}
+
+// ─── Veldmapping overzicht bouwen ───
+function buildFieldMap() {
+  const fields = [
+    { key: 'name',             label: 'Productnaam',       magento: 'name',              getValue: () => document.getElementById('productName').value },
+    { key: 'shortDescription', label: 'Short description', magento: 'short_description', getValue: () => document.getElementById('shortDescription').value },
+    { key: 'descriptionHTML',  label: 'Omschrijving HTML', magento: 'description',       getValue: () => buildFullHTML() },
+    { key: 'metaTitle',        label: 'Meta titel (SEO)',  magento: 'meta_title',        getValue: () => document.getElementById('metaTitle').value },
+    { key: 'seoDescription',   label: 'SEO beschrijving',  magento: 'meta_description',  getValue: () => document.getElementById('seoDescription').value },
+    { key: 'urlKey',           label: 'URL key',           magento: 'url_key',           getValue: () => document.getElementById('urlKey').value },
+    { key: 'ingredients',      label: 'Ingrediënten',      magento: 'ingredients',       getValue: () => document.getElementById('ingredients').value },
+    { key: 'brand',            label: 'Merk',              magento: 'brand',             getValue: () => document.getElementById('brand').value },
+    { key: 'line',             label: 'Lijn',              magento: 'product_line',      getValue: () => document.getElementById('line').value },
+    { key: 'productType',      label: 'Producttype',       magento: 'product_type_custom', getValue: () => document.getElementById('productType').value },
+    { key: 'contentSize',      label: 'Inhoud',            magento: 'content_size',      getValue: () => document.getElementById('contentSize').value },
+    { key: 'ikHeb',            label: 'Ik heb',            magento: 'ik_heb',            getValue: () => data.ikHeb.join(', ') },
+    { key: 'werking',          label: 'Werking',           magento: 'werking',           getValue: () => data.werking.join(', ') },
+    { key: 'vrijVan',          label: 'Vrij van',          magento: 'vrij_van',          getValue: () => data.vrijVan.join(', ') },
+    { key: 'metaKeywords',     label: 'Meta keywords',     magento: 'meta_keyword',      getValue: () => [...data.ikHeb, ...data.werking, document.getElementById('brand').value].filter(Boolean).join(', ') },
+  ];
+
+  const ca = opvoerProduct?.custom_attributes || {};
+
+  const html = `
+    <table style="width:100%;border-collapse:collapse;font-size:13px;">
+      <thead>
+        <tr style="background:#f9f4ef;">
+          <th style="padding:10px 14px;text-align:left;font-weight:600;border-bottom:1px solid #e5dcd1;width:30px;">
+            <input type="checkbox" id="opvoerSelectAll" checked onchange="toggleAllOpvoerFields(this.checked)">
+          </th>
+          <th style="padding:10px 14px;text-align:left;font-weight:600;border-bottom:1px solid #e5dcd1;">Veld</th>
+          <th style="padding:10px 14px;text-align:left;font-weight:600;border-bottom:1px solid #e5dcd1;font-family:'Space Mono',monospace;font-size:11px;">Magento attribuut</th>
+          <th style="padding:10px 14px;text-align:left;font-weight:600;border-bottom:1px solid #e5dcd1;">Tool waarde</th>
+          <th style="padding:10px 14px;text-align:left;font-weight:600;border-bottom:1px solid #e5dcd1;">Huidige Magento waarde</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${fields.map(f => {
+          const toolVal = f.getValue();
+          const magentoVal = f.key === 'name' ? opvoerProduct.name : (ca[f.magento] || '');
+          const hasToolVal = toolVal && toolVal.trim() !== '';
+          const hasMagentoVal = magentoVal && String(magentoVal).trim() !== '';
+          const isOverwrite = hasToolVal && hasMagentoVal;
+          return `
+          <tr style="border-bottom:1px solid #f2ece4;" data-field="${f.key}">
+            <td style="padding:10px 14px;">
+              <input type="checkbox" class="opvoer-field-cb" data-key="${f.key}" ${hasToolVal ? 'checked' : ''} ${!hasToolVal ? 'disabled' : ''}>
+            </td>
+            <td style="padding:10px 14px;font-weight:500;">
+              ${f.label}
+              ${isOverwrite ? '<span style="color:#f39c12;font-size:10px;margin-left:4px;" title="Overschrijft bestaande waarde">⚠ overschrijft</span>' : ''}
+            </td>
+            <td style="padding:10px 14px;font-family:'Space Mono',monospace;font-size:11px;color:#888;">${f.magento}</td>
+            <td style="padding:10px 14px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+              ${hasToolVal ? '<span style="color:#27ae60;">✓</span> ' + escHTML(toolVal.substring(0, 60)) + (toolVal.length > 60 ? '…' : '') : '<span style="color:#ccc;">— leeg</span>'}
+            </td>
+            <td style="padding:10px 14px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#888;">
+              ${hasMagentoVal ? escHTML(String(magentoVal).substring(0, 60).replace(/<[^>]*>/g, '')) + (String(magentoVal).length > 60 ? '…' : '') : '<span style="color:#ccc;">— leeg</span>'}
+            </td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  `;
+  document.getElementById('opvoerFieldMap').innerHTML = html;
+  updateOpvoerPushSummary();
+}
+
+function toggleAllOpvoerFields(checked) {
+  document.querySelectorAll('.opvoer-field-cb:not(:disabled)').forEach(cb => cb.checked = checked);
+  updateOpvoerPushSummary();
+}
+
+function updateOpvoerPushSummary() {
+  if (!opvoerProduct) return;
+  const selectedFields = [...document.querySelectorAll('.opvoer-field-cb:checked')].map(cb => cb.dataset.key);
+  const price = document.getElementById('magentoPrice').value;
+  const cats = selectedMagentoCatIds.length;
+
+  document.getElementById('opvoerPushSummary').innerHTML = [
+    ['Product', opvoerProduct.name + ' (' + opvoerProduct.sku + ')'],
+    ['Te updaten velden', selectedFields.length + ' van ' + document.querySelectorAll('.opvoer-field-cb').length],
+    ['Prijs', price ? '€ ' + parseFloat(price).toFixed(2) : '<span style="color:#999;">— niet wijzigen</span>'],
+    ['Categorieën', cats > 0 ? cats + ' geselecteerd' : '<span style="color:#999;">— niet wijzigen</span>'],
+    ['Status', document.getElementById('magentoProductStatus').options[document.getElementById('magentoProductStatus').selectedIndex].text],
+  ].map(([l, v]) => `<div class="magento-summary-row"><span class="magento-summary-label">${l}</span><span class="magento-summary-value">${v}</span></div>`).join('');
+}
+
+// ─── Push alle velden naar Magento ───
+async function pushAllFieldsToMagento() {
+  if (!opvoerProduct) { alert('Koppel eerst een product.'); return; }
+
+  const selectedKeys = [...document.querySelectorAll('.opvoer-field-cb:checked')].map(cb => cb.dataset.key);
+  if (selectedKeys.length === 0 && !document.getElementById('magentoPrice').value) {
+    alert('Selecteer minimaal één veld om te pushen.'); return;
+  }
+
+  const btn = document.getElementById('pushBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinning">⟳</span> Velden bijwerken in Magento...';
+
+  addLog('info', 'Product "' + opvoerProduct.name + '" (' + opvoerProduct.sku + ') bijwerken...');
+  addLog('info', selectedKeys.length + ' veld(en) geselecteerd voor update');
+
+  // Build field getters
+  const fieldGetters = {
+    name:             () => document.getElementById('productName').value,
+    shortDescription: () => document.getElementById('shortDescription').value,
+    descriptionHTML:  () => buildFullHTML(),
+    metaTitle:        () => document.getElementById('metaTitle').value,
+    seoDescription:   () => document.getElementById('seoDescription').value,
+    urlKey:           () => document.getElementById('urlKey').value,
+    ingredients:      () => document.getElementById('ingredients').value,
+    brand:            () => document.getElementById('brand').value,
+    line:             () => document.getElementById('line').value,
+    productType:      () => document.getElementById('productType').value,
+    contentSize:      () => document.getElementById('contentSize').value,
+    ikHeb:            () => data.ikHeb,
+    werking:          () => data.werking,
+    vrijVan:          () => data.vrijVan,
+    metaKeywords:     () => [...data.ikHeb, ...data.werking, document.getElementById('brand').value].filter(Boolean).join(', '),
+  };
+
+  const payload = { sku: opvoerProduct.sku };
+
+  // Add selected fields
+  selectedKeys.forEach(key => {
+    if (fieldGetters[key]) {
+      payload[key] = fieldGetters[key]();
+    }
+  });
+
+  // Add price, qty, status, weight if set
+  const price = document.getElementById('magentoPrice').value;
+  if (price) payload.price = price;
+  
+  const qty = document.getElementById('magentoQty').value;
+  if (qty) payload.qty = qty;
+  
+  payload.status = document.getElementById('magentoProductStatus').value;
+  
+  const weight = document.getElementById('magentoWeight').value;
+  if (weight) payload.weight = weight;
+
+  // Categories
+  if (selectedMagentoCatIds.length > 0) {
+    payload.categoryIds = selectedMagentoCatIds.map(c => c.id);
+  }
+
+  try {
+    addLog('info', 'Payload versturen...');
+    const result = await proxyRequest('update-fields', 'POST', payload);
+    if (result.success) {
+      addLog('success', '✅ ' + (result.updated_fields || 0) + ' velden bijgewerkt.');
+      if (result.product?.id) {
+        addLog('info', 'Magento product ID: ' + result.product.id);
+      }
+      btn.innerHTML = '✅ Product bijgewerkt!';
+      btn.style.background = '#27ae60';
+      // Refresh product data
+      try {
+        const refreshed = await proxyRequest('product-detail?sku=' + encodeURIComponent(opvoerProduct.sku));
+        if (refreshed.product) {
+          opvoerProduct = refreshed.product;
+          buildFieldMap();
+          addLog('info', 'Productgegevens ververst.');
+        }
+      } catch (e) {}
+      setTimeout(() => {
+        btn.innerHTML = '🚀 Alle velden naar Magento pushen';
+        btn.style.background = '';
+        btn.disabled = false;
+      }, 4000);
+    } else {
+      throw new Error(result.message || 'Onbekende fout');
+    }
+  } catch (err) {
+    addLog('error', 'Fout: ' + err.message);
+    btn.innerHTML = '🚀 Alle velden naar Magento pushen';
+    btn.disabled = false;
+  }
+}
+
+// ─── Tab 6 auto-refresh ───
+const origSwitchTab = switchTab;
+switchTab = function(idx) {
+  document.querySelectorAll('.tab-content').forEach((el, i) => el.classList.toggle('active', i === idx));
+  document.querySelectorAll('.tab-btn').forEach((el, i) => el.classList.toggle('active', i === idx));
+  if (idx === 4) updateGooglePreview();
+  if (idx === 5) updateExport();
+  if (idx === 7 && opvoerProduct) buildFieldMap();
+};
+
+const FIELD_DEFS = {
+  // Tech specs
+  wattage:            { label: 'Wattage',              placeholder: 'Bijv. 2200W',               type: 'text' },
+  maxTemperatuur:     { label: 'Max. temperatuur',     placeholder: 'Bijv. 230°C',               type: 'text' },
+  temperatuurstanden: { label: 'Temperatuurstanden',   placeholder: 'Bijv. 3 standen / variabel', type: 'text' },
+  plaatmateriaal:     { label: 'Plaatmateriaal',       placeholder: 'Bijv. Keramisch / Titanium / Toermalijn', type: 'text' },
+  plaatbreedte:       { label: 'Plaatbreedte',         placeholder: 'Bijv. 25 mm',               type: 'text' },
+  snoerlengte:        { label: 'Snoerlengte',          placeholder: 'Bijv. 2,7 m',               type: 'text' },
+  gewicht:            { label: 'Gewicht',              placeholder: 'Bijv. 490 gram',            type: 'text' },
+  opwarmtijd:         { label: 'Opwarmtijd',           placeholder: 'Bijv. 30 seconden',         type: 'text' },
+  autoShutoff:        { label: 'Auto shut-off',        placeholder: 'Bijv. Ja, na 30 min',       type: 'text' },
+  ionentechnologie:   { label: 'Ionentechnologie',     placeholder: 'Bijv. Ja / Nee',            type: 'text' },
+  snelheidsstanden:   { label: 'Snelheidsstanden',     placeholder: 'Bijv. 2 snelheden',         type: 'text' },
+  coolShot:           { label: 'Cool shot',            placeholder: 'Bijv. Ja',                  type: 'text' },
+  opzetstukken:       { label: 'Opzetstukken',         placeholder: 'Bijv. Diffuser, concentrator', type: 'text' },
+  diameter:           { label: 'Diameter (mm)',        placeholder: 'Bijv. 32 mm',               type: 'text' },
+  geschiktHaartype:   { label: 'Geschikt haartype',    placeholder: 'Bijv. Alle haartypes / Dik haar', type: 'text' },
+  kleurUitvoering:    { label: 'Kleur/Uitvoering',     placeholder: 'Bijv. Zwart / Roségoud',    type: 'text' },
+  // Beauty specs
+  kleurTint:          { label: 'Kleur/Tint',           placeholder: 'Bijv. 6.0 Donkerblond',     type: 'text' },
+  dekking:            { label: 'Dekking',              placeholder: 'Bijv. 100% grijsdekking / Transparant', type: 'text' },
+  oxidatietijd:       { label: 'Oxidatietijd',         placeholder: 'Bijv. 30-45 minuten',       type: 'text' },
+  mengverhouding:     { label: 'Mengverhouding',       placeholder: 'Bijv. 1:1 / 1:1,5',         type: 'text' },
+  volumeSterkte:      { label: 'Volume/Sterkte (%)',   placeholder: 'Bijv. 6% / 9% / 12%',       type: 'text' },
+  materiaal:          { label: 'Materiaal',            placeholder: 'Bijv. Keramiek / Hout / Nylon', type: 'text' },
+  maatLengte:         { label: 'Maat/Lengte',          placeholder: 'Bijv. 40 cm / 5,5 inch',    type: 'text' },
+  huidskleur:         { label: 'Huidskleur geschiktheid', placeholder: 'Bijv. Alle huidskleuren / Lichte huid', type: 'text' },
+  spf:                { label: 'SPF',                  placeholder: 'Bijv. SPF 30',              type: 'text' },
+  finish:             { label: 'Finish',               placeholder: 'Bijv. Mat / Glans / Satijn', type: 'text' },
+  // New fields for added product sets
+  meslengte:          { label: 'Meslengte',            placeholder: 'Bijv. 45 mm / 2 inch',     type: 'text' },
+  aantalTanden:       { label: 'Aantal tanden/snijvlak', placeholder: 'Bijv. 40 tanden / Enkel snijvlak', type: 'text' },
+  oplaadtijd:         { label: 'Oplaadtijd',           placeholder: 'Bijv. 90 minuten',         type: 'text' },
+  gebruikstijdDraadloos: { label: 'Gebruikstijd (draadloos)', placeholder: 'Bijv. 60 minuten', type: 'text' },
+  geurtype:           { label: 'Geurtype',             placeholder: 'Bijv. Bloemig / Houtachtig / Citrus / Orientaals', type: 'text' },
+  haartypeExtensions: { label: 'Haartype (extensions)', placeholder: 'Bijv. Echt haar / Synthetisch / Remy', type: 'text' },
+  verzachtend:        { label: 'Verzachtend',          placeholder: 'Bijv. Ja',                 type: 'text' },
+};
+
+const HAARSHOP_URLS = {
+  // ══════════════════════════════════════
+  // HAAR (HAARVERZORGING)
+  // ══════════════════════════════════════
+  'Haarverzorging':         'https://www.haarshop.nl/haarverzorging',
+  'Shampoo':                'https://www.haarshop.nl/haarverzorging/shampoo',
+  'Shampoo Bar':            'https://www.haarshop.nl/haarverzorging/shampoo/shampoo-bar',
+  'Conditioner':            'https://www.haarshop.nl/haarverzorging/conditioners',
+  'Leave-in Conditioner':   'https://www.haarshop.nl/haarverzorging/leave-in-conditioners',
+  'Haarmasker':             'https://www.haarshop.nl/haarverzorging/haarmasker',
+  'Haar Treatment':         'https://www.haarshop.nl/haarverzorging/treatment',
+  'Treatment':              'https://www.haarshop.nl/haarverzorging/treatment',
+  'Haarolie':               'https://www.haarshop.nl/haarverzorging/haarolie',
+  'Hoofdhuidproblemen':     'https://www.haarshop.nl/haarverzorging/hoofdhuid-oplossingen',
+  'Voordeelsets':           'https://www.haarshop.nl/haarverzorging/alle-voordeelsets',
+
+  // ══════════════════════════════════════
+  // HAARSTYLING
+  // ══════════════════════════════════════
+  'Haarstyling':            'https://www.haarshop.nl/haarverzorging/haarstyling',
+  'Krullen Creme':          'https://www.haarshop.nl/haarverzorging/haarstyling/krullen-creme',
+  'Haarcreme':              'https://www.haarshop.nl/haarverzorging/haarstyling/styling-creme-wax',
+  'Styling Paste':          'https://www.haarshop.nl/haarverzorging/haarstyling/haar-paste',
+  'Haarwax':                'https://www.haarshop.nl/haarverzorging/haarstyling/wax',
+  'Wax':                    'https://www.haarshop.nl/haarverzorging/haarstyling/wax',
+  'Volume Poeder':          'https://www.haarshop.nl/haarverzorging/haarstyling/volume-poeder',
+  'Gel':                    'https://www.haarshop.nl/haarverzorging/haarstyling/gel',
+  'Pommade':                'https://www.haarshop.nl/haarverzorging/haarstyling/pommade',
+  'Haarlak':                'https://www.haarshop.nl/haarverzorging/haarstyling/haarspray/haarlak',
+  'Haarspray':              'https://www.haarshop.nl/haarverzorging/haarstyling/haarspray/haarlak',
+  'Schuimverstevigers':     'https://www.haarshop.nl/haarverzorging/haarstyling/schuimverstevigers',
+  'Mousse':                 'https://www.haarshop.nl/haarverzorging/haarstyling/schuimverstevigers',
+
+  // ══════════════════════════════════════
+  // HAARKLEURINGEN
+  // ══════════════════════════════════════
+  'Haarkleuringen':         'https://www.haarshop.nl/haarverzorging/haarkleuringen',
+  'Haarverf':               'https://www.haarshop.nl/haarverzorging/haarkleuringen/haarverf',
+  'Haarspoelingen':         'https://www.haarshop.nl/haarverzorging/haarkleuringen/haarspoelingen',
+  'Blondeer poeders':       'https://www.haarshop.nl/haarverzorging/haarkleuringen/blondeer-poeders',
+  'Blondeermiddel':         'https://www.haarshop.nl/haarverzorging/haarkleuringen/blondeer-poeders',
+  'Waterstof Peroxide':     'https://www.haarshop.nl/haarverzorging/haarkleuringen/waterstof-peroxide',
+  'Kleur opfrissers':       'https://www.haarshop.nl/haarverzorging/haarkleuringen/kleur-opfrissers-kleur-onderhoud',
+  'Kleurmousse':            'https://www.haarshop.nl/haarverzorging/haarkleuringen/kleurmousse',
+  'Uitgroei Sprays':        'https://www.haarshop.nl/haarverzorging/haarkleuringen/uitgroei-sprays-stiften',
+
+  // ══════════════════════════════════════
+  // HAARMODE & EXTENSIONS
+  // ══════════════════════════════════════
+  'Haaraccessoires':        'https://www.haarshop.nl/haarverzorging/haaraccessoires',
+  'Haarelastiekjes':        'https://www.haarshop.nl/haarverzorging/haaraccessoires/haarelastiekjes',
+  'Scrunchies':             'https://www.haarshop.nl/haarverzorging/haaraccessoires/velvet-scrunchie',
+  'Haarklemmen':            'https://www.haarshop.nl/haarverzorging/haaraccessoires/haarklemmen',
+  'Hair Extensions':        'https://www.haarshop.nl/haarverzorging/extensions',
+  'Extensions':             'https://www.haarshop.nl/professioneel/extensions',
+  'Baby & Kind':            'https://www.haarshop.nl/baby-kind',
+
+  // ══════════════════════════════════════
+  // LICHAAM / HUIDVERZORGING
+  // ══════════════════════════════════════
+  'Huidverzorging':         'https://www.haarshop.nl/huidverzorging',
+  'Gezichtsverzorging':     'https://www.haarshop.nl/huidverzorging/gezicht',
+  'Gezichtsscrub':          'https://www.haarshop.nl/huidverzorging/gezicht/scrub',
+  'Gezichtsreiniger':       'https://www.haarshop.nl/huidverzorging/gezicht/reiniger',
+  'Gezichtstoner':          'https://www.haarshop.nl/huidverzorging/gezicht/toner',
+  'Gezichtscrème':          'https://www.haarshop.nl/huidverzorging/gezicht/creme',
+  'Dagcrème':               'https://www.haarshop.nl/huidverzorging/gezicht/creme/dagcreme',
+  'Nachtcrème':             'https://www.haarshop.nl/huidverzorging/gezicht/creme/nachtcreme',
+  'Gezichtsserum':          'https://www.haarshop.nl/huidverzorging/gezicht/serum',
+  'Gezichtsmasker':         'https://www.haarshop.nl/huidverzorging/gezicht/masker',
+  'LED':                    'https://www.haarshop.nl/huidverzorging/gezicht/led',
+  'Lichaamsverzorging':     'https://www.haarshop.nl/huidverzorging/lichaam',
+  'Handcrème':              'https://www.haarshop.nl/huidverzorging/lichaam/handcreme',
+  'Bodyscrub':              'https://www.haarshop.nl/huidverzorging/lichaam/bodyscrub',
+  'Douchegel':              'https://www.haarshop.nl/huidverzorging/lichaam/douchegel',
+  'Huidserum':              'https://www.haarshop.nl/huidverzorging/lichaam/huidserum',
+  'Bodylotion':             'https://www.haarshop.nl/huidverzorging/lichaam/bodylotion',
+  'Huidcrème':              'https://www.haarshop.nl/huidverzorging/lichaam/huidcreme',
+  'Huidolie':               'https://www.haarshop.nl/huidverzorging/lichaam/huidolie',
+  'Deodorant':              'https://www.haarshop.nl/huidverzorging/lichaam/deodorant',
+  'Ontharen':               'https://www.haarshop.nl/huidverzorging/ontharen',
+  'Oogverzorging':          'https://www.haarshop.nl/huidverzorging/oogverzorging',
+  'Oogcrème':               'https://www.haarshop.nl/huidverzorging/oogverzorging/oogcreme',
+  'Oogserum':               'https://www.haarshop.nl/huidverzorging/oogverzorging/oogserum',
+
+  // Tanning
+  'Tanning':                'https://www.haarshop.nl/huidverzorging/tanning',
+  'Tanning Spray':          'https://www.haarshop.nl/huidverzorging/tanning/bruinings-spray',
+  'Tanning Mousse':         'https://www.haarshop.nl/huidverzorging/tanning/mousse',
+  'Tanning Lotion':         'https://www.haarshop.nl/huidverzorging/tanning/lotion',
+  'Tanning Cream':          'https://www.haarshop.nl/huidverzorging/tanning/cream',
+
+  // Supplementen
+  'Supplementen':           'https://www.haarshop.nl/supplementen',
+  'Haar supplement':        'https://www.haarshop.nl/huidverzorging/supplementen/haar-supplement',
+
+  // ══════════════════════════════════════
+  // MAKE-UP
+  // ══════════════════════════════════════
+  'Make-Up':                'https://www.haarshop.nl/make-up',
+  'Wenkbrauwen':            'https://www.haarshop.nl/make-up/wenkbrauw',
+  'Wenkbrauwverf':          'https://www.haarshop.nl/make-up/verf',
+  'Wenkbrauwpotlood':       'https://www.haarshop.nl/make-up/wenkbrauw/potlood',
+  'Wenkbrauwpoeder':        'https://www.haarshop.nl/make-up/wenkbrauw/poeder',
+  'Wenkbrauwgel':           'https://www.haarshop.nl/make-up/wenkbrauw/gel',
+  'Wenkbrauwserum':         'https://www.haarshop.nl/make-up/wenkbrauw/serum',
+  'Oogschaduw':             'https://www.haarshop.nl/make-up/ogen/oogschaduw',
+  'Mascara':                'https://www.haarshop.nl/make-up/ogen/mascara',
+  'Eyeliner':               'https://www.haarshop.nl/make-up/ogen/eyeliner',
+  'Oogpotlood':             'https://www.haarshop.nl/make-up/ogen/oogpotlood',
+  'Oog Make-up Remover':    'https://www.haarshop.nl/make-up/ogen/remover',
+  'Lipstick':               'https://www.haarshop.nl/make-up/lippen/lipstick',
+  'Lipgloss':               'https://www.haarshop.nl/make-up/lippen/lipgloss',
+  'Lipliner':               'https://www.haarshop.nl/make-up/lippen/lipliner',
+  'Concealer':              'https://www.haarshop.nl/make-up/gezicht/concealer',
+  'Foundation':             'https://www.haarshop.nl/make-up/gezicht/foundation',
+  'Gezichtspoeder':         'https://www.haarshop.nl/make-up/gezicht/poeder',
+  'Bronzer':                'https://www.haarshop.nl/make-up/gezicht/bronzer',
+  'Highlighter':            'https://www.haarshop.nl/make-up/gezicht/highlighter',
+  'Blush':                  'https://www.haarshop.nl/make-up/gezicht/blush',
+  'Make-up Kwasten':        'https://www.haarshop.nl/make-up/accessoires/kwasten',
+  'Make-up Remover':        'https://www.haarshop.nl/make-up/accessoires/remover',
+  'Make-up Spons':          'https://www.haarshop.nl/make-up/accessoires/spons',
+
+  // ══════════════════════════════════════
+  // NAGELS
+  // ══════════════════════════════════════
+  'Nagels':                 'https://www.haarshop.nl/nagels',
+  'Acrylnagels':            'https://www.haarshop.nl/nagels/acryl-nagels',
+  'Gelnagels':              'https://www.haarshop.nl/nagels/brisa-gel-nagels',
+  'Nagellak':               'https://www.haarshop.nl/nagels/nagel-topcoat',
+  'Gellak':                 'https://www.haarshop.nl/nagels/shellac',
+  'Manicure':               'https://www.haarshop.nl/nagels/manicure',
+  'Nagelverzorging':        'https://www.haarshop.nl/nagels/nagelverzorging',
+  'Nagelvijl':              'https://www.haarshop.nl/nagels/vijlen',
+  'Pedicure':               'https://www.haarshop.nl/nagels/pedicure',
+
+  // ══════════════════════════════════════
+  // MAN
+  // ══════════════════════════════════════
+  'Man':                    'https://www.haarshop.nl/man',
+  'Man Shampoo':            'https://www.haarshop.nl/man/haarproducten/shampoos',
+  'Man Conditioner':        'https://www.haarshop.nl/man/haarproducten/conditioners',
+  'Man Haarkuur':           'https://www.haarshop.nl/man/haarproducten/haarkuren',
+  'Styling Wax':            'https://www.haarshop.nl/man/haarproducten/styling-wax',
+  'Styling Gel':            'https://www.haarshop.nl/haarverzorging/haarstyling/gel',
+  'Scheermesjes':           'https://www.haarshop.nl/man/scheerproducten/scheermesjes',
+  'Pre-Shave':              'https://www.haarshop.nl/man/scheerproducten/pre-shave',
+  'Scheerolie':             'https://www.haarshop.nl/man/scheerproducten/scheerolie',
+  'Scheerschuim':           'https://www.haarshop.nl/man/scheerproducten/scheerschuim',
+  'Scheergel':              'https://www.haarshop.nl/man/scheerproducten/scheergels',
+  'Scheerkwasten':          'https://www.haarshop.nl/man/scheerproducten/scheerkwasten',
+  'Baardproducten':         'https://www.haarshop.nl/man/baardproducten',
+  'Baardshampoo':           'https://www.haarshop.nl/man/baardproducten/baardshampoo',
+  'Baardolie':              'https://www.haarshop.nl/man/baardproducten/baardolie',
+  'Baardwax':               'https://www.haarshop.nl/man/baardproducten/baardwax',
+  'Baardbalsem':            'https://www.haarshop.nl/man/baardproducten/baardbalsem',
+
+  // ══════════════════════════════════════
+  // HAARTOOLS
+  // ══════════════════════════════════════
+  'Haartools':              'https://www.haarshop.nl/tools',
+  'Multistyler':            'https://www.haarshop.nl/tools/multistyler',
+  'Stijltang':              'https://www.haarshop.nl/tools/stijltangen',
+  'Stijltangen':            'https://www.haarshop.nl/tools/stijltangen',
+  'Krultang':               'https://www.haarshop.nl/tools/krultangen-warme-fohnborstels',
+  'Krultangen':             'https://www.haarshop.nl/tools/krultangen-warme-fohnborstels',
+  'Föhn':                   'https://www.haarshop.nl/tools/fohns',
+  'Föhns':                  'https://www.haarshop.nl/tools/fohns',
+  'Föhnborstel':            'https://www.haarshop.nl/tools/fohnborstel-krulborstel',
+  'Föhnborstels':           'https://www.haarshop.nl/tools/fohnborstel-krulborstel',
+  'Stijlborstel':           'https://www.haarshop.nl/tools/stijlborstel',
+  'Tondeuse':               'https://www.haarshop.nl/tools/tondeuses-trimmers',
+  'Trimmers & Tondeuses':   'https://www.haarshop.nl/tools/tondeuses-trimmers',
+  'Trimmer':                'https://www.haarshop.nl/tools/trimmers',
+  'Opzetkammen':            'https://www.haarshop.nl/tools/tondeuses-trimmers/opzetkammen',
+  'Haarrollers':            'https://www.haarshop.nl/tools/rollers-wikkels',
+  'Droogkap':               'https://www.haarshop.nl/tools/fohns/droogkap',
+  'Kappersschaar':          'https://www.haarshop.nl/tools/kappers-scharen',
+  'Kappersscharen':         'https://www.haarshop.nl/tools/kappers-scharen',
+  'Kappersmes':             'https://www.haarshop.nl/tools/kappersmessen',
+  'Messen':                 'https://www.haarshop.nl/tools/kappersmessen',
+  'Haarkam':                'https://www.haarshop.nl/tools/kammen',
+  'Haarkammen':             'https://www.haarshop.nl/tools/kammen',
+  'Haarborstel':            'https://www.haarshop.nl/tools/borstels',
+  'Haarborstels':           'https://www.haarshop.nl/tools/borstels',
+  'Pneumatische Borstel':   'https://www.haarshop.nl/tools/borstels/pneumatische-borstels',
+  'Kapperskoffer':          'https://www.haarshop.nl/tools/koffers',
+
+  // ══════════════════════════════════════
+  // PROFESSIONEEL / KAPPERS
+  // ══════════════════════════════════════
+  'Professional':           'https://www.haarshop.nl/professioneel',
+  'Kappersstoelen':         'https://www.haarshop.nl/professioneel/kappers-interieur/kappersstoelen',
+  'Kappersstoelen Kind':    'https://www.haarshop.nl/professioneel/kappers-interieur/kappersstoel-kind',
+  'Kapperskrukken':         'https://www.haarshop.nl/professioneel/kappers-interieur/kapperskruk',
+  'Mobiele Wasbakken':      'https://www.haarshop.nl/professioneel/mobiele-kappers/mobiele-wasbak',
+  'Werkwagens Kapper':      'https://www.haarshop.nl/professioneel/kappers-interieur/werkwagen-kapper',
+  'Kappershanddoeken':      'https://www.haarshop.nl/professioneel/kappers-benodigdheden/kappershanddoeken',
+  'Kappersspiegel':         'https://www.haarshop.nl/professioneel/kappers-benodigdheden/kappersspiegel',
+  'Kapperskoffers':         'https://www.haarshop.nl/professioneel/mobiele-kappers/kapperskoffer',
+  'Kapperstrolleys':        'https://www.haarshop.nl/professioneel/mobiele-kappers/kapperstrolley',
+  'Wegwerp Handschoenen':   'https://www.haarshop.nl/professioneel/wegwerp-handschoenen',
+  'Nekmessen & Snijmessen': 'https://www.haarshop.nl/professioneel/knipbenodigdheden/nekmessen-snijmessen',
+  'Waterspuit Kappers':     'https://www.haarshop.nl/professioneel/knipbenodigdheden/waterspuit-kapper',
+  'Kappersklemmen':         'https://www.haarshop.nl/professioneel/knipbenodigdheden/kappersklemmen',
+  'Kappersetui':            'https://www.haarshop.nl/professioneel/knipbenodigdheden/kappersetui',
+  'Kapmantels':             'https://www.haarshop.nl/professioneel/knipbenodigdheden/kapmantels',
+  'Nekpapier':              'https://www.haarshop.nl/professioneel/knipbenodigdheden/nekpapier',
+  'Oefenhoofden':           'https://www.haarshop.nl/professioneel/oefenmateriaal',
+
+  // ══════════════════════════════════════
+  // MERKEN (pattern: /merken/merknaam)
+  // ══════════════════════════════════════
+  'Merken':                 'https://www.haarshop.nl/merken',
+};
+
+// Simplified fallback for sets not yet defined
+function getSetConfig(setName) {
+  return PRODUCT_SET_CONFIG[setName] || {
+    productTypes: [], ikHeb: [], werking: [], vrijVan: [],
+    showIngredients: true, showTechSpecs: false, showBeautySpecs: false, techFields: [], beautyFields: []
+  };
+}
+
+// ─── Step Navigation ───
+function goToStep(n) {
+  currentStep = n;
+  document.querySelectorAll('.step-panel').forEach((p, i) => p.classList.toggle('active', i === n));
+  document.querySelectorAll('.step-item').forEach((s, i) => s.classList.toggle('active', i === n));
+
+  // Update review step
+  if (n === 4) updateReviewStep();
+  if (n === 2) { renderFeatures(); renderSteps(); }
+  if (n === 3) { renderBadges(); renderDynamicFields(); }
+  runValidation();
+  saveState();
+}
+
+// ─── Toast ───
+function showToast(msg, type = 'success') {
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 3000);
+}
+
+// ─── Settings Modal ───
+function showSettingsModal() {
+  document.getElementById('settingsApiKey').value = localStorage.getItem('haarshop_ai_key') || '';
+  document.getElementById('settingsMagentoUrl').value = localStorage.getItem('haarshop_magento_url') || '';
+  document.getElementById('settingsMagentoKey').value = localStorage.getItem('haarshop_magento_key') || '';
+  document.getElementById('settingsModal').style.display = 'flex';
+}
+function closeSettingsModal() { document.getElementById('settingsModal').style.display = 'none'; }
+function saveSettings() {
+  const key = document.getElementById('settingsApiKey').value.trim();
+  const mUrl = document.getElementById('settingsMagentoUrl').value.trim().replace(/\/+$/, '');
+  const mKey = document.getElementById('settingsMagentoKey').value.trim();
+  if (key) localStorage.setItem('haarshop_ai_key', key);
+  if (mUrl) localStorage.setItem('haarshop_magento_url', mUrl);
+  if (mKey) localStorage.setItem('haarshop_magento_key', mKey);
+  closeSettingsModal();
+  showToast('Instellingen opgeslagen');
+}
+
+// ─── Features & Steps Rendering ───
+function renderFeatures() {
+  const c = document.getElementById('featuresContainer');
+  if (!c) return;
+  c.innerHTML = data.features.map((f, i) => `
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+      <span style="font-size:10px;color:var(--text-muted);width:16px;">${i+1}.</span>
+      <input class="field-input" value="${escHTML(f)}" oninput="data.features[${i}]=this.value;markManual('keyFeatures');runValidation()" placeholder="Eigenschap ${i+1}..." style="flex:1;">
+    </div>
+  `).join('');
+}
+
+function renderSteps() {
+  const c = document.getElementById('stepsContainer');
+  if (!c) return;
+  c.innerHTML = data.steps.map((s, i) => `
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+      <span style="font-size:10px;color:var(--text-muted);width:16px;">${i+1}.</span>
+      <input class="field-input" value="${escHTML(s)}" oninput="data.steps[${i}]=this.value;markManual('usageSteps');runValidation()" placeholder="Stap ${i+1}..." style="flex:1;">
+      ${data.steps.length > 1 ? `<button onclick="data.steps.splice(${i},1);renderSteps()" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:14px;">×</button>` : ''}
+    </div>
+  `).join('');
+}
+
+function addStep() {
+  data.steps.push('');
+  renderSteps();
+}
+
+// ─── Badge Rendering (Ik heb, Werking, Vrij van, Categories) ───
+function renderBadges() {
+  const set = document.getElementById('productSet').value;
+  const cfg = getSetConfig(set);
+
+  renderBadgeGroup('ikHebContainer', cfg.ikHeb, data.ikHeb, 'ikHeb');
+  renderBadgeGroup('werkingContainer', cfg.werking, data.werking, 'werking');
+  renderBadgeGroup('vrijVanContainer', cfg.vrijVan, data.vrijVan, 'vrijVan');
+  renderCategoryBadges();
+}
+
+function renderBadgeGroup(containerId, options, selected, dataKey) {
+  const c = document.getElementById(containerId);
+  if (!c) return;
+  c.innerHTML = options.map(opt => {
+    const isSelected = selected.includes(opt);
+    return `<div class="badge ${isSelected ? 'selected' : ''}" onclick="toggleBadge('${dataKey}','${escHTML(opt)}')">${opt}</div>`;
+  }).join('');
+}
+
+function toggleBadge(key, val) {
+  const arr = data[key];
+  const idx = arr.indexOf(val);
+  if (idx >= 0) arr.splice(idx, 1); else arr.push(val);
+  renderBadges();
+  runValidation();
+}
+
+function renderCategoryBadges() {
+  const c = document.getElementById('categoriesContainer');
+  if (!c) return;
+  c.innerHTML = data.categories.map((cat, i) =>
+    `<div class="badge selected" onclick="data.categories.splice(${i},1);renderCategoryBadges();runValidation()">${cat} ×</div>`
+  ).join('');
+}
+
+function addCategory() {
+  const input = document.getElementById('newCategory');
+  const val = input.value.trim();
+  if (val && !data.categories.includes(val)) {
+    data.categories.push(val);
+    input.value = '';
+    renderCategoryBadges();
+    runValidation();
+  }
+}
+
+// ─── Dynamic Spec Fields ───
+function renderDynamicFields() {
+  // Placeholder — will be filled from PRODUCT_SET_CONFIG
+  const set = document.getElementById('productSet').value;
+  const cfg = getSetConfig(set);
+  const allFields = [...(cfg.techFields || []), ...(cfg.beautyFields || [])];
+  const card = document.getElementById('dynamicSpecsCard');
+  const container = document.getElementById('dynamicFieldsContainer');
+  if (allFields.length === 0) { if(card) card.style.display = 'none'; return; }
+  if(card) card.style.display = 'block';
+  container.innerHTML = allFields.map(key => {
+    const val = dynamicFieldValues[key] || '';
+    return `<div class="field"><div class="field-label">${key}</div><input class="field-input" value="${escHTML(val)}" oninput="dynamicFieldValues['${key}']=this.value"></div>`;
+  }).join('');
+}
+
+// ─── Description Rich Text ───
+function wrapDesc(tag) {
+  const ta = document.getElementById('description');
+  const start = ta.selectionStart, end = ta.selectionEnd;
+  const sel = ta.value.substring(start, end);
+  if (!sel) return;
+  ta.value = ta.value.substring(0, start) + `<${tag}>${sel}</${tag}>` + ta.value.substring(end);
+  ta.focus();
+}
+function insertDesc(text) {
+  const ta = document.getElementById('description');
+  const pos = ta.selectionStart;
+  ta.value = ta.value.substring(0, pos) + text + ta.value.substring(pos);
+  ta.focus();
+}
+function stripDescFormatting() {
+  const ta = document.getElementById('description');
+  ta.value = ta.value.replace(/<[^>]*>/g, '');
+}
+function toggleDescPreview() {
+  const p = document.getElementById('descPreview');
+  const name = document.getElementById('productName').value || '[PRODUCTNAAM]';
+  if (p.style.display === 'none') {
+    p.style.display = 'block';
+    p.innerHTML = `<p><strong>${escHTML(name)}</strong> ${document.getElementById('description').value}</p>`;
+  } else { p.style.display = 'none'; }
+}
+
+// ─── Validation Engine ───
+function runValidation() {
+  const checks = [];
+  const name = document.getElementById('productName')?.value || '';
+  const shortDesc = document.getElementById('shortDescription')?.value || '';
+  const desc = document.getElementById('description')?.value || '';
+  const features = data.features.filter(Boolean);
+  const steps = data.steps.filter(Boolean);
+  const crossSell = document.getElementById('crossSellText')?.value || '';
+  const ingredients = document.getElementById('ingredients')?.value || '';
+  const seoTitle = document.getElementById('seoTitle')?.value || '';
+  const seoDesc = document.getElementById('seoDescription')?.value || '';
+  const urlKey = document.getElementById('urlKey')?.value || '';
+  const set = document.getElementById('productSet')?.value || '';
+  const brand = document.getElementById('brand')?.value || '';
+  const ean = document.getElementById('ean')?.value || '';
+
+  // Productnaam format check: Merk – Type – Inhoud
+  const nameHasFormat = /^.+\s–\s.+\s–\s\d+\s*(ml|gr|g|st|stuks|mm|cm)$/i.test(name.trim());
+  checks.push({
+    pass: !!name && nameHasFormat,
+    warn: !!name && !nameHasFormat,
+    label: `<strong>Productnaam</strong>${sourceTag('productName')}: ${!name ? 'ontbreekt' : nameHasFormat ? 'correct format' : 'check format (Merk – Type – Inhoud)'}`
+  });
+
+  // Product set
+  checks.push({ pass: !!set, label: `<strong>Product Set</strong>: ${set || 'niet gekozen'}` });
+
+  // Brand
+  checks.push({ pass: !!brand, label: `<strong>Merk</strong>${sourceTag('brand')}: ${brand || 'ontbreekt'}` });
+
+  // Short description
+  const shortWords = shortDesc.split(/\s+/).filter(Boolean).length;
+  const shortHasName = name && shortDesc.toLowerCase().includes(name.split(/\s*[-–—]\s*/)[0]?.toLowerCase());
+  checks.push({
+    pass: shortWords >= 12 && shortWords <= 25 && !shortHasName,
+    warn: shortWords > 0 && (shortWords < 12 || shortWords > 25),
+    label: `<strong>Short description</strong>${sourceTag('shortDescription')}: ${shortWords} woorden ${shortHasName ? '(bevat productnaam!)' : ''} ${shortWords < 12 ? '(te kort)' : shortWords > 25 ? '(te lang)' : '(goed)'}`
+  });
+
+  // Description
+  const descWords = desc.replace(/<[^>]*>/g, '').split(/\s+/).filter(Boolean).length;
+  const descHasWij = /\b(wij|onze|ons)\b/i.test(desc.replace(/dan zorgen wij.*/i, ''));
+  checks.push({
+    pass: descWords >= 80 && descWords <= 130 && !descHasWij,
+    warn: descWords > 0 && (descWords < 80 || descWords > 130),
+    label: `<strong>Description</strong>${sourceTag('description')}: ${descWords} woorden ${descHasWij ? '(bevat wij/onze!)' : ''} ${descWords < 80 ? '(te kort)' : descWords > 130 ? '(te lang)' : '(goed)'}`
+  });
+
+  // Features
+  const allEndWithPeriod = features.every(f => f.trim().endsWith('.'));
+  checks.push({
+    pass: features.length >= 6 && features.length <= 7 && allEndWithPeriod,
+    warn: features.length > 0 && (features.length < 6 || !allEndWithPeriod),
+    label: `<strong>Eigenschappen</strong>${sourceTag('keyFeatures')}: ${features.length}/7 ${!allEndWithPeriod && features.length > 0 ? '(niet alle eindigen met punt)' : ''}`
+  });
+
+  // Usage steps
+  const stepsHaveLinks = steps.some(s => /<a\s+href=/.test(s));
+  checks.push({
+    pass: steps.length >= 3 && steps.length <= 5 && !stepsHaveLinks,
+    warn: (steps.length > 0 && (steps.length < 3 || steps.length > 5)) || stepsHaveLinks,
+    label: `<strong>Gebruiksaanwijzing</strong>${sourceTag('usageSteps')}: ${steps.length} stappen ${steps.length < 3 ? '(min. 3)' : steps.length > 5 ? '(max. 5)' : ''} ${stepsHaveLinks ? '(bevat links — verplaats naar cross-sell!)' : steps.length >= 3 && steps.length <= 5 ? '(goed)' : ''}`
+  });
+
+  // Cross-sell
+  const hasLink = /<a\s+href=/.test(crossSell);
+  const linkCount = (crossSell.match(/<a\s+href=/g) || []).length;
+  checks.push({
+    pass: hasLink && linkCount <= 2,
+    warn: (!hasLink && crossSell.length > 0) || linkCount > 2,
+    label: `<strong>Cross-sell</strong>${sourceTag('crossSellText')}: ${!crossSell ? 'leeg' : !hasLink ? 'geen link gevonden!' : linkCount > 2 ? `${linkCount} links (max. 2)` : `${linkCount} product${linkCount > 1 ? 'en' : ''} gelinkt (goed)`}`
+  });
+
+  // Ingredients
+  const cfg = getSetConfig(set);
+  if (cfg.showIngredients !== false) {
+    checks.push({
+      pass: ingredients.length > 20,
+      warn: ingredients.length > 0 && ingredients.length < 20,
+      label: `<strong>Ingrediënten</strong>${sourceTag('ingredients')}: ${ingredients ? ingredients.length + ' tekens' : 'leeg (handmatig toevoegen!)'}`
+    });
+  }
+
+  // SEO
+  checks.push({ pass: seoTitle.includes('morgen in huis'), warn: seoTitle.length > 0 && !seoTitle.includes('morgen in huis'), label: `<strong>SEO-titel</strong>${sourceTag('seoTitle')}: ${seoTitle.includes('morgen in huis') ? 'correct format' : seoTitle ? 'mist "morgen in huis✓"' : 'leeg'}` });
+  checks.push({ pass: !!urlKey, label: `<strong>URL key</strong>${sourceTag('urlKey')}: ${urlKey || 'leeg'}` });
+  checks.push({ pass: data.categories.length >= 2, label: `<strong>Categorieën</strong>${sourceTag('categories')}: ${data.categories.length} geselecteerd ${data.categories.length < 2 ? '(min. 2)' : ''}` });
+
+  // EAN
+  checks.push({ pass: ean.length >= 8, warn: !ean, label: `<strong>EAN</strong>${sourceTag('ean')}: ${ean || 'niet ingevuld (optioneel)'}` });
+
+  // Render
+  const list = document.getElementById('validationList');
+  if (!list) return;
+  let passCount = 0;
+  list.innerHTML = checks.map(c => {
+    const cls = c.pass ? 'check-pass' : c.warn ? 'check-warn' : (c.label.includes('leeg') || c.label.includes('ontbreekt') || c.label.includes('niet')) ? 'check-fail' : 'check-warn';
+    if (c.pass) passCount++;
+    const icon = c.pass ? '✓' : c.warn ? '⚠' : '✗';
+    return `<div class="check-item ${cls}"><span class="check-icon">${icon}</span><div class="check-label">${c.label}</div></div>`;
+  }).join('');
+
+  const score = document.getElementById('validationScore');
+  if (score) score.textContent = `${passCount}/${checks.length}`;
+
+  // Update word counts
+  const sc = document.getElementById('shortDescCount');
+  if (sc) sc.textContent = `${shortWords} woorden`;
+  const dc = document.getElementById('descCount');
+  if (dc) dc.textContent = `${descWords} woorden`;
+
+  // Update step nav indicators
+  updateStepIndicators(checks);
+}
+
+function updateStepIndicators(checks) {
+  // Simplified: mark steps as completed/has-errors
+  const steps = document.querySelectorAll('.step-item');
+  // Step 0 (ID): name + set + brand
+  const s0ok = checks.slice(0,3).every(c => c.pass);
+  steps[0]?.classList.toggle('completed', s0ok && currentStep > 0);
+
+  // Step 2 (Content): short desc, desc, features, steps, cross-sell
+  const s2ok = checks.slice(3,8).every(c => c.pass);
+  steps[2]?.classList.toggle('completed', s2ok && currentStep > 2);
+
+  // Step 3 (SEO): seo, url, cats
+  const s3ok = checks.slice(9,12).every(c => c.pass);
+  steps[3]?.classList.toggle('completed', s3ok && currentStep > 3);
+}
+
+// ─── Build HTML ───
+function buildShortHTML() {
+  const s = document.getElementById('shortDescription')?.value || '';
+  return `<p>${s}</p>`;
+}
+
+function buildFullHTML() {
+  const rawName = document.getElementById('productName')?.value || '[PRODUCTNAAM]';
+  const name = rawName.replace(/\s*[-–—]\s*/g, ' ').replace(/\s+/g, ' ').trim();
+  let desc = document.getElementById('description')?.value || '';
+  desc = desc.replace(/<(?!\/?(?:strong|em|b|i|br|a)\b)[^>]*>/gi, '');
+  desc = desc.replace(/(\*{1,2}|_{1,2})(.*?)\1/g, '$2');
+  const features = data.features.filter(Boolean);
+  const steps = data.steps.filter(Boolean);
+  const crossSell = document.getElementById('crossSellText')?.value || '';
+
+  let html = `<p><strong>${name}</strong> ${desc}</p>\n\n`;
+  html += `<h2><strong>Belangrijkste eigenschappen</strong></h2>\n<ul>\n`;
+  features.forEach(f => html += `<li>${f}</li>\n`);
+  html += `</ul>\n\n`;
+  html += `<h2><strong>Gebruiksaanwijzing</strong></h2>\n<ol>\n`;
+  steps.forEach(s => html += `<li>${s}</li>\n`);
+  if (crossSell) html += `<li>${crossSell}</li>\n`;
+  html += `</ol>\n\n`;
+  html += `<h3><strong>${name} online kopen bij Haarshop.nl</strong></h3>\n`;
+  html += `<p>Shop dus nu de <strong>${name}</strong>, dan zorgen wij dat deze snel bij je thuis wordt bezorgd!</p>`;
+  return html;
+}
+
+function buildStructuredText() {
+  const fields = [
+    ['Producttype', document.getElementById('productType')?.value],
+    ['Merk', document.getElementById('brand')?.value],
+    ['Lijn', document.getElementById('line')?.value],
+    ['Sub-lijn', document.getElementById('subLine')?.value],
+    ['Inhoud', document.getElementById('contentSize')?.value],
+    ['EAN', document.getElementById('ean')?.value],
+    ['SKU', document.getElementById('sku')?.value],
+    ['SEO-titel', document.getElementById('seoTitle')?.value],
+    ['SEO-beschrijving', document.getElementById('seoDescription')?.value],
+    ['URL key', document.getElementById('urlKey')?.value],
+    ['Categorieën', data.categories.join(', ')],
+    ['Ik heb', data.ikHeb.join(', ')],
+    ['Werking', data.werking.join(', ')],
+    ['Vrij van', data.vrijVan.join(', ')],
+    ['Ingrediënten', document.getElementById('ingredients')?.value],
+  ];
+  return fields.map(([k,v]) => `${k}: ${v || ''}`).join('\n');
+}
+
+// ─── Review Step ───
+function updateReviewStep() {
+  // Live preview
+  document.getElementById('livePreview').innerHTML = buildFullHTML();
+
+  // Structured info table
+  const info = document.getElementById('structuredInfo');
+  const fields = [
+    ['Productnaam', document.getElementById('productName')?.value],
+    ['EAN', document.getElementById('ean')?.value],
+    ['SKU', document.getElementById('sku')?.value],
+    ['Merk', document.getElementById('brand')?.value],
+    ['Lijn', document.getElementById('line')?.value],
+    ['Producttype', document.getElementById('productType')?.value],
+    ['Inhoud', document.getElementById('contentSize')?.value],
+    ['Categorieën', data.categories.join(', ')],
+    ['Ik heb', data.ikHeb.join(', ')],
+    ['Werking', data.werking.join(', ')],
+    ['Vrij van', data.vrijVan.join(', ')],
+  ];
+  info.innerHTML = fields.map(([k,v]) => `<tr><td>${k}</td><td>${v || '—'}</td></tr>`).join('');
+
+  // Copy blocks
+  document.getElementById('copyShort').textContent = buildShortHTML();
+  document.getElementById('copyFull').textContent = buildFullHTML();
+  document.getElementById('copyIngredients').textContent = document.getElementById('ingredients')?.value || '';
+  document.getElementById('copySeoTitle').textContent = document.getElementById('seoTitle')?.value || '';
+  document.getElementById('copySeoDesc').textContent = document.getElementById('seoDescription')?.value || '';
+  document.getElementById('copyUrlKey').textContent = document.getElementById('urlKey')?.value || '';
+  document.getElementById('copyStructured').textContent = buildStructuredText();
+}
+
+function copyBlock(id) {
+  const text = document.getElementById(id)?.textContent || '';
+  navigator.clipboard.writeText(text).then(() => showToast('Gekopieerd!')).catch(() => showToast('Kopiëren mislukt', 'error'));
+}
+
+function exportAllAsText() {
+  const all = `=== SHORT DESCRIPTION ===\n${buildShortHTML()}\n\n=== DESCRIPTION ===\n${buildFullHTML()}\n\n=== PRODUCTINFO ===\n${buildStructuredText()}\n\n=== INGREDIËNTEN ===\n${document.getElementById('ingredients')?.value || ''}`;
+  const blob = new Blob([all], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `productopvoer-${document.getElementById('urlKey')?.value || 'export'}.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Export gedownload');
+}
+
+// ─── Product Set Change ───
+function onProductSetChange() {
+  const set = document.getElementById('productSet').value;
+  // Clear selections when changing set
+  data.ikHeb = [];
+  data.werking = [];
+  data.vrijVan = [];
+  if (currentStep === 3) { renderBadges(); renderDynamicFields(); }
+  runValidation();
+}
+
+// ─── Helpers ───
+function escHTML(s) { return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// Source tag HTML helper
+function sourceTag(fieldKey) {
+  const src = fieldSources[fieldKey];
+  if (!src) return '';
+  return `<span class="source-tag ${src}">${SOURCE_LABELS[src] || src}</span>`;
+}
+
+// Mark field as manual when user edits it
+function markManual(fieldKey) {
+  if (fieldSources[fieldKey] && fieldSources[fieldKey] !== 'manual') {
+    fieldSources[fieldKey] = 'manual';
+    runValidation(); // refresh source tags in sidebar
+  }
+}
+
+// ─── Catalog Integration (via Magento API) ───
+const CATALOG_CACHE_KEY = 'haarshop_catalog_cache';
+const CATALOG_CACHE_TTL = 3 * 24 * 60 * 60 * 1000;
+let catalogCatFlat = [];
+let catalogProducts = [];
+let catalogLoaded = false;
+
+function loadCatalogFromCache() {
+  try {
+    const raw = localStorage.getItem(CATALOG_CACHE_KEY);
+    if (!raw) return false;
+    const cache = JSON.parse(raw);
+    if (Date.now() - cache.timestamp > CATALOG_CACHE_TTL) return false;
+    catalogCatFlat = cache.catFlat || [];
+    catalogProducts = cache.products || [];
+    catalogLoaded = true;
+    updateCatalogBadge();
+    return true;
+  } catch(e) { return false; }
+}
+
+async function loadCatalog() {
+  const baseUrl = (localStorage.getItem('haarshop_magento_url') || '').replace(/\/+$/, '');
+  const apiKey = localStorage.getItem('haarshop_magento_key') || '';
+  if (!baseUrl || !apiKey) { showToast('Configureer eerst Magento in Instellingen', 'error'); return; }
+
+  const headers = { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' };
+  const badge = document.getElementById('catalogBadgeText');
+  badge.textContent = 'Laden...';
+
+  try {
+    const catRes = await fetch(`${baseUrl}/rest/V1/categories`, { method: 'GET', headers });
+    if (!catRes.ok) throw new Error(`${catRes.status}`);
+    const catTree = await catRes.json();
+    const catFlat = [];
+    function flatten(node, path = []) {
+      if (node.id > 1) catFlat.push({ id: node.id, name: node.name, fullPath: [...path, node.name].join(' > ') });
+      if (node.children_data) node.children_data.forEach(c => flatten(c, node.id > 1 ? [...path, node.name] : path));
+    }
+    flatten(catTree);
+
+    badge.textContent = 'Producten laden...';
+    const allProducts = [];
+    let page = 1, totalPages = 1;
+    while (page <= totalPages && page <= 50) {
+      const r = await fetch(`${baseUrl}/rest/V1/products?searchCriteria[pageSize]=100&searchCriteria[currentPage]=${page}&fields=items[sku,name,custom_attributes],total_count`, { method: 'GET', headers });
+      if (!r.ok) break;
+      const d = await r.json();
+      totalPages = Math.ceil((d.total_count || 0) / 100);
+      for (const item of (d.items || [])) {
+        const urlKey = item.custom_attributes?.find(a => a.attribute_code === 'url_key')?.value || '';
+        allProducts.push({ sku: item.sku, name: item.name, url_key: urlKey, url: urlKey ? `https://www.haarshop.nl/${urlKey}` : '' });
+      }
+      page++;
+    }
+
+    catalogCatFlat = catFlat;
+    catalogProducts = allProducts;
+    catalogLoaded = true;
+    localStorage.setItem(CATALOG_CACHE_KEY, JSON.stringify({ timestamp: Date.now(), catFlat, products: allProducts }));
+    updateCatalogBadge();
+    showToast(`Catalogus: ${catFlat.length} categorieën, ${allProducts.length} producten`, 'success');
+  } catch(err) {
+    badge.textContent = 'Fout: ' + err.message;
+    showToast('Catalogus laden mislukt', 'error');
+  }
+}
+
+function updateCatalogBadge() {
+  const dot = document.getElementById('catalogDot');
+  const text = document.getElementById('catalogBadgeText');
+  if (catalogLoaded) {
+    dot.className = 'catalog-dot on';
+    text.textContent = `${catalogCatFlat.length} cat · ${catalogProducts.length} prod`;
+  } else {
+    dot.className = 'catalog-dot off';
+    text.textContent = 'Niet geladen';
+  }
+}
+
+function getRelevantCatalogContext(brandName, productType) {
+  if (!catalogLoaded) return '';
+  const brandLower = brandName?.toLowerCase() || '';
+  const typeLower = productType?.toLowerCase() || '';
+  let lines = [];
+
+  const matchedCats = catalogCatFlat.filter(c => {
+    const nl = c.name.toLowerCase(), pl = c.fullPath.toLowerCase();
+    return (brandLower && (nl.includes(brandLower) || pl.includes(brandLower))) || (typeLower && (nl.includes(typeLower) || pl.includes(typeLower)));
+  }).slice(0, 12);
+  if (matchedCats.length) { lines.push('CATEGORIEËN:'); matchedCats.forEach(c => lines.push(`- ${c.fullPath}`)); }
+
+  if (brandLower && catalogProducts.length) {
+    const comps = ['conditioner','masker','mask','treatment','olie','oil','leave-in','serum','spray','shampoo','haarmasker'];
+    const typeWords = productType?.toLowerCase().split(/\s+/) || [];
+    const prods = catalogProducts.filter(p => p.name.toLowerCase().includes(brandLower)).map(p => {
+      let score = 0;
+      const nl = p.name.toLowerCase();
+      for (const c of comps) if (nl.includes(c) && !typeWords.includes(c)) score += 3;
+      return { ...p, score };
+    }).sort((a, b) => b.score - a.score).filter(p => p.url).slice(0, 12);
+    if (prods.length) { lines.push('\nGERELATEERDE PRODUCTEN:'); prods.forEach(p => lines.push(`${p.url} — ${p.name}`)); }
+  }
+  return lines.join('\n');
+}
+
+// ─── AI Sanitizers ───
+function cleanAiText(t) {
+  if (!t) return '';
+  return t.replace(/<\/?cite[^>]*>/gi,'').replace(/<\/?antml:[^>]*>/gi,'').replace(/<\/?source[^>]*>/gi,'')
+    .replace(/\[\d+\]/g,'').replace(/【[^】]*】/g,'').replace(/\s{2,}/g,' ').trim();
+}
+function cleanAiHtml(t) {
+  if (!t) return '';
+  let c = cleanAiText(t);
+  return c.replace(/<(?!\/?(?:strong|em|b|i|br|a)\b)[^>]*>/gi, '');
+}
+function extractBalancedJSON(text, idx) {
+  if (text[idx] !== '{') return null;
+  let depth = 0, inStr = false, esc = false;
+  for (let i = idx; i < text.length; i++) {
+    const ch = text[i];
+    if (esc) { esc = false; continue; }
+    if (ch === '\\' && inStr) { esc = true; continue; }
+    if (ch === '"' && !esc) { inStr = !inStr; continue; }
+    if (inStr) continue;
+    if (ch === '{') depth++;
+    if (ch === '}') { depth--; if (depth === 0) return text.substring(idx, i + 1); }
+  }
+  return null;
+}
+
+// ─── AI Generation ───
+async function generateWithAI() {
+  const name = document.getElementById('productName').value.trim();
+  if (!name) { showToast('Voer een productnaam in', 'error'); return; }
+  const apiKey = localStorage.getItem('haarshop_ai_key') || '';
+  if (!apiKey) { showToast('Stel eerst je API key in via Instellingen', 'error'); showSettingsModal(); return; }
+
+  const btn = document.getElementById('generateBtn');
+  const statusEl = document.getElementById('aiStatus');
+  const progressEl = document.getElementById('aiProgress');
+  const errorEl = document.getElementById('aiError');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinning">⟳</span> Genereren...';
+  statusEl.style.display = 'block';
+  errorEl.style.display = 'none';
+
+  const eanCode = document.getElementById('ean').value.trim();
+  const refUrl = document.getElementById('refUrl').value.trim();
+  const productSet = document.getElementById('productSet').value;
+  const cfg = getSetConfig(productSet);
+
+  // Animate progress
+  let progress = 0;
+  const progressInterval = setInterval(() => { progress = Math.min(progress + 2, 90); progressEl.style.width = progress + '%'; }, 500);
+
+  // Build prompt
+  document.getElementById('aiStatusText').textContent = 'Productinformatie opzoeken...';
+  progressEl.style.width = '10%';
+
+  let userPrompt = `Genereer een complete Haarshop.nl productopvoer voor: "${name}"`;
+  if (eanCode) userPrompt += `\nEAN / Barcode: ${eanCode}`;
+  if (productSet) userPrompt += `\nProduct set: ${productSet}`;
+  if (refUrl) userPrompt += `\nReferentie URL: ${refUrl}`;
+  if (eanCode) userPrompt += `\n\nZOEK OP EAN: Zoek EERST op de EAN-code "${eanCode}" om het exacte product te identificeren.`;
+
+  if (cfg && productSet) {
+    userPrompt += `\n\nDit is een "${productSet}" product:`;
+    userPrompt += `\n- Kies productType uit: ${cfg.productTypes.join(', ')}`;
+    if (cfg.ikHeb.length) userPrompt += `\n- Kies ikHeb uit: ${cfg.ikHeb.join(', ')}`;
+    if (cfg.werking.length) userPrompt += `\n- Kies werking uit: ${cfg.werking.join(', ')}`;
+    if (cfg.vrijVan.length) userPrompt += `\n- Kies vrijVan uit: ${cfg.vrijVan.join(', ')}`;
+    if (!cfg.showIngredients) userPrompt += `\n- ingredients: leeg laten`;
+  }
+
+  // Catalog context
+  const brand = name.split(/\s*[-–—]\s*/)[0]?.trim() || '';
+  const pType = cfg?.productTypes?.[0] || '';
+  const catalogCtx = getRelevantCatalogContext(brand, pType);
+  userPrompt += `\n\nCROSS-SELL & INTERNE LINKS:`;
+  if (catalogCtx) { userPrompt += `\n${catalogCtx}`; }
+  else { userPrompt += `\nBasis URLs: /haarverzorging/shampoo, /haarverzorging/conditioners, /haarverzorging/haarmasker, /tools/stijltangen, /tools/fohns, /merken/[merknaam]`; }
+
+  userPrompt += `\n\nAntwoord UITSLUITEND als JSON object:
+{
+  "productName": "SCHRIJFWIJZE: Merk – Lijn en Producttype – Inhoudsmaat. Voorbeeld: Olaplex – Volumizing Blow Dry Mist – 150 ml. Let op: streepjes met spaties (–), inhoudsmaat met spatie (150 ml), hoofdletters bij merk en producttype",
+  "ean": "EAN als gevonden",
+  "sku": "voorgestelde SKU",
+  "brand": "merk",
+  "line": "lijn",
+  "subLine": "sublijn of leeg",
+  "productType": "type",
+  "subProductType": "subtype of leeg",
+  "content": "inhoud",
+  "shortDescription": "1 zin, 15-20 woorden, zonder productnaam, neutraal",
+  "description": "~100 woorden, begin NIET met productnaam, mag <strong> en <em> bevatten, geen wij/onze",
+  "keyFeatures": ["6-7 eigenschappen, elk eindigt met punt"],
+  "usageSteps": ["3-5 praktische gebruiksstappen. Alleen échte stappen (aanbrengen, masseren, uitspoelen etc). GEEN cross-sell in deze stappen."],
+  "crossSellText": "PRECIES 1 zin met max 2 producten. Elk product MOET een <a href=PRODUCT-URL> link hebben. Voorbeeld: Combineer met de <a href=URL>Merk Conditioner</a> en het <a href=URL>Merk Masker</a> voor het beste resultaat.",
+  "ingredients": "INCI lijst of leeg",
+  "categories": ["altijd Nieuw + merk-categorie"],
+  "ikHeb": ["uit opties"],
+  "werking": ["uit opties"],
+  "vrijVan": ["uit opties"],
+  "specs": {},
+  "sources": {
+    "productName": "web|ai",
+    "brand": "web|ai",
+    "line": "web|ai",
+    "content": "web|ai",
+    "ingredients": "web|ai",
+    "shortDescription": "ai",
+    "description": "ai",
+    "keyFeatures": "web|ai",
+    "usageSteps": "web|ai",
+    "crossSellText": "ai",
+    "ean": "web|ai|input"
+  }
+}`;
+
+  try {
+    document.getElementById('aiStatusText').textContent = 'AI genereert content...';
+    progressEl.style.width = '30%';
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 8000,
+        system: `Je bent Productopvoer Mattie, de AI-assistent van Haarshop.nl voor SEO-geoptimaliseerde productbeschrijvingen.
+
+ZOEKREGELS:
+- Als een EAN/barcode is meegegeven, zoek daar EERST op
+- Zoek ALTIJD echte productinformatie op via web search
+- Verzin NOOIT specificaties, ingrediënten of kenmerken — leeg laten als niet gevonden
+
+PRODUCTNAAM SCHRIJFWIJZE (STRIKT):
+- Format: Merk – Lijn en Producttype – Inhoudsmaat
+- Gebruik het langere streepje (–) met spaties ervoor en erna
+- Inhoudsmaat: getal + spatie + eenheid (150 ml, 250 ml, 500 ml, 30 gr, 1000 ml)
+- Hoofdletters bij merk en producttype, zoals op de verpakking
+- Voorbeelden:
+  Olaplex – Volumizing Blow Dry Mist – 150 ml
+  Kérastase – Resistance Bain Force Architecte – 250 ml
+  Wella Professionals – Ultimate Color Shampoo – 250 ml
+  Moroccanoil – Treatment – 100 ml
+  Redken – All Soft Conditioner – 300 ml
+
+SCHRIJFSTIJL:
+- Foutloos, overtuigend, aantrekkelijk Nederlands
+- Vermijd wij/onze (alleen bij "dan zorgen wij dat deze snel bij je wordt bezorgd")
+- Professioneel, inspirerend, toegankelijk
+
+OPMAAK:
+- Short description: 1 zin, 15-20 woorden, geen productnaam
+- Description: ~100 woorden, begin niet met productnaam, mag <strong>/<em> tags
+- Eigenschappen: 6-7 punten, elke zin eindigt met punt
+- Gebruiksaanwijzing: 3-5 praktische stappen. Cross-sell hoort NIET in usageSteps — dat gaat apart in crossSellText
+- crossSellText: PRECIES 1 zin met max 2 gelinkte producten. Noem NOOIT een product zonder <a href> link. Gebruik product-URLs uit de meegeleverde lijst. Alleen categorie-URL als fallback als er geen productlinks beschikbaar zijn.
+
+CROSS-SELL FOUTEN DIE JE MOET VERMIJDEN:
+- FOUT: Twee aparte cross-sell stappen in usageSteps (bijv. stap 6 én stap 7 zijn allebei cross-sell)
+- FOUT: Categorie-links gebruiken als er product-links beschikbaar zijn
+- FOUT: Een productnaam noemen zonder werkende link
+- GOED: usageSteps bevat alleen echte gebruiksstappen, crossSellText bevat 1 zin met 1-2 gelinkte producten
+
+BRONVERMELDING (sources object):
+- Vul per veld in of de info van "web" (gevonden via search) of "ai" (door jou gegenereerd) komt
+- "web" = feitelijke info die je hebt gevonden op een website (ingrediënten, specificaties, productnaam, inhoud, EAN)
+- "ai" = door jou geschreven tekst (beschrijvingen, eigenschappen, gebruiksaanwijzing, cross-sell, SEO)
+- Dit helpt de gebruiker om te weten wat gecontroleerd moet worden
+
+ANTWOORD: Alleen JSON, geen uitleg/markdown/backticks/cite-tags`,
+        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+        messages: [{ role: 'user', content: userPrompt }]
+      })
+    });
+
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.error?.message || `API fout (${response.status})`);
+    }
+
+    document.getElementById('aiStatusText').textContent = 'Antwoord verwerken...';
+    progressEl.style.width = '80%';
+
+    const result = await response.json();
+    const allText = result.content?.filter(b => b.type === 'text').map(b => b.text || '').join('\n') || '';
+
+    // Parse JSON with 3 strategies
+    let parsed = null;
+    const codeBlock = allText.match(/```json\s*([\s\S]*?)```/);
+    if (codeBlock) try { parsed = JSON.parse(codeBlock[1].trim()); } catch(e) {}
+    if (!parsed) { const s = allText.indexOf('{"'); if (s !== -1) { const j = extractBalancedJSON(allText, s); if (j) try { parsed = JSON.parse(j); } catch(e) {} } }
+    if (!parsed) { for (let i = 0; i < allText.length; i++) { if (allText[i] === '{') { const c = extractBalancedJSON(allText, i); if (c?.includes('"productName"')) try { parsed = JSON.parse(c); break; } catch(e) {} } } }
+    if (!parsed) throw new Error('Kon geen geldig JSON-antwoord vinden. Probeer opnieuw.');
+
+    // Fill fields
+    document.getElementById('productName').value = cleanAiText(parsed.productName || name);
+    document.getElementById('ean').value = cleanAiText(parsed.ean || eanCode || '');
+    document.getElementById('sku').value = cleanAiText(parsed.sku || '');
+    document.getElementById('brand').value = cleanAiText(parsed.brand || '');
+    document.getElementById('line').value = cleanAiText(parsed.line || '');
+    document.getElementById('subLine').value = cleanAiText(parsed.subLine || '');
+    document.getElementById('contentSize').value = cleanAiText(parsed.content || '');
+    document.getElementById('productType').value = cleanAiText(parsed.productType || '');
+    document.getElementById('subProductType').value = cleanAiText(parsed.subProductType || '');
+    document.getElementById('shortDescription').value = cleanAiText(parsed.shortDescription || '');
+    document.getElementById('description').value = cleanAiHtml(parsed.description || '');
+    document.getElementById('crossSellText').value = cleanAiHtml(parsed.crossSellText || '');
+    document.getElementById('ingredients').value = cleanAiText(parsed.ingredients || '');
+
+    if (parsed.keyFeatures) data.features = [...parsed.keyFeatures.map(cleanAiText), ...Array(7).fill('')].slice(0, 7);
+    if (parsed.usageSteps) data.steps = parsed.usageSteps.map(cleanAiHtml);
+    if (parsed.categories) data.categories = parsed.categories.map(cleanAiText);
+    if (parsed.ikHeb) data.ikHeb = parsed.ikHeb.map(cleanAiText);
+    if (parsed.werking) data.werking = parsed.werking.map(cleanAiText);
+    if (parsed.vrijVan) data.vrijVan = parsed.vrijVan.map(cleanAiText);
+    if (parsed.specs) { for (const [k,v] of Object.entries(parsed.specs)) dynamicFieldValues[k] = v; }
+
+    // Track sources from AI response
+    if (parsed.sources) {
+      for (const [key, src] of Object.entries(parsed.sources)) {
+        fieldSources[key] = src === 'web' ? 'web' : 'ai';
+      }
+    } else {
+      // Default: assume factual fields are web, written fields are ai
+      const webFields = ['productName','brand','line','subLine','content','ingredients','ean','contentSize'];
+      const aiFields = ['shortDescription','description','keyFeatures','usageSteps','crossSellText','categories','ikHeb','werking','vrijVan'];
+      webFields.forEach(f => { if (parsed[f]) fieldSources[f] = 'web'; });
+      aiFields.forEach(f => { if (parsed[f]) fieldSources[f] = 'ai'; });
+    }
+    // SEO fields are always auto-generated
+    fieldSources['seoTitle'] = 'ai';
+    fieldSources['seoDescription'] = 'ai';
+    fieldSources['urlKey'] = 'ai';
+    fieldSources['metaTitle'] = 'ai';
+    // SKU is always AI-suggested
+    if (parsed.sku) fieldSources['sku'] = 'ai';
+
+    // Auto-generate SEO fields
+    const pName = document.getElementById('productName').value;
+    document.getElementById('seoTitle').value = pName + ' - morgen in huis✓';
+    document.getElementById('seoDescription').value = pName + ' bestel je voordelig op Haarshop.nl ✓ Morgen in Huis ✓ Achteraf betalen ✓ GRATIS verzending vanaf €35,-';
+    document.getElementById('urlKey').value = pName.toLowerCase().replace(/[éè]/g,'e').replace(/[ü]/g,'u').replace(/[ï]/g,'i').replace(/[']/g,'').replace(/\s*[-–—]\s*/g,'-').replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'').replace(/-+/g,'-');
+    document.getElementById('metaTitle').value = pName.replace(/\s*[-–—]\s*/g,' ');
+
+    progressEl.style.width = '100%';
+    document.getElementById('aiStatusText').textContent = '✓ Content gegenereerd!';
+    showToast('Product gegenereerd! Controleer de content.', 'success');
+
+    // Auto-advance to productgegevens step to review/verify
+    setTimeout(() => goToStep(1), 800);
+
+  } catch(err) {
+    errorEl.style.display = 'block';
+    errorEl.textContent = err.message;
+    showToast('Genereren mislukt', 'error');
+  } finally {
+    clearInterval(progressInterval);
+    btn.disabled = false;
+    btn.innerHTML = '✦ Genereer met AI';
+  }
+}
+
+// ─── Magento Push ───
+async function pushToMagento() {
+  const baseUrl = (localStorage.getItem('haarshop_magento_url') || '').replace(/\/+$/, '');
+  const apiKey = localStorage.getItem('haarshop_magento_key') || '';
+  if (!baseUrl || !apiKey) { showToast('Configureer eerst Magento in Instellingen', 'error'); return; }
+
+  const statusEl = document.getElementById('pushStatus');
+  statusEl.style.display = 'block';
+  statusEl.style.background = 'rgba(120,199,201,0.08)';
+  statusEl.style.color = 'var(--teal)';
+  statusEl.style.border = '1px solid rgba(120,199,201,0.15)';
+  statusEl.textContent = 'Verbinden met Magento...';
+
+  const sku = document.getElementById('sku').value.trim();
+  if (!sku) { statusEl.textContent = '✗ SKU is verplicht voor Magento push'; statusEl.style.color = 'var(--red)'; return; }
+
+  try {
+    const headers = { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' };
+
+    // Build product payload
+    const payload = {
+      product: {
+        sku: sku,
+        name: document.getElementById('productName').value,
+        status: 1,
+        visibility: 4,
+        type_id: 'simple',
+        custom_attributes: [
+          { attribute_code: 'short_description', value: buildShortHTML() },
+          { attribute_code: 'description', value: buildFullHTML() },
+          { attribute_code: 'meta_title', value: document.getElementById('metaTitle').value },
+          { attribute_code: 'meta_description', value: document.getElementById('seoDescription').value },
+          { attribute_code: 'url_key', value: document.getElementById('urlKey').value },
+        ]
+      }
+    };
+
+    statusEl.textContent = 'Product opslaan...';
+    const res = await fetch(`${baseUrl}/rest/V1/products`, {
+      method: 'POST', headers, body: JSON.stringify(payload)
+    });
+
+    if (res.ok) {
+      statusEl.textContent = '✓ Product succesvol gepubliceerd naar Magento!';
+      statusEl.style.background = 'rgba(74,222,128,0.08)';
+      statusEl.style.color = 'var(--green)';
+      showToast('Product gepubliceerd naar Magento!', 'success');
+    } else {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || `Magento fout (${res.status})`);
+    }
+  } catch(err) {
+    statusEl.textContent = '✗ ' + err.message;
+    statusEl.style.background = 'rgba(248,113,113,0.08)';
+    statusEl.style.color = 'var(--red)';
+    statusEl.style.border = '1px solid rgba(248,113,113,0.15)';
+    showToast('Magento push mislukt — gebruik de kopieerblokken hierboven', 'error');
+  }
+}
+
+// ─── Autosave ───
+const SAVE_KEY = 'mattie2_state';
+function saveState() {
+  try {
+    const fields = {};
+    ['productName','ean','sku','brand','line','subLine','contentSize','productType','subProductType',
+     'shortDescription','description','crossSellText','ingredients','urlKey','metaTitle','seoTitle','seoDescription','refUrl'].forEach(id => {
+      fields[id] = document.getElementById(id)?.value || '';
+    });
+    fields.productSet = document.getElementById('productSet')?.value || '';
+    localStorage.setItem(SAVE_KEY, JSON.stringify({ fields, data, dynamicFieldValues, fieldSources, currentStep, timestamp: Date.now() }));
+  } catch(e) {}
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return;
+    const state = JSON.parse(raw);
+    if (state.fields) {
+      Object.entries(state.fields).forEach(([id, val]) => {
+        const el = document.getElementById(id);
+        if (el) el.value = val;
+      });
+      if (state.fields.productSet) document.getElementById('productSet').value = state.fields.productSet;
+    }
+    if (state.data) Object.assign(data, state.data);
+    if (state.dynamicFieldValues) dynamicFieldValues = state.dynamicFieldValues;
+    if (state.fieldSources) fieldSources = state.fieldSources;
+    showToast('Vorige sessie hersteld', 'success');
+  } catch(e) {}
+}
+
+function resetAll() {
+  if (!confirm('Alle velden wissen en opnieuw beginnen?')) return;
+  localStorage.removeItem(SAVE_KEY);
+  location.reload();
+}
+
+// ─── Auto-save on input ───
+let saveTimeout;
+document.addEventListener('input', () => { clearTimeout(saveTimeout); saveTimeout = setTimeout(saveState, 500); });
+
+// ─── Init ───
+document.addEventListener('DOMContentLoaded', () => {
+  loadCatalogFromCache();
+  loadState();
+  renderFeatures();
+  renderSteps();
+  runValidation();
+});
+</script>
+</body>
+</html>
