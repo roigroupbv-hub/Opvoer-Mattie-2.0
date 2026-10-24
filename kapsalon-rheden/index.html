@@ -2,24 +2,29 @@
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kapsalon Rheden — Kapper aan de Groenestraat in Rheden</title>
-<meta name="description" content="Kapsalon Rheden aan de Groenestraat 39 in Rheden: knippen, kleuren en persoonlijk haaradvies voor dames, heren en kinderen. Voorheen Dierking Coiffures Rheden.">
-<meta name="theme-color" content="#fbf7f2">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kapsalon Rheden · Kapper aan de Groenestraat in Rheden</title>
+<meta name="description" content="Kapsalon Rheden aan de Groenestraat 39: knippen, kleuren en persoonlijk advies voor dames, heren en kinderen. Voorheen Dierking Coiffures Rheden.">
+<meta name="theme-color" content="#141211">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Kapsalon Rheden">
 <meta property="og:description" content="Knippen, kleuren en persoonlijk advies in het centrum van Rheden. Groenestraat 39.">
+<meta property="og:image" content="img/interieur.jpg">
 <meta property="og:locale" content="nl_NL">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 48'%3E%3Cpath d='M0 20a20 20 0 0 1 40 0v28H0z' fill='%23d9b4a2'/%3E%3Ctext x='20' y='36' text-anchor='middle' font-family='Georgia,serif' font-style='italic' font-size='26' fill='%232a201b'%3ER%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
-<script>document.documentElement.classList.add('js');</script>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600&family=Poppins:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<script src="assets/js/main.js" defer></script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "HairSalon",
   "name": "Kapsalon Rheden",
+  "image": "img/interieur.jpg",
+  "logo": "img/logo-kapsalon-rheden.png",
   "telephone": "+31264951200",
   "email": "info@kapsalonrheden.nl",
   "priceRange": "€€",
@@ -37,708 +42,220 @@
   ]
 }
 </script>
-<style>
-:root {
-  --ivory: #fbf7f2;
-  --paper: #fffdfa;
-  --cream: #f4ece2;
-  --sand: #eadccd;
-  --blush: #e6cfc2;
-  --rose: #c99a86;
-  --clay: #a5735f;
-  --clay-deep: #7d5443;
-  --gold-text: #8a6a3a;
-  --espresso: #2a201b;
-  --espresso-2: #211915;
-  --text: #3d312b;
-  --text-soft: #6b5a50;
-  --line: rgba(42,32,27,0.12);
-  --line-light: rgba(251,247,242,0.16);
-  --sage: #7f9a7a;
-  --serif: 'Cormorant Garamond', 'Times New Roman', Georgia, serif;
-  --sans: 'Jost', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
-  --max: 1200px;
-}
-* { margin:0; padding:0; box-sizing:border-box; }
-html { scroll-behavior:smooth; scroll-padding-top:96px; }
-body {
-  font-family:var(--sans); font-weight:300; font-size:17px; line-height:1.7;
-  color:var(--text); background:var(--ivory); overflow-x:hidden;
-  -webkit-font-smoothing:antialiased;
-}
-img { display:block; max-width:100%; }
-a { color:inherit; }
-::selection { background:var(--blush); color:var(--espresso); }
-:focus-visible { outline:2px solid var(--clay); outline-offset:3px; }
-.wrap { max-width:var(--max); margin:0 auto; padding:0 32px; }
-h1, h2, h3 { font-family:var(--serif); font-weight:500; color:var(--espresso); line-height:1.08; letter-spacing:-0.01em; }
-h1 em, h2 em, h3 em { font-style:italic; font-weight:400; color:var(--clay); }
-.hero-facts dd, .price-list .price, .hours td, .visit-list .value, .booking-phone strong { font-variant-numeric:lining-nums; }
-.sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
-
-/* ─── Buttons ─── */
-.btn {
-  display:inline-flex; align-items:center; justify-content:center; gap:10px;
-  padding:15px 30px; border-radius:999px; border:1px solid transparent;
-  font-family:var(--sans); font-size:14px; font-weight:500; letter-spacing:0.06em;
-  text-decoration:none; cursor:pointer; white-space:nowrap;
-  transition:background .25s, color .25s, border-color .25s;
-}
-.btn-dark { background:var(--espresso); color:var(--ivory); }
-.btn-dark:hover { background:var(--clay-deep); }
-.btn-ghost { border-color:rgba(42,32,27,0.25); color:var(--espresso); background:transparent; }
-.btn-ghost:hover { border-color:var(--espresso); background:var(--espresso); color:var(--ivory); }
-.btn-light { background:var(--ivory); color:var(--espresso); }
-.btn-light:hover { background:var(--blush); }
-.btn-sm { padding:10px 22px; font-size:13px; }
-
-/* ─── Eyebrow ─── */
-.eyebrow {
-  display:inline-flex; align-items:center; gap:12px; margin-bottom:22px;
-  font-size:12px; font-weight:500; letter-spacing:0.22em; text-transform:uppercase; color:var(--gold-text);
-}
-.eyebrow::before { content:''; width:28px; height:1px; background:currentColor; }
-.eyebrow.light { color:var(--blush); }
-.center .eyebrow::after { content:''; width:28px; height:1px; background:currentColor; }
-
-/* ─── Notice + Header ─── */
-.notice {
-  background:var(--espresso); color:var(--sand); text-align:center;
-  font-size:13px; letter-spacing:0.02em; padding:10px 20px;
-}
-.notice strong { color:var(--ivory); font-weight:500; }
-.site-header {
-  position:sticky; top:0; z-index:50;
-  background:rgba(251,247,242,0.88); backdrop-filter:saturate(1.2) blur(14px); -webkit-backdrop-filter:saturate(1.2) blur(14px);
-  border-bottom:1px solid transparent; transition:border-color .3s, box-shadow .3s;
-}
-.site-header.scrolled { border-bottom-color:var(--line); box-shadow:0 8px 30px -20px rgba(42,32,27,0.4); }
-.header-inner { display:flex; align-items:center; justify-content:space-between; height:80px; }
-.brand { display:flex; align-items:center; gap:12px; text-decoration:none; }
-.brand-mark {
-  width:38px; height:46px; border-radius:19px 19px 3px 3px; padding-top:6px;
-  display:flex; align-items:center; justify-content:center;
-  background:linear-gradient(170deg, var(--blush), var(--rose));
-  font-family:var(--serif); font-style:italic; font-size:24px; color:var(--espresso);
-}
-.brand-name { font-family:var(--serif); font-size:25px; font-weight:500; color:var(--espresso); letter-spacing:0.01em; }
-.brand-name em { font-style:italic; font-weight:400; color:var(--clay); }
-.nav { display:flex; align-items:center; gap:34px; }
-.nav a:not(.btn) { position:relative; padding:4px 0; font-size:14px; letter-spacing:0.04em; text-decoration:none; color:var(--text); }
-.nav a:not(.btn)::after {
-  content:''; position:absolute; left:0; right:0; bottom:-2px; height:1px; background:var(--clay);
-  transform:scaleX(0); transform-origin:left; transition:transform .3s;
-}
-.nav a:not(.btn):hover::after { transform:scaleX(1); }
-.nav-toggle { display:none; }
-
-/* ─── Hero ─── */
-.hero { position:relative; padding:72px 0 104px; overflow:hidden; }
-.hero::before {
-  content:''; position:absolute; width:760px; height:760px; right:-260px; top:-40px; border-radius:50%;
-  background:radial-gradient(circle, rgba(230,207,194,0.6), transparent 65%); pointer-events:none;
-}
-.hero-grid { position:relative; display:grid; grid-template-columns:1.05fr 0.95fr; gap:72px; align-items:center; }
-.hero h1 { font-size:clamp(48px, 6.4vw, 90px); margin-bottom:28px; }
-.lead { font-size:19px; color:var(--text-soft); max-width:520px; margin-bottom:38px; }
-.hero-actions { display:flex; flex-wrap:wrap; gap:14px; margin-bottom:56px; }
-.hero-facts { display:flex; gap:44px; max-width:540px; padding-top:28px; border-top:1px solid var(--line); }
-.hero-facts dt { font-size:12px; letter-spacing:0.18em; text-transform:uppercase; color:var(--text-soft); margin-bottom:2px; }
-.hero-facts dd { font-family:var(--serif); font-size:27px; color:var(--espresso); }
-.hero-facts dd small { font-family:var(--sans); font-size:13px; color:var(--text-soft); margin-right:4px; }
-.hero-visual { position:relative; height:640px; }
-.hero-visual .arch-lg { position:absolute; right:0; top:0; width:76%; height:92%; }
-.hero-visual .arch-sm { position:absolute; left:0; bottom:0; width:40%; height:44%; border:8px solid var(--ivory); }
-
-/* ─── Arches (photo frames) ─── */
-.arch {
-  position:relative; overflow:hidden; border-radius:999px 999px 20px 20px;
-  background:linear-gradient(165deg, #f1e3d8 0%, #ddbfad 52%, #c39886 100%);
-}
-.arch.tone-2 { background:linear-gradient(195deg, #efe4d6 0%, #d8c1a6 55%, #b8957a 100%); }
-.arch.tone-3 { background:linear-gradient(150deg, #e9d3c9 0%, #cfa797 55%, #a8786a 100%); }
-.arch-art { position:absolute; inset:0; width:100%; height:100%; }
-.arch img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
-
-.status-card {
-  position:absolute; left:4%; top:16%; z-index:2;
-  display:flex; align-items:center; gap:14px; padding:16px 22px 16px 18px; border-radius:16px;
-  background:var(--paper); box-shadow:0 24px 50px -24px rgba(42,32,27,0.45);
-}
-.status-dot { position:relative; width:10px; height:10px; border-radius:50%; background:var(--rose); flex-shrink:0; }
-.status-dot.open { background:var(--sage); }
-.status-dot.open::after {
-  content:''; position:absolute; inset:-5px; border-radius:50%; border:1px solid var(--sage);
-  animation:pulse 2.2s ease-out infinite;
-}
-.status-dot.later { background:#c9a46a; }
-@keyframes pulse { from { opacity:0.9; transform:scale(0.6); } to { opacity:0; transform:scale(1.6); } }
-.status-title { font-family:var(--serif); font-size:21px; font-weight:600; color:var(--espresso); line-height:1.15; }
-.status-sub { font-size:13px; color:var(--text-soft); line-height:1.4; }
-
-/* ─── Ribbon ─── */
-.ribbon { overflow:hidden; padding:22px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
-.ribbon-track { display:flex; width:max-content; animation:ribbon 46s linear infinite; }
-.ribbon-track span { padding-right:40px; font-family:var(--serif); font-style:italic; font-size:30px; color:var(--espresso); white-space:nowrap; }
-.ribbon-track i { padding-right:40px; align-self:center; font-style:normal; font-size:14px; color:var(--rose); }
-@keyframes ribbon { to { transform:translateX(-50%); } }
-
-/* ─── Sections ─── */
-.section { padding:128px 0; }
-.section-head { max-width:660px; margin-bottom:64px; }
-.section-head.center { margin-left:auto; margin-right:auto; text-align:center; }
-h2 { font-size:clamp(40px, 4.6vw, 62px); margin-bottom:22px; }
-.section-head p:not(.eyebrow) { font-size:18px; color:var(--text-soft); }
-
-/* ─── About ─── */
-.about-grid { display:grid; grid-template-columns:0.9fr 1.1fr; gap:104px; align-items:center; }
-.about-visual { position:relative; }
-.about-visual .arch { aspect-ratio:4 / 5; }
-.about-badge {
-  position:absolute; right:-36px; bottom:56px; width:156px; height:156px; border-radius:50%;
-  display:flex; align-items:center; justify-content:center; background:var(--espresso);
-}
-.about-badge svg { position:absolute; inset:0; width:100%; height:100%; animation:spin 30s linear infinite; }
-.about-badge text { font-family:var(--sans); font-size:12.5px; font-weight:500; letter-spacing:0.18em; fill:var(--sand); text-transform:uppercase; }
-.about-badge span { font-family:var(--serif); font-style:italic; font-size:44px; color:var(--blush); line-height:1; }
-@keyframes spin { to { transform:rotate(360deg); } }
-.about-copy > p:not(.eyebrow) { font-size:18px; color:var(--text-soft); margin-bottom:18px; }
-.pillars { display:grid; gap:26px; margin-top:44px; }
-.pillar { display:grid; grid-template-columns:54px 1fr; gap:18px; padding-top:26px; border-top:1px solid var(--line); }
-.pillar-num { font-family:var(--serif); font-style:italic; font-size:32px; line-height:1; color:var(--rose); }
-.pillar h3 { font-size:27px; margin-bottom:6px; }
-.pillar p { color:var(--text-soft); }
-
-/* ─── Services ─── */
-.services { background:var(--cream); }
-.service-grid {
-  display:grid; grid-template-columns:repeat(3, 1fr); gap:1px;
-  background:var(--line); border:1px solid var(--line); border-radius:28px; overflow:hidden;
-}
-.service { background:var(--cream); padding:46px 40px 50px; transition:background .35s; }
-.service:hover { background:var(--ivory); }
-.service-icon {
-  width:54px; height:54px; margin-bottom:28px; border-radius:50%;
-  display:flex; align-items:center; justify-content:center;
-  border:1px solid rgba(165,115,95,0.35); color:var(--clay);
-}
-.service-icon svg { width:24px; height:24px; fill:none; stroke:currentColor; stroke-width:1.3; stroke-linecap:round; stroke-linejoin:round; }
-.service h3 { font-size:29px; margin-bottom:10px; }
-.service p { font-size:16px; color:var(--text-soft); }
-
-/* ─── Prices ─── */
-.price-grid { display:grid; grid-template-columns:repeat(2, 1fr); gap:28px; }
-.price-card { padding:44px 44px 38px; border:1px solid var(--line); border-radius:24px; background:var(--paper); }
-.price-card-head { display:flex; align-items:baseline; justify-content:space-between; gap:16px; margin-bottom:22px; padding-bottom:18px; border-bottom:1px solid var(--line); }
-.price-card h3 { font-size:34px; }
-.price-card-head span { font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-soft); }
-.price-list { list-style:none; }
-.price-list li { display:flex; align-items:baseline; padding:11px 0; }
-.price-list .item { color:var(--text); }
-.price-list .dots { flex:1; min-width:24px; margin:0 12px; border-bottom:1px dotted rgba(42,32,27,0.3); transform:translateY(-5px); }
-.price-list .price { font-family:var(--serif); font-size:22px; font-weight:500; color:var(--espresso); white-space:nowrap; }
-.price-list .price small { font-family:var(--sans); font-size:12px; font-weight:400; color:var(--text-soft); margin-right:4px; }
-.price-advice {
-  grid-column:1 / -1; display:flex; align-items:center; justify-content:space-between; gap:32px;
-  padding:40px 48px; border-radius:24px; background:linear-gradient(120deg, var(--blush), var(--sand));
-}
-.price-advice h3 { font-size:32px; margin-bottom:6px; }
-.price-advice p { color:var(--text); max-width:560px; }
-.price-footnote { margin-top:28px; text-align:center; font-size:14px; color:var(--text-soft); }
-
-/* ─── Contact / hours ─── */
-.contact { background:var(--cream); }
-.contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:28px; align-items:stretch; }
-.hours-card, .visit-card { border-radius:28px; padding:56px; }
-.hours-card { background:var(--paper); border:1px solid var(--line); }
-.hours { width:100%; border-collapse:collapse; margin-top:12px; }
-.hours th, .hours td { padding:15px 0; border-bottom:1px solid var(--line); font-size:16px; text-align:left; }
-.hours th { font-weight:400; color:var(--text); }
-.hours td { text-align:right; font-family:var(--serif); font-size:21px; font-weight:500; color:var(--espresso); }
-.hours tr.closed td { font-family:var(--sans); font-size:15px; font-weight:300; color:var(--text-soft); }
-.hours tr:last-child th, .hours tr:last-child td { border-bottom:0; }
-.hours tr.today th { font-weight:500; color:var(--espresso); }
-.hours tr.today th::after {
-  content:'Vandaag'; display:inline-block; margin-left:10px; padding:2px 10px; border-radius:999px; vertical-align:2px;
-  background:var(--blush); font-size:11px; font-weight:500; letter-spacing:0.12em; text-transform:uppercase; color:var(--clay-deep);
-}
-.visit-card { position:relative; overflow:hidden; display:flex; flex-direction:column; background:var(--espresso); color:var(--sand); }
-.visit-card > * { position:relative; }
-.visit-card .visit-art { position:absolute; left:0; right:0; bottom:0; width:100%; height:60%; opacity:0.22; pointer-events:none; }
-.visit-card h2 { color:var(--ivory); }
-.visit-card h2 em { color:var(--rose); }
-.visit-list { list-style:none; margin:12px 0 40px; }
-.visit-list li { display:grid; grid-template-columns:120px 1fr; gap:16px; padding:16px 0; border-bottom:1px solid var(--line-light); }
-.visit-list li:last-child { border-bottom:0; }
-.visit-list .label { font-size:12px; letter-spacing:0.18em; text-transform:uppercase; color:var(--rose); padding-top:4px; }
-.visit-list .value { font-family:var(--serif); font-size:23px; line-height:1.35; color:var(--ivory); }
-.visit-list a { text-decoration:none; border-bottom:1px solid rgba(251,247,242,0.3); transition:border-color .25s; }
-.visit-list a:hover { border-color:var(--ivory); }
-.visit-actions { margin-top:auto; display:flex; flex-wrap:wrap; gap:12px; }
-.visit-card .btn-ghost { border-color:rgba(251,247,242,0.3); color:var(--ivory); }
-.visit-card .btn-ghost:hover { background:var(--ivory); color:var(--espresso); border-color:var(--ivory); }
-
-/* ─── Booking ─── */
-.booking { background:var(--espresso-2); color:var(--sand); }
-.booking-grid { display:grid; grid-template-columns:0.9fr 1.1fr; gap:96px; align-items:start; }
-.booking h2 { color:var(--ivory); }
-.booking h2 em { color:var(--rose); }
-.booking-copy > p:not(.eyebrow) { font-size:18px; color:rgba(234,220,205,0.8); margin-bottom:40px; max-width:440px; }
-.booking-phone { display:inline-flex; flex-direction:column; text-decoration:none; }
-.booking-phone span { font-size:12px; letter-spacing:0.2em; text-transform:uppercase; color:var(--rose); }
-.booking-phone strong { font-family:var(--serif); font-size:40px; font-weight:500; color:var(--ivory); border-bottom:1px solid rgba(251,247,242,0.25); transition:border-color .25s; }
-.booking-phone:hover strong { border-color:var(--ivory); }
-.booking-form { display:grid; grid-template-columns:1fr 1fr; gap:26px 28px; padding:48px; border-radius:28px; border:1px solid var(--line-light); background:rgba(251,247,242,0.03); }
-.form-field { display:flex; flex-direction:column; gap:8px; }
-.form-field.full { grid-column:1 / -1; }
-.form-field label { font-size:12px; font-weight:500; letter-spacing:0.16em; text-transform:uppercase; color:var(--blush); }
-.form-field input, .form-field select, .form-field textarea {
-  width:100%; padding:12px 0; border:0; border-bottom:1px solid rgba(251,247,242,0.28); border-radius:0;
-  background:transparent; color:var(--ivory); font-family:var(--sans); font-size:17px; font-weight:300;
-  transition:border-color .25s;
-}
-.form-field select {
-  appearance:none; cursor:pointer; padding-right:28px;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='none' stroke='%23e6cfc2' stroke-width='1.3' d='M2 4.5l4 4 4-4'/%3E%3C/svg%3E");
-  background-repeat:no-repeat; background-position:right 4px center;
-}
-.form-field select option { color:var(--espresso); }
-.form-field textarea { resize:vertical; min-height:96px; line-height:1.6; }
-.form-field input::placeholder, .form-field textarea::placeholder { color:rgba(234,220,205,0.4); }
-.form-field input:focus, .form-field select:focus, .form-field textarea:focus { outline:none; border-bottom-color:var(--rose); }
-.form-actions { grid-column:1 / -1; display:flex; align-items:center; gap:24px; flex-wrap:wrap; margin-top:6px; }
-.form-note { flex:1; min-width:220px; font-size:14px; line-height:1.55; color:rgba(234,220,205,0.7); }
-
-/* ─── Footer ─── */
-.site-footer { background:var(--espresso-2); color:rgba(234,220,205,0.75); border-top:1px solid var(--line-light); padding:56px 0 40px; font-size:15px; }
-.footer-grid { display:flex; justify-content:space-between; gap:40px; flex-wrap:wrap; }
-.site-footer .brand-name { color:var(--ivory); }
-.site-footer .brand-name em { color:var(--rose); }
-.footer-col p { line-height:1.8; }
-.footer-col a { text-decoration:none; }
-.footer-col a:hover { color:var(--ivory); }
-.footer-nav { display:flex; flex-direction:column; gap:6px; }
-.footer-bottom { margin-top:44px; padding-top:24px; border-top:1px solid var(--line-light); font-size:13px; color:rgba(234,220,205,0.55); display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; }
-
-/* ─── Mobile action bar ─── */
-.mobile-bar { display:none; }
-
-/* ─── Reveal ─── */
-.js .reveal { opacity:0; transform:translateY(26px); transition:opacity .9s ease, transform .9s ease; }
-.js .reveal.in { opacity:1; transform:none; }
-
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior:auto; }
-  .ribbon-track, .about-badge svg, .status-dot.open::after { animation:none; }
-  .js .reveal { opacity:1; transform:none; transition:none; }
-}
-
-/* ─── Responsive ─── */
-@media (max-width: 1080px) {
-  .hero-grid { gap:48px; }
-  .about-grid, .booking-grid { gap:64px; }
-  .hours-card, .visit-card { padding:44px; }
-  .service { padding:40px 32px 44px; }
-}
-@media (max-width: 900px) {
-  .nav-toggle {
-    display:flex; flex-direction:column; justify-content:center; gap:6px;
-    width:44px; height:44px; background:none; border:0; cursor:pointer;
-  }
-  .nav-toggle span { display:block; width:24px; height:1.5px; margin:0 auto; background:var(--espresso); transition:transform .3s; }
-  .nav-toggle[aria-expanded="true"] span:first-child { transform:translateY(3.75px) rotate(45deg); }
-  .nav-toggle[aria-expanded="true"] span:last-child { transform:translateY(-3.75px) rotate(-45deg); }
-  .nav {
-    display:none; position:absolute; top:100%; left:0; right:0;
-    flex-direction:column; align-items:stretch; gap:0; padding:8px 32px 28px;
-    background:var(--ivory); border-bottom:1px solid var(--line); box-shadow:0 20px 30px -24px rgba(42,32,27,0.4);
-  }
-  .nav.open { display:flex; }
-  .nav a:not(.btn) { padding:15px 0; border-bottom:1px solid var(--line); font-size:16px; }
-  .nav a:not(.btn)::after { display:none; }
-  .nav .btn { margin-top:20px; padding:15px 30px; font-size:14px; }
-
-  .hero { padding:48px 0 80px; }
-  .hero-grid, .about-grid, .contact-grid, .booking-grid { grid-template-columns:1fr; }
-  .hero-visual { height:520px; max-width:560px; width:100%; margin:0 auto; }
-  .about-visual { max-width:440px; margin:0 auto; width:100%; }
-  .about-badge { right:-12px; }
-  .service-grid { grid-template-columns:repeat(2, 1fr); }
-  .section { padding:96px 0; }
-}
-@media (max-width: 640px) {
-  body { font-size:16px; padding-bottom:76px; }
-  .wrap { padding:0 20px; }
-  .nav { padding:8px 20px 24px; }
-  .notice { font-size:12px; padding:9px 16px; }
-  .header-inner { height:68px; }
-  .brand-name { font-size:22px; }
-  .brand-mark { width:32px; height:39px; font-size:20px; }
-  .hero h1 { font-size:46px; }
-  .lead { font-size:17px; }
-  .hero-actions { margin-bottom:44px; }
-  .hero-actions .btn { flex:1 1 100%; }
-  .hero-facts { gap:20px; justify-content:space-between; }
-  .hero-facts dd { font-size:23px; }
-  .hero-visual { height:420px; }
-  .hero-visual .arch-lg { width:82%; }
-  .status-card { left:0; top:auto; bottom:47%; padding:12px 16px 12px 14px; }
-  .status-title { font-size:18px; }
-  .ribbon-track span { font-size:24px; }
-  .section { padding:80px 0; }
-  .section-head { margin-bottom:44px; }
-  .section-head p:not(.eyebrow), .about-copy > p:not(.eyebrow), .booking-copy > p:not(.eyebrow) { font-size:16px; }
-  .about-grid { gap:56px; }
-  .about-badge { width:120px; height:120px; right:-4px; bottom:32px; }
-  .about-badge text { font-size:12px; }
-  .about-badge span { font-size:34px; }
-  .service-grid { grid-template-columns:1fr; border-radius:22px; }
-  .service { padding:34px 26px 38px; }
-  .price-grid { grid-template-columns:1fr; gap:20px; }
-  .price-card { padding:30px 24px 26px; }
-  .price-card h3 { font-size:30px; }
-  .price-list .item { font-size:15px; }
-  .price-list .price { font-size:20px; }
-  .price-advice { flex-direction:column; align-items:flex-start; padding:32px 26px; gap:20px; }
-  .hours-card, .visit-card { padding:34px 24px; border-radius:22px; }
-  .visit-list li { grid-template-columns:1fr; gap:4px; }
-  .visit-list .value { font-size:21px; }
-  .booking-grid { gap:48px; }
-  .booking-phone strong { font-size:32px; }
-  .booking-form { grid-template-columns:1fr; padding:30px 22px; gap:22px; border-radius:22px; }
-  .form-actions .btn { width:100%; }
-
-  .mobile-bar {
-    display:flex; gap:10px; position:fixed; left:0; right:0; bottom:0; z-index:60;
-    padding:12px 16px calc(12px + env(safe-area-inset-bottom));
-    background:rgba(251,247,242,0.94); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
-    border-top:1px solid var(--line);
-  }
-  .mobile-bar .btn { flex:1; padding:13px 16px; }
-}
-</style>
 </head>
 <body>
+<a class="skip-link" href="#main">Naar de inhoud</a>
 
-<!-- Gedeelde decoratie voor de fotokaders: zichtbaar zolang er geen foto in img/ staat -->
-<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
-  <defs>
-    <g id="strands" fill="none" stroke="#fff" stroke-width="1.1" stroke-linecap="round">
-      <path d="M-60 150 C 80 40, 210 320, 460 190" stroke-opacity=".55"/>
-      <path d="M-60 178 C 80 68, 210 348, 460 218" stroke-opacity=".45"/>
-      <path d="M-60 206 C 80 96, 210 376, 460 246" stroke-opacity=".38"/>
-      <path d="M-60 234 C 80 124, 210 404, 460 274" stroke-opacity=".3"/>
-      <path d="M-60 262 C 80 152, 210 432, 460 302" stroke-opacity=".22"/>
-      <path d="M-60 420 C 110 520, 250 300, 460 410" stroke-opacity=".4"/>
-      <path d="M-60 448 C 110 548, 250 328, 460 438" stroke-opacity=".32"/>
-      <path d="M-60 476 C 110 576, 250 356, 460 466" stroke-opacity=".24"/>
-      <path d="M-60 504 C 110 604, 250 384, 460 494" stroke-opacity=".16"/>
-    </g>
-  </defs>
-</svg>
+<div class="notice">Dierking Coiffures Rheden heet voortaan <strong>Kapsalon Rheden</strong> · zelfde adres aan de Groenestraat</div>
 
-<div class="notice">
-  Dierking Coiffures Rheden heet voortaan <strong>Kapsalon Rheden</strong>. Je vindt ons op hetzelfde adres aan de Groenestraat.
-</div>
-
-<header class="site-header" id="top">
+<header class="site-header">
   <div class="wrap header-inner">
-    <a href="#top" class="brand" aria-label="Kapsalon Rheden, naar boven">
-      <span class="brand-mark" aria-hidden="true">R</span>
-      <span class="brand-name">Kapsalon <em>Rheden</em></span>
-    </a>
-    <nav class="nav" id="nav" aria-label="Hoofdmenu">
-      <a href="#over">Over ons</a>
-      <a href="#behandelingen">Behandelingen</a>
-      <a href="#prijzen">Prijzen</a>
-      <a href="#contact">Openingstijden</a>
-      <a href="#afspraak" class="btn btn-dark btn-sm">Afspraak maken</a>
+    <a class="brand" href="index.html"><img src="img/logo-kapsalon-rheden.png" alt="Kapsalon Rheden" width="163" height="48"></a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav"><span class="sr-only">Menu openen</span><span class="bar"></span><span class="bar"></span></button>
+    <nav class="nav" id="site-nav" aria-label="Hoofdmenu">
+      <ul class="nav-links">
+        <li><a href="index.html" aria-current="page">Home</a></li>
+        <li><a href="behandelingen.html">Behandelingen</a></li>
+        <li><a href="prijzen.html">Prijzen</a></li>
+        <li><a href="team.html">Team</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <a class="btn btn-accent btn-sm" href="contact.html#afspraak">Afspraak maken</a>
     </nav>
-    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav" aria-label="Menu openen">
-      <span></span><span></span>
-    </button>
   </div>
 </header>
 
-<main>
+<main id="main">
 
-  <!-- ─── Hero ─── -->
   <section class="hero">
-    <div class="wrap hero-grid">
-      <div class="hero-copy reveal">
-        <p class="eyebrow">Groenestraat 39 · Rheden</p>
-        <h1>Mooi haar,<br><em>met aandacht</em><br>gemaakt.</h1>
-        <p class="lead">Jouw kapsalon in het centrum van Rheden. Voor een frisse coupe, een nieuwe kleur of gewoon een eerlijk advies: we nemen de tijd voor je.</p>
-        <div class="hero-actions">
-          <a href="#afspraak" class="btn btn-dark">Afspraak maken</a>
-          <a href="tel:+31264951200" class="btn btn-ghost">Bel 026 495 1200</a>
-        </div>
-        <dl class="hero-facts">
-          <div><dt>Dames</dt><dd><small>v.a.</small>€ 42,50</dd></div>
-          <div><dt>Heren</dt><dd><small>v.a.</small>€ 40,00</dd></div>
-          <div><dt>Kinderen</dt><dd><small>v.a.</small>€ 31,00</dd></div>
-        </dl>
-      </div>
-
-      <div class="hero-visual reveal">
-        <div class="arch arch-lg">
-          <svg class="arch-art" viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><use href="#strands"/></svg>
-          <img src="img/hero.jpg" alt="Interieur van Kapsalon Rheden" onerror="this.remove()">
-        </div>
-        <div class="arch arch-sm tone-3">
-          <svg class="arch-art" viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><use href="#strands"/></svg>
-          <img src="img/detail.jpg" alt="Kapper aan het werk in de salon" loading="lazy" onerror="this.remove()">
-        </div>
-        <div class="status-card" aria-live="polite">
-          <span class="status-dot" id="status-dot"></span>
-          <div>
-            <p class="status-title" id="status-title">Dinsdag t/m zaterdag</p>
-            <p class="status-sub" id="status-sub">Vrijdag koopavond tot 20:00</p>
-          </div>
-        </div>
-      </div>
+    <img class="hero-bg" src="img/interieur.jpg" alt="" width="1440" height="960" fetchpriority="high">
+    <span class="eyebrow hero-eyebrow">Groenestraat 39 · Rheden</span>
+    <h1>Even tijd<br>voor jezelf</h1>
+    <p>Knippen, kleuren en persoonlijk advies in het centrum van Rheden. Een vertrouwd adres met een nieuwe naam.</p>
+    <div class="btn-row">
+      <a class="btn btn-accent" href="contact.html#afspraak">Afspraak maken</a>
+      <a class="btn btn-ghost" href="behandelingen.html">Bekijk behandelingen</a>
     </div>
   </section>
 
-  <div class="ribbon" aria-hidden="true">
-    <div class="ribbon-track">
-      <span>Knippen</span><i>✦</i><span>Kleuren</span><i>✦</i><span>Highlights</span><i>✦</i><span>Balayage</span><i>✦</i><span>Föhnen</span><i>✦</i><span>Heren</span><i>✦</i><span>Kinderen</span><i>✦</i><span>Persoonlijk advies</span><i>✦</i>
-      <span>Knippen</span><i>✦</i><span>Kleuren</span><i>✦</i><span>Highlights</span><i>✦</i><span>Balayage</span><i>✦</i><span>Föhnen</span><i>✦</i><span>Heren</span><i>✦</i><span>Kinderen</span><i>✦</i><span>Persoonlijk advies</span><i>✦</i>
+  <div class="info-strip">
+    <div class="wrap">
+      <div class="item">
+        <span class="label">Adres</span>
+        <span class="value">Groenestraat 39, Rheden</span>
+      </div>
+      <div class="item">
+        <span class="label">Openingstijden</span>
+        <span class="value" data-open-status>Di t/m za · vrijdag tot 20:00</span>
+      </div>
+      <div class="item">
+        <span class="label">Bel ons</span>
+        <a class="value" href="tel:+31264951200">026 495 1200</a>
+      </div>
     </div>
   </div>
 
-  <!-- ─── Over ons ─── -->
-  <section class="section" id="over">
-    <div class="wrap about-grid">
-      <div class="about-visual reveal">
-        <div class="arch tone-2">
-          <svg class="arch-art" viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><use href="#strands"/></svg>
-          <img src="img/salon.jpg" alt="De salon aan de Groenestraat in Rheden" loading="lazy" onerror="this.remove()">
-        </div>
-        <div class="about-badge" aria-hidden="true">
-          <svg viewBox="0 0 200 200">
-            <defs><path id="badge-circle" d="M100,100 m-74,0 a74,74 0 1,1 148,0 a74,74 0 1,1 -148,0"/></defs>
-            <text><textPath href="#badge-circle" textLength="462" lengthAdjust="spacing">Kapsalon Rheden ✦ Groenestraat 39 ✦</textPath></text>
-          </svg>
-          <span>R</span>
-        </div>
+  <section class="section">
+    <div class="wrap">
+      <div class="welcome">
+        <span class="eyebrow">Welkom</span>
+        <p class="welcome-quote">Aan de Groenestraat zit al jaren een kapsalon waar Rheden graag komt. Als Kapsalon Rheden gaan we daar met plezier mee verder.</p>
+        <p class="welcome-sub">We luisteren, denken mee en zorgen dat je de salon uitloopt met haar dat bij je past, ook als je het thuis zelf moet stylen. Met een kop koffie en zonder haast.</p>
       </div>
-
-      <div class="about-copy reveal">
-        <p class="eyebrow">Over ons</p>
-        <h2>Een vertrouwd adres, <em>een nieuwe naam</em></h2>
-        <p>Aan de Groenestraat zit al jaren een kapsalon waar Rheden graag komt. Als Kapsalon Rheden gaan we daar met plezier mee verder: dezelfde plek in het dorp, met een frisse uitstraling en dezelfde liefde voor het vak.</p>
-        <p>Bij ons zit je niet aan de lopende band. We luisteren, denken mee en zorgen dat je de salon uitloopt met haar dat bij je past, ook als je het thuis zelf moet stylen.</p>
-
-        <div class="pillars">
-          <div class="pillar">
-            <span class="pillar-num">01</span>
-            <div>
-              <h3>Persoonlijk advies</h3>
-              <p>We beginnen altijd met een gesprek: wat wil je, wat past bij je haar en wat past bij je dag?</p>
-            </div>
-          </div>
-          <div class="pillar">
-            <span class="pillar-num">02</span>
-            <div>
-              <h3>Vakwerk tot in detail</h3>
-              <p>Knippen, kleuren en stylen met goede producten en oog voor de kleine dingen die het verschil maken.</p>
-            </div>
-          </div>
-          <div class="pillar">
-            <span class="pillar-num">03</span>
-            <div>
-              <h3>Even tijd voor jezelf</h3>
-              <p>Een kop koffie, een fijne stoel en een salon waar je je meteen thuis voelt.</p>
-            </div>
-          </div>
-        </div>
+      <div class="gallery">
+        <img src="img/model-pony.jpg" alt="Vrouw met pony en warm koperbruin haar" width="1201" height="801" loading="lazy" style="object-position: 58% 30%">
+        <img class="tall" src="img/styling-krullen.jpg" alt="Kapster stylt krullen bij een klant" width="1280" height="1600" loading="lazy" style="object-position: 50% 30%">
+        <img src="img/interieur.jpg" alt="Interieur van de salon met ronde spiegels" width="1440" height="960" loading="lazy" style="object-position: 20% 50%">
       </div>
     </div>
   </section>
 
-  <!-- ─── Behandelingen ─── -->
-  <section class="section services" id="behandelingen">
+  <section class="section section-alt">
     <div class="wrap">
-      <div class="section-head center reveal">
-        <p class="eyebrow">Behandelingen</p>
-        <h2>Alles voor <em>mooi haar</em></h2>
-        <p>Van een kleine opfrisbeurt tot een complete metamorfose. Elke behandeling begint met advies op maat.</p>
+      <div class="section-head">
+        <div class="intro">
+          <span class="eyebrow">Behandelingen</span>
+          <h2 class="h2">Alles voor mooi haar</h2>
+        </div>
+        <a class="link-arrow" href="behandelingen.html">Alle behandelingen →</a>
       </div>
-
-      <div class="service-grid reveal">
-        <article class="service">
-          <div class="service-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.5 7.8 20 18M8.5 16.2 20 6"/></svg></div>
+      <div class="service-grid">
+        <a class="service-card" href="behandelingen.html#knippen">
+          <span class="service-num">I</span>
           <h3>Knippen &amp; stylen</h3>
-          <p>Een coupe die past bij je haartype, je gezicht en je dagelijkse routine. Kort, lang of ertussenin.</p>
-        </article>
-        <article class="service">
-          <div class="service-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c3.5 4.2 6 7.6 6 10.6a6 6 0 0 1-12 0C6 10.6 8.5 7.2 12 3Z"/><path d="M9.2 14.2a3 3 0 0 0 2.6 2.6"/></svg></div>
+          <p>Een coupe die past bij je haartype, je gezicht en je dagelijkse routine.</p>
+        </a>
+        <a class="service-card" href="behandelingen.html#kleuren">
+          <span class="service-num">II</span>
           <h3>Kleuren</h3>
-          <p>Uitgroei bijwerken, een volledig nieuwe kleur of grijs mooi laten meekleuren. Altijd met kleuradvies vooraf.</p>
-        </article>
-        <article class="service">
-          <div class="service-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3Q13 11 21 12Q13 13 12 21Q11 13 3 12Q11 11 12 3Z"/></svg></div>
+          <p>Uitgroei bijwerken, een nieuwe kleur of grijs mooi laten meekleuren.</p>
+        </a>
+        <a class="service-card" href="behandelingen.html#highlights">
+          <span class="service-num">III</span>
           <h3>Highlights &amp; balayage</h3>
-          <p>Zachte, natuurlijke lichtaccenten of juist een sprekend contrast, met de hand aangebracht.</p>
-        </article>
-        <article class="service">
-          <div class="service-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 8.5h17v3.5h-17z"/><path d="M6 12v6.5M9 12v6.5M12 12v6.5M15 12v6.5M18 12v6.5"/></svg></div>
+          <p>Zachte, natuurlijke lichtaccenten of juist een sprekend contrast.</p>
+        </a>
+        <a class="service-card" href="behandelingen.html#heren">
+          <span class="service-num">IV</span>
           <h3>Heren</h3>
-          <p>Strak geknipt of juist wat langer: een verzorgde coupe met aandacht voor de afwerking.</p>
-        </article>
-        <article class="service">
-          <div class="service-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 14c1 1.4 2.2 2 3.5 2s2.5-.6 3.5-2"/><path d="M9.2 9.6h.01M14.8 9.6h.01" stroke-width="2"/></svg></div>
+          <p>Strak geknipt of juist wat langer, met aandacht voor de afwerking.</p>
+        </a>
+        <a class="service-card" href="behandelingen.html#kinderen">
+          <span class="service-num">V</span>
           <h3>Kinderen</h3>
-          <p>Rustig en met geduld, zodat ook de jongste klanten met plezier in de stoel klimmen.</p>
-        </article>
-        <article class="service">
-          <div class="service-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.4-7.5-10A4.2 4.2 0 0 1 12 7.9a4.2 4.2 0 0 1 7.5 2.6c0 5.6-7.5 10-7.5 10Z"/></svg></div>
+          <p>Rustig en met geduld, zodat ook de jongste klanten graag in de stoel klimmen.</p>
+        </a>
+        <a class="service-card" href="behandelingen.html#gelegenheid">
+          <span class="service-num">VI</span>
           <h3>Föhnen &amp; gelegenheid</h3>
-          <p>Voor een feest, bruiloft of gewoon omdat het kan: mooi gestyled de deur uit.</p>
-        </article>
+          <p>Voor een feest, bruiloft of gewoon omdat het kan.</p>
+        </a>
       </div>
     </div>
   </section>
 
-  <!-- ─── Prijzen ─── -->
-  <section class="section" id="prijzen">
-    <div class="wrap">
-      <div class="section-head center reveal">
-        <p class="eyebrow">Prijzen</p>
-        <h2>Helder <em>geprijsd</em></h2>
-        <p>Je weet vooraf waar je aan toe bent. Twijfel je? Vraag gerust naar de prijs voor jouw haar.</p>
+  <section class="section">
+    <div class="wrap split">
+      <div class="split-intro">
+        <span class="eyebrow">Prijzen</span>
+        <h2 class="h2">Helder geprijsd</h2>
+        <p>Je weet vooraf waar je aan toe bent. Kleurprijzen hangen af van je haar; die spreken we altijd vooraf met je af.</p>
+        <a class="link-arrow" href="prijzen.html">Volledige prijslijst →</a>
       </div>
-
-      <div class="price-grid">
-        <article class="price-card reveal">
-          <div class="price-card-head"><h3>Dames</h3><span>Knippen</span></div>
-          <ul class="price-list">
-            <li><span class="item">Knippen &amp; drogen</span><span class="dots"></span><span class="price">€ 42,50</span></li>
-            <li><span class="item">Wassen, knippen &amp; drogen</span><span class="dots"></span><span class="price">€ 46,50</span></li>
-          </ul>
-        </article>
-
-        <article class="price-card reveal">
-          <div class="price-card-head"><h3>Heren</h3><span>Knippen</span></div>
-          <ul class="price-list">
-            <li><span class="item">Knippen</span><span class="dots"></span><span class="price">€ 40,00</span></li>
-            <li><span class="item">Wassen &amp; knippen</span><span class="dots"></span><span class="price">€ 42,50</span></li>
-          </ul>
-        </article>
-
-        <article class="price-card reveal">
-          <div class="price-card-head"><h3>Kinderen</h3><span>T/m 12 jaar</span></div>
-          <ul class="price-list">
-            <li><span class="item">Knippen</span><span class="dots"></span><span class="price">€ 31,00</span></li>
-            <li><span class="item">Wassen &amp; knippen</span><span class="dots"></span><span class="price">€ 32,50</span></li>
-          </ul>
-        </article>
-
-        <article class="price-card reveal">
-          <div class="price-card-head"><h3>Kleuren</h3><span>Op maat</span></div>
-          <ul class="price-list">
-            <li><span class="item">Basiskleuring</span><span class="dots"></span><span class="price"><small>v.a.</small>€ 59,50</span></li>
-            <li><span class="item">Highlights of lowlights</span><span class="dots"></span><span class="price"><small>v.a.</small>€ 74,00</span></li>
-            <li><span class="item">Balayage</span><span class="dots"></span><span class="price"><small>op</small>aanvraag</span></li>
-          </ul>
-        </article>
-
-        <div class="price-advice reveal">
-          <div>
-            <h3>Twijfel je over een <em>nieuwe kleur?</em></h3>
-            <p>Kom langs voor een vrijblijvend kleuradvies. We bekijken je haar, bespreken de mogelijkheden en geven je meteen een prijs.</p>
-          </div>
-          <a href="#afspraak" class="btn btn-dark">Plan kleuradvies</a>
+      <div class="price-tiles">
+        <div class="price-tile">
+          <span class="what">Dames knippen</span>
+          <div class="amount"><small>v.a.</small> € 42,50</div>
+        </div>
+        <div class="price-tile">
+          <span class="what">Heren knippen</span>
+          <div class="amount"><small>v.a.</small> € 40,00</div>
+        </div>
+        <div class="price-tile">
+          <span class="what">Kinderen t/m 12</span>
+          <div class="amount"><small>v.a.</small> € 31,00</div>
+        </div>
+        <div class="price-tile is-accent">
+          <span class="what">Kleuren</span>
+          <div class="amount"><small>v.a.</small> € 59,50</div>
         </div>
       </div>
-
-      <p class="price-footnote">Kleurprijzen zijn vanaf-prijzen en hangen af van de lengte en dikte van je haar. We spreken de prijs altijd vooraf met je af.</p>
     </div>
   </section>
 
-  <!-- ─── Openingstijden & contact ─── -->
-  <section class="section contact" id="contact">
-    <div class="wrap contact-grid">
-      <div class="hours-card reveal">
-        <p class="eyebrow">Openingstijden</p>
-        <h2>Welkom <em>bij ons</em></h2>
+  <section class="section section-alt">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="intro">
+          <span class="eyebrow">Ons team</span>
+          <h2 class="h2">Vertrouwde handen</h2>
+          <p>Het team aan de Groenestraat neemt de tijd voor je haar, je wensen en een goed gesprek.</p>
+        </div>
+        <a class="link-arrow" href="team.html">Ontmoet het team →</a>
+      </div>
+      <div class="team-grid">
+        <div class="team-card">
+          <img src="img/styling-krullen.jpg" alt="Kapster van Kapsalon Rheden aan het werk" width="1280" height="1600" loading="lazy" style="object-position: 62% 30%">
+          <h3>[Naam]</h3>
+          <span class="role">[Functie]</span>
+        </div>
+        <div class="team-card">
+          <img src="img/lang-golvend.jpg" alt="Teamlid van Kapsalon Rheden" width="1201" height="1800" loading="lazy" style="object-position: 50% 22%">
+          <h3>[Naam]</h3>
+          <span class="role">[Functie]</span>
+        </div>
+        <div class="team-card">
+          <img src="img/heer-portret.jpg" alt="Teamlid van Kapsalon Rheden" width="1200" height="1800" loading="lazy" style="object-position: 50% 20%">
+          <h3>[Naam]</h3>
+          <span class="role">[Functie]</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-bottom: 0">
+    <div class="wrap">
+      <div class="cta-band">
+        <div class="text">
+          <h2>Twijfel je over een nieuwe kleur?</h2>
+          <p>Kom langs voor een vrijblijvend kleuradvies. We bekijken je haar, bespreken de mogelijkheden en geven je meteen een prijs.</p>
+        </div>
+        <a class="btn btn-accent" href="contact.html?behandeling=Kleuradvies#afspraak">Plan kleuradvies</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap visit">
+      <div>
+        <span class="eyebrow">Openingstijden</span>
+        <h2 class="h2">Kom langs</h2>
         <table class="hours">
           <caption class="sr-only">Openingstijden van Kapsalon Rheden</caption>
           <tbody>
             <tr data-day="1" class="closed"><th scope="row">Maandag</th><td>Gesloten</td></tr>
-            <tr data-day="2" data-open="09:00" data-close="18:00"><th scope="row">Dinsdag</th><td>09:00 – 18:00</td></tr>
-            <tr data-day="3" data-open="09:00" data-close="18:00"><th scope="row">Woensdag</th><td>09:00 – 18:00</td></tr>
-            <tr data-day="4" data-open="09:00" data-close="18:00"><th scope="row">Donderdag</th><td>09:00 – 18:00</td></tr>
-            <tr data-day="5" data-open="09:00" data-close="20:00"><th scope="row">Vrijdag</th><td>09:00 – 20:00</td></tr>
-            <tr data-day="6" data-open="08:30" data-close="17:00"><th scope="row">Zaterdag</th><td>08:30 – 17:00</td></tr>
+            <tr data-day="2"><th scope="row">Dinsdag</th><td>09:00 – 18:00</td></tr>
+            <tr data-day="3"><th scope="row">Woensdag</th><td>09:00 – 18:00</td></tr>
+            <tr data-day="4"><th scope="row">Donderdag</th><td>09:00 – 18:00</td></tr>
+            <tr data-day="5"><th scope="row">Vrijdag</th><td>09:00 – 20:00</td></tr>
+            <tr data-day="6"><th scope="row">Zaterdag</th><td>08:30 – 17:00</td></tr>
             <tr data-day="0" class="closed"><th scope="row">Zondag</th><td>Gesloten</td></tr>
           </tbody>
         </table>
       </div>
-
-      <div class="visit-card reveal">
-        <svg class="visit-art" viewBox="0 0 400 300" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><use href="#strands" transform="translate(0 -260)"/></svg>
-        <p class="eyebrow light">Contact</p>
-        <h2>Kom <em>langs</em></h2>
-        <ul class="visit-list">
-          <li><span class="label">Adres</span><span class="value">Groenestraat 39<br>6991 GC Rheden</span></li>
-          <li><span class="label">Telefoon</span><span class="value"><a href="tel:+31264951200">026 495 1200</a></span></li>
-          <li><span class="label">E-mail</span><span class="value"><a href="mailto:info@kapsalonrheden.nl">info@kapsalonrheden.nl</a></span></li>
-        </ul>
-        <div class="visit-actions">
-          <a href="https://www.google.com/maps/search/?api=1&amp;query=Groenestraat+39%2C+6991+GC+Rheden" class="btn btn-light" target="_blank" rel="noopener">Plan je route</a>
-          <a href="#afspraak" class="btn btn-ghost">Afspraak maken</a>
+      <div>
+        <span class="eyebrow">Contact</span>
+        <h2 class="h2">Groenestraat 39</h2>
+        <div class="info-list">
+          <div><span class="label">Adres</span>Groenestraat 39<br>6991 GC Rheden</div>
+          <div><span class="label">Telefoon</span><a href="tel:+31264951200">026 495 1200</a></div>
+          <div><span class="label">E-mail</span><a href="mailto:info@kapsalonrheden.nl">info@kapsalonrheden.nl</a></div>
+        </div>
+        <div class="btn-row" style="margin-top: 36px">
+          <a class="btn btn-accent" href="contact.html#afspraak">Afspraak maken</a>
+          <a class="btn btn-ghost" href="https://www.google.com/maps/search/?api=1&amp;query=Groenestraat+39%2C+6991+GC+Rheden" target="_blank" rel="noopener">Plan je route</a>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- ─── Afspraak ─── -->
-  <section class="section booking" id="afspraak">
-    <div class="wrap booking-grid">
-      <div class="booking-copy reveal">
-        <p class="eyebrow light">Afspraak maken</p>
-        <h2>Tijd voor <em>iets nieuws?</em></h2>
-        <p>Laat je gegevens achter en we nemen zo snel mogelijk contact met je op om een moment in te plannen. Liever direct schakelen? Bel ons tijdens openingstijden.</p>
-        <a class="booking-phone" href="tel:+31264951200"><span>Bel direct</span><strong>026 495 1200</strong></a>
-      </div>
-
-      <form class="booking-form reveal" id="booking-form" data-email="info@kapsalonrheden.nl">
-        <div class="form-field">
-          <label for="f-naam">Naam</label>
-          <input id="f-naam" name="naam" type="text" autocomplete="name" placeholder="Je volledige naam" required>
-        </div>
-        <div class="form-field">
-          <label for="f-telefoon">Telefoon</label>
-          <input id="f-telefoon" name="telefoon" type="tel" autocomplete="tel" placeholder="06 12 34 56 78" required>
-        </div>
-        <div class="form-field">
-          <label for="f-behandeling">Behandeling</label>
-          <select id="f-behandeling" name="behandeling" required>
-            <option value="Dames knippen">Dames knippen</option>
-            <option value="Heren knippen">Heren knippen</option>
-            <option value="Kinderen knippen">Kinderen knippen</option>
-            <option value="Kleuren">Kleuren</option>
-            <option value="Highlights / balayage">Highlights / balayage</option>
-            <option value="Föhnen / gelegenheid">Föhnen / gelegenheid</option>
-            <option value="Kleuradvies">Kleuradvies</option>
-            <option value="Anders">Anders</option>
-          </select>
-        </div>
-        <div class="form-field">
-          <label for="f-moment">Voorkeursmoment</label>
-          <input id="f-moment" name="moment" type="text" placeholder="Bijv. vrijdagmiddag">
-        </div>
-        <div class="form-field full">
-          <label for="f-opmerking">Opmerking</label>
-          <textarea id="f-opmerking" name="opmerking" placeholder="Wensen, vragen of iets wat we moeten weten"></textarea>
-        </div>
-        <div class="form-actions">
-          <button type="submit" class="btn btn-light">Verstuur aanvraag</button>
-          <p class="form-note" id="form-note" aria-live="polite">Je aanvraag opent in je e-mailprogramma. Je afspraak staat vast zodra wij hem hebben bevestigd.</p>
-        </div>
-      </form>
     </div>
   </section>
 
@@ -747,135 +264,37 @@ h2 { font-size:clamp(40px, 4.6vw, 62px); margin-bottom:22px; }
 <footer class="site-footer">
   <div class="wrap">
     <div class="footer-grid">
-      <div class="footer-col">
-        <a href="#top" class="brand" aria-label="Kapsalon Rheden, naar boven">
-          <span class="brand-mark" aria-hidden="true">R</span>
-          <span class="brand-name">Kapsalon <em>Rheden</em></span>
-        </a>
+      <div class="footer-brand">
+        <img src="img/logo-kapsalon-rheden.png" alt="Kapsalon Rheden" width="218" height="64" loading="lazy">
+        <p>Knippen, kleuren en persoonlijk advies in het centrum van Rheden.</p>
       </div>
       <div class="footer-col">
-        <p>Groenestraat 39<br>6991 GC Rheden<br><a href="tel:+31264951200">026 495 1200</a></p>
+        <span class="label">Bezoek</span>
+        Groenestraat 39<br>6991 GC Rheden<br><a href="tel:+31264951200">026 495 1200</a>
       </div>
       <div class="footer-col">
-        <p>Di – do 09:00 – 18:00<br>Vr 09:00 – 20:00<br>Za 08:30 – 17:00</p>
+        <span class="label">Openingstijden</span>
+        Di – do 09:00 – 18:00<br>Vr 09:00 – 20:00<br>Za 08:30 – 17:00
       </div>
       <nav class="footer-col footer-nav" aria-label="Footermenu">
-        <a href="#over">Over ons</a>
-        <a href="#behandelingen">Behandelingen</a>
-        <a href="#prijzen">Prijzen</a>
-        <a href="#afspraak">Afspraak maken</a>
+        <span class="label">Menu</span>
+        <a href="behandelingen.html">Behandelingen</a>
+        <a href="prijzen.html">Prijzen</a>
+        <a href="team.html">Team</a>
+        <a href="contact.html">Contact &amp; afspraak</a>
       </nav>
     </div>
     <div class="footer-bottom">
-      <span>© <span id="year">2026</span> Kapsalon Rheden</span>
+      <span>© <span data-year>2026</span> Kapsalon Rheden</span>
       <span>Voorheen Dierking Coiffures Rheden</span>
     </div>
   </div>
 </footer>
 
 <div class="mobile-bar">
-  <a href="tel:+31264951200" class="btn btn-ghost">Bellen</a>
-  <a href="#afspraak" class="btn btn-dark">Afspraak maken</a>
+  <a class="btn btn-ghost" href="tel:+31264951200">Bellen</a>
+  <a class="btn btn-accent" href="contact.html#afspraak">Afspraak</a>
 </div>
 
-<script>
-(function () {
-  // ─── Menu ───
-  const toggle = document.querySelector('.nav-toggle');
-  const nav = document.getElementById('nav');
-  const setMenu = open => {
-    toggle.setAttribute('aria-expanded', String(open));
-    toggle.setAttribute('aria-label', open ? 'Menu sluiten' : 'Menu openen');
-    nav.classList.toggle('open', open);
-  };
-  toggle.addEventListener('click', () => setMenu(toggle.getAttribute('aria-expanded') !== 'true'));
-  nav.addEventListener('click', e => { if (e.target.closest('a')) setMenu(false); });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
-
-  // ─── Header-schaduw bij scrollen ───
-  const header = document.querySelector('.site-header');
-  const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 8);
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
-
-  // ─── Openingstijden: vandaag markeren + status in de hero ───
-  // De tijden komen uit de tabel in #contact; pas ze daar aan.
-  const DAYS = ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag'];
-  const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
-  const toMin = t => { const [h, m] = t.split(':').map(Number); return h * 60 + m; };
-
-  const hours = {};
-  document.querySelectorAll('.hours tr[data-day]').forEach(row => {
-    hours[Number(row.dataset.day)] = { open: row.dataset.open, close: row.dataset.close, row };
-  });
-
-  const parts = new Intl.DateTimeFormat('en-GB', {
-    timeZone: 'Europe/Amsterdam', weekday: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23'
-  }).formatToParts(new Date());
-  const part = type => parts.find(p => p.type === type).value;
-  const day = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(part('weekday'));
-  const minutes = Number(part('hour')) * 60 + Number(part('minute'));
-
-  const today = hours[day];
-  if (today) {
-    today.row.classList.add('today');
-
-    let title, sub, state = 'closed';
-    if (today.open && minutes < toMin(today.open)) {
-      title = 'Vandaag geopend'; sub = `Van ${today.open} tot ${today.close}`; state = 'later';
-    } else if (today.open && minutes < toMin(today.close)) {
-      title = 'Nu geopend'; sub = `Vandaag tot ${today.close}`; state = 'open';
-    } else {
-      for (let i = 1; i <= 7; i++) {
-        const next = hours[(day + i) % 7];
-        if (next && next.open) {
-          title = 'Nu gesloten';
-          sub = `${i === 1 ? 'Morgen' : cap(DAYS[(day + i) % 7])} weer open vanaf ${next.open}`;
-          break;
-        }
-      }
-    }
-    if (title) {
-      document.getElementById('status-title').textContent = title;
-      document.getElementById('status-sub').textContent = sub;
-      document.getElementById('status-dot').classList.add(state);
-    }
-  }
-
-  // ─── Afspraakformulier: opent een ingevulde e-mail ───
-  const form = document.getElementById('booking-form');
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    const data = new FormData(form);
-    const subject = `Afspraakaanvraag: ${data.get('behandeling')}`;
-    const body = [
-      `Naam: ${data.get('naam')}`,
-      `Telefoon: ${data.get('telefoon')}`,
-      `Behandeling: ${data.get('behandeling')}`,
-      `Voorkeursmoment: ${data.get('moment') || 'geen voorkeur'}`,
-      '',
-      data.get('opmerking') || ''
-    ].join('\n');
-    window.location.href = `mailto:${form.dataset.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    document.getElementById('form-note').textContent = 'Je e-mailprogramma wordt geopend. Verstuur de e-mail om je aanvraag af te ronden.';
-  });
-
-  // ─── Jaartal in de footer ───
-  document.getElementById('year').textContent = new Date().getFullYear();
-
-  // ─── Rustig infaden bij scrollen ───
-  const items = document.querySelectorAll('.reveal');
-  if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    const io = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) { entry.target.classList.add('in'); io.unobserve(entry.target); }
-      });
-    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-    items.forEach(el => io.observe(el));
-  } else {
-    items.forEach(el => el.classList.add('in'));
-  }
-})();
-</script>
 </body>
 </html>

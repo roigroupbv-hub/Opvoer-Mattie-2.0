@@ -1,37 +1,43 @@
 # Kapsalon Rheden – website
 
-Nieuwe website voor Kapsalon Rheden (voorheen Dierking Coiffures Rheden), Groenestraat 39, Rheden.
-Stijl: luxe salon met warme zand- en roze-beige tinten, Cormorant Garamond voor koppen en Jost voor tekst.
+Website van Kapsalon Rheden (voorheen Dierking Coiffures Rheden), Groenestraat 39, Rheden.
+Donker en warm ontwerp met champagne-accent, koppen in Poppins (sluit aan op het logo) en tekst in Figtree.
+
+## Pagina's
+
+| Bestand | Inhoud |
+|---|---|
+| `index.html` | Home: sfeerfoto, openingsstatus, welkom, behandelingen, prijzen, team, kleuradvies, openingstijden en contact |
+| `behandelingen.html` | Zes behandelingen met foto, uitleg en prijs |
+| `prijzen.html` | Volledige prijslijst |
+| `team.html` | Teamleden en "Werken bij ons" |
+| `contact.html` | Afspraakformulier, contactgegevens en openingstijden |
+
+Gedeelde bestanden:
+
+- `assets/css/style.css`: alle opmaak (kleuren en lettertypes staan bovenaan als variabelen)
+- `assets/js/main.js`: mobiel menu, "nu geopend/gesloten", vandaag markeren in de openingstijden en het afspraakformulier
+- `img/`: logo, favicons en foto's
 
 ## Gebruik
 
-Open `index.html` in je browser. Alles staat in één bestand (HTML, CSS en JavaScript) en er is geen server nodig.
-Je kunt de map zo op elke hosting zetten.
-
-## Foto's toevoegen
-
-Zet foto's met deze namen in de map `img/`. Ze verschijnen dan vanzelf in de boogvormige kaders.
-Zolang er geen foto staat, toont de site een decoratieve achtergrond.
-
-| Bestand | Plek | Advies |
-|---|---|---|
-| `img/hero.jpg` | Grote boog bovenaan | Staand, minstens 900 × 1300 px, bijv. het interieur |
-| `img/detail.jpg` | Kleine boog bovenaan | Staand, minstens 500 × 700 px, bijv. een kapper aan het werk |
-| `img/salon.jpg` | Boog bij "Over ons" | Staand (4:5), minstens 800 × 1000 px, bijv. de gevel of de salon |
-
-## Nog controleren vóór livegang
-
-De gegevens hieronder komen van de oude Dierking-site en uit openbare bedrijvengidsen. Controleer ze:
-
-- **Telefoon `026 495 1200`**: het nummer van Dierking Rheden. Klopt het dat jullie dit nummer overnemen?
-- **E-mail `info@kapsalonrheden.nl`**: dit is een placeholder. Vervang het door jullie echte adres op 3 plekken: het JSON-LD-blok in `<head>`, de contactkaart en `data-email` op het afspraakformulier.
-- **Postcode `6991 GC`**: komt uit een bedrijvengids.
-- **Openingstijden**: overgenomen van Dierking Rheden. Pas ze aan in de tabel bij `#contact`. De status "Nu geopend/gesloten" bovenaan leest de tijden daaruit. Pas ook het JSON-LD-blok en de footer aan.
-- **Prijzen**: de vanaf-prijzen van Dierking. Pas ze aan bij `#prijzen` en in de drie bedragen in de hero.
-- **Behandelingen**: algemene kapsalondiensten. Haal weg wat jullie niet aanbieden.
-- **Melding "voorheen Dierking Coiffures Rheden"**: staat in de balk bovenaan, de meta-omschrijving en de footer. Check of jullie de oude naam mogen noemen volgens de overnameafspraken.
+Open `index.html` in je browser, of zet de hele map `kapsalon-rheden/` op een webhosting.
+Er is geen server of build-stap nodig.
 
 ## Afspraakformulier
 
-Het formulier heeft geen server nodig. Na versturen opent het e-mailprogramma van de bezoeker met een ingevulde aanvraag aan het adres in `data-email`.
-Gaan jullie een online boekingssysteem gebruiken (bijv. Salonized of Treatwell)? Dan kun je de knoppen "Afspraak maken" naar die boekingslink laten wijzen.
+Het formulier opent bij versturen het e-mailprogramma van de bezoeker, met een ingevulde aanvraag aan het adres in `data-email` (in `contact.html`).
+Links als `contact.html?behandeling=Kleuradvies` kiezen de behandeling alvast voor.
+Gaan jullie een online boekingssysteem gebruiken (bijv. Salonized of Treatwell)? Laat dan de knoppen "Afspraak maken" naar die boekingslink wijzen.
+
+## Nog in te vullen of te controleren vóór livegang
+
+- **E-mailadres** `info@kapsalonrheden.nl` is een placeholder. Vervang het in `contact.html` (`data-email` en het mailto-adres), in `index.html` (contactblok en het JSON-LD-blok bovenin).
+- **Team**: `[Naam]`, `[Functie]` en `[Specialisatie]` in `team.html` en `index.html`. Vraag de mensen op de foto's om toestemming voor publicatie.
+- **Telefoon 026 495 1200**: het nummer van Dierking Rheden. Klopt het dat jullie dit overnemen?
+- **Postcode 6991 GC**: komt uit een bedrijvengids.
+- **Openingstijden**: overgenomen van Dierking Rheden. Ze staan op vijf plekken: `HOURS` in `assets/js/main.js`, de tabellen in `index.html` en `contact.html`, de footer van elke pagina en het JSON-LD-blok in `index.html`.
+- **Prijzen**: de vanaf-prijzen van Dierking, in `prijzen.html`, `behandelingen.html` en `index.html`.
+- **Foto's**: komen van de oude Dierking-site. Check of de overname het gebruik dekt. In `interieur.jpg` is in een spiegel een stukje van het oude Dierking-logo te zien, en `model-pony.jpg` lijkt een campagnebeeld van een productmerk.
+- **"Voorheen Dierking Coiffures Rheden"**: staat in de balk bovenaan de homepage, de meta-omschrijving en de footer. Check of jullie de oude naam mogen noemen.
+- **Kinderen** heeft nog geen foto. Vervang op `behandelingen.html` het blok `treatment-panel` door een `<img class="treatment-media" …>` zodra er een foto is.
