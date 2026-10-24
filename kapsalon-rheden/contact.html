@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact &amp; afspraak · Kapsalon Rheden</title>
+<meta name="description" content="Maak een afspraak bij Kapsalon Rheden, Groenestraat 39 in Rheden. Bel 026 495 1200 of vraag online een afspraak aan.">
+<meta name="theme-color" content="#141211">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600&family=Poppins:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<script src="assets/js/main.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Naar de inhoud</a>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="index.html"><img src="img/logo-kapsalon-rheden.png" alt="Kapsalon Rheden" width="163" height="48"></a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav"><span class="sr-only">Menu openen</span><span class="bar"></span><span class="bar"></span></button>
+    <nav class="nav" id="site-nav" aria-label="Hoofdmenu">
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="behandelingen.html">Behandelingen</a></li>
+        <li><a href="prijzen.html">Prijzen</a></li>
+        <li><a href="team.html">Team</a></li>
+        <li><a href="contact.html" aria-current="page">Contact</a></li>
+      </ul>
+      <a class="btn btn-outline btn-sm" href="tel:+31264951200">Bel 026 495 1200</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="page-hero">
+    <div class="wrap">
+      <div>
+        <span class="eyebrow">Contact &amp; afspraak</span>
+        <h1>Plan je bezoek</h1>
+      </div>
+      <p>Laat je gegevens achter en we nemen zo snel mogelijk contact op om een moment te kiezen. Liever direct? Bel ons tijdens openingstijden.</p>
+    </div>
+  </section>
+
+  <div class="wrap contact-layout">
+
+    <div class="form-panel" id="afspraak">
+      <div id="booking-wrap">
+        <h2>Afspraak aanvragen</h2>
+        <!-- Vervang data-email door het echte e-mailadres van de salon -->
+        <form class="booking-form" id="booking-form" data-email="info@kapsalonrheden.nl">
+          <div class="field">
+            <label for="f-naam">Naam</label>
+            <input id="f-naam" name="naam" type="text" autocomplete="name" placeholder="Je volledige naam" required>
+          </div>
+          <div class="field">
+            <label for="f-tel">Telefoon</label>
+            <input id="f-tel" name="telefoon" type="tel" autocomplete="tel" placeholder="06 12 34 56 78" required>
+          </div>
+          <div class="field">
+            <label for="f-beh">Behandeling</label>
+            <select id="f-beh" name="behandeling">
+              <option value="Dames knippen">Dames knippen</option>
+              <option value="Heren knippen">Heren knippen</option>
+              <option value="Kinderen knippen">Kinderen knippen</option>
+              <option value="Kleuren">Kleuren</option>
+              <option value="Highlights / balayage">Highlights / balayage</option>
+              <option value="Föhnen / gelegenheid">Föhnen / gelegenheid</option>
+              <option value="Kleuradvies">Kleuradvies</option>
+              <option value="Anders">Anders</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-dag">Voorkeursdag</label>
+            <select id="f-dag" name="dag">
+              <option>Geen voorkeur</option>
+              <option>Dinsdag</option>
+              <option>Woensdag</option>
+              <option>Donderdag</option>
+              <option>Vrijdag</option>
+              <option>Vrijdagavond</option>
+              <option>Zaterdag</option>
+            </select>
+          </div>
+          <div class="field full">
+            <label for="f-opm">Opmerking</label>
+            <textarea id="f-opm" name="opmerking" rows="3" placeholder="Wensen, vragen of iets wat we moeten weten"></textarea>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-accent" type="submit">Verstuur aanvraag</button>
+            <p class="form-note">Je aanvraag opent in je e-mailprogramma. Je afspraak staat vast zodra wij hem hebben bevestigd.</p>
+          </div>
+        </form>
+      </div>
+
+      <div class="form-thanks" id="form-thanks" hidden>
+        <span class="check" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+        </span>
+        <h2 tabindex="-1">Bijna klaar</h2>
+        <p>Je e-mailprogramma is geopend met je aanvraag. Verstuur die e-mail, dan bellen of mailen we je zo snel mogelijk om je afspraak te bevestigen.</p>
+        <button class="btn btn-ghost btn-sm" type="button" data-reset>Nieuwe aanvraag</button>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="side-card">
+        <div class="info-list">
+          <div><span class="label">Adres</span>Groenestraat 39<br>6991 GC Rheden</div>
+          <div><span class="label">Telefoon</span><a href="tel:+31264951200">026 495 1200</a></div>
+          <div><span class="label">E-mail</span><a href="mailto:info@kapsalonrheden.nl">info@kapsalonrheden.nl</a></div>
+        </div>
+        <a class="btn btn-ghost btn-sm" href="https://www.google.com/maps/search/?api=1&amp;query=Groenestraat+39%2C+6991+GC+Rheden" target="_blank" rel="noopener">Plan je route</a>
+      </div>
+      <div class="side-card">
+        <span class="label" style="margin-bottom: 6px">Openingstijden</span>
+        <table class="hours">
+          <caption class="sr-only">Openingstijden van Kapsalon Rheden</caption>
+          <tbody>
+            <tr data-day="1" class="closed"><th scope="row">Maandag</th><td>Gesloten</td></tr>
+            <tr data-day="2"><th scope="row">Dinsdag</th><td>09:00 – 18:00</td></tr>
+            <tr data-day="3"><th scope="row">Woensdag</th><td>09:00 – 18:00</td></tr>
+            <tr data-day="4"><th scope="row">Donderdag</th><td>09:00 – 18:00</td></tr>
+            <tr data-day="5"><th scope="row">Vrijdag</th><td>09:00 – 20:00</td></tr>
+            <tr data-day="6"><th scope="row">Zaterdag</th><td>08:30 – 17:00</td></tr>
+            <tr data-day="0" class="closed"><th scope="row">Zondag</th><td>Gesloten</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="img/logo-kapsalon-rheden.png" alt="Kapsalon Rheden" width="218" height="64" loading="lazy">
+        <p>Knippen, kleuren en persoonlijk advies in het centrum van Rheden.</p>
+      </div>
+      <div class="footer-col">
+        <span class="label">Bezoek</span>
+        Groenestraat 39<br>6991 GC Rheden<br><a href="tel:+31264951200">026 495 1200</a>
+      </div>
+      <div class="footer-col">
+        <span class="label">Openingstijden</span>
+        Di – do 09:00 – 18:00<br>Vr 09:00 – 20:00<br>Za 08:30 – 17:00
+      </div>
+      <nav class="footer-col footer-nav" aria-label="Footermenu">
+        <span class="label">Menu</span>
+        <a href="behandelingen.html">Behandelingen</a>
+        <a href="prijzen.html">Prijzen</a>
+        <a href="team.html">Team</a>
+        <a href="contact.html">Contact &amp; afspraak</a>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span data-year>2026</span> Kapsalon Rheden</span>
+      <span>Voorheen Dierking Coiffures Rheden</span>
+    </div>
+  </div>
+</footer>
+
+<div class="mobile-bar">
+  <a class="btn btn-ghost" href="tel:+31264951200">Bellen</a>
+  <a class="btn btn-accent" href="#afspraak">Afspraak</a>
+</div>
+
+</body>
+</html>
