@@ -33,11 +33,11 @@ Gaan jullie een online boekingssysteem gebruiken (bijv. Salonized of Treatwell)?
 ## Nog in te vullen of te controleren vóór livegang
 
 - **E-mailadres** `info@kapsalonrheden.nl` is een placeholder. Vervang het in `contact.html` (`data-email` en het mailto-adres), in `index.html` (contactblok en het JSON-LD-blok bovenin).
-- **Team**: `[Naam]`, `[Functie]` en `[Specialisatie]` in `team.html` en `index.html`. Vraag de mensen op de foto's om toestemming voor publicatie.
+- **Team**: de namen Marianne (teamleider), Niels, Daphne, Mieke en Babs komen van de Rheden-pagina van Dierking. Controleer of dit het huidige team is (de teampagina van Dierking noemt voor Rheden ook Suzan en Thayrah). De namen staan in `team.html` en `index.html`; de foto's hebben bewust geen naam, omdat niet bekend is wie erop staat. Vraag de mensen op de foto's om toestemming voor publicatie.
 - **Telefoon 026 495 1200**: het nummer van Dierking Rheden. Klopt het dat jullie dit overnemen?
 - **Postcode 6991 GC**: komt uit een bedrijvengids.
 - **Openingstijden**: overgenomen van Dierking Rheden. Ze staan op vijf plekken: `HOURS` in `assets/js/main.js`, de tabellen in `index.html` en `contact.html`, de footer van elke pagina en het JSON-LD-blok in `index.html`.
-- **Prijzen**: de vanaf-prijzen van Dierking, in `prijzen.html`, `behandelingen.html` en `index.html`.
+- **Prijzen**: de prijslijst van Dierking (geldig vanaf 3 november 2025), in `prijzen.html`, `behandelingen.html` en `index.html`. Niet overgenomen: de "Dierking Signature Color" (merknaam van Dierking) en de barbershop- en beautyprijzen, omdat niet zeker is dat Rheden die aanbiedt.
 - **Foto's**: komen van de oude Dierking-site. Check of de overname het gebruik dekt. In `interieur.jpg` is in een spiegel een stukje van het oude Dierking-logo te zien, en `model-pony.jpg` lijkt een campagnebeeld van een productmerk.
 - **"Voorheen Dierking Coiffures Rheden"**: staat in de balk bovenaan de homepage, de meta-omschrijving en de footer. Check of jullie de oude naam mogen noemen.
 - **Kinderen** heeft nog geen foto. Vervang op `behandelingen.html` het blok `treatment-panel` door een `<img class="treatment-media" …>` zodra er een foto is.
